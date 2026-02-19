@@ -1,0 +1,63 @@
+.page {
+  padding: var(--space-md);
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+}
+
+.searchWrapper {
+  margin-bottom: var(--space-md);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.noResults {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: var(--space-xl);
+  font-size: 0.95rem;
+}
+
+.itemCard {
+  cursor: default;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.itemName {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+}
+
+.tip {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.tipLabel {
+  font-weight: 600;
+}

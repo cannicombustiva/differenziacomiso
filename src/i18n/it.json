@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "DifferenziaComiso",
+    "shortName": "Differenzia"
+  },
+  "nav": {
+    "home": "Home",
+    "calendar": "Calendario",
+    "dictionary": "Riciclabolario",
+    "news": "Notizie",
+    "info": "Info"
+  },
+  "home": {
+    "tomorrowCollection": "Domani si raccoglie:",
+    "noCollection": "Domani non si effettua la raccolta",
+    "holiday": "Giorno festivo",
+    "nextDays": "Prossimi giorni"
+  },
+  "calendar": {
+    "title": "Calendario Raccolta",
+    "noCollection": "Nessuna raccolta",
+    "holiday": "Festivo"
+  },
+  "dictionary": {
+    "title": "Riciclabolario",
+    "searchPlaceholder": "Cerca un oggetto...",
+    "noResults": "Nessun risultato trovato",
+    "tip": "Suggerimento"
+  },
+  "news": {
+    "title": "Notizie",
+    "noNews": "Nessuna notizia al momento"
+  },
+  "info": {
+    "title": "Informazioni",
+    "contacts": "Contatti",
+    "greenNumber": "Numero Verde",
+    "website": "Sito web",
+    "socialMedia": "Social Media",
+    "notifications": "Notifiche",
+    "notificationSettings": "Impostazioni notifiche",
+    "enableNotifications": "Attiva notifiche",
+    "disableNotifications": "Disattiva notifiche",
+    "notificationsEnabled": "Notifiche attivate",
+    "notificationsDisabled": "Notifiche disattivate",
+    "appVersion": "Versione app",
+    "credits": "Sviluppato per i cittadini di Comiso"
+  },
+  "admin": {
+    "title": "Pannello Admin",
+    "dashboard": "Dashboard",
+    "calendarManager": "Gestione Calendario",
+    "dictionaryManager": "Gestione Riciclabolario",
+    "newsManager": "Gestione Notizie",
+    "notificationManager": "Gestione Notifiche",
+    "login": "Accedi",
+    "logout": "Esci",
+    "email": "Email",
+    "password": "Password",
+    "save": "Salva",
+    "delete": "Elimina",
+    "cancel": "Annulla",
+    "edit": "Modifica",
+    "add": "Aggiungi",
+    "publish": "Pubblica",
+    "unpublish": "Nascondi",
+    "bulkFill": "Riempi con Settimana Tipo",
+    "fromDate": "Da data",
+    "toDate": "A data",
+    "markHoliday": "Segna come festivo",
+    "holidayNote": "Nota festivo",
+    "subscribers": "Iscritti",
+    "sendNotification": "Invia notifica",
+    "notificationText": "Testo notifica",
+    "preview": "Anteprima"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "retry": "Riprova",
+    "offline": "Sei offline — dati aggiornati al",
+    "close": "Chiudi",
+    "confirm": "Conferma"
+  },
+  "days": {
+    "monday": "Lunedì",
+    "tuesday": "Martedì",
+    "wednesday": "Mercoledì",
+    "thursday": "Giovedì",
+    "friday": "Venerdì",
+    "saturday": "Sabato",
+    "sunday": "Domenica"
+  },
+  "daysShort": {
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mer",
+    "thu": "Gio",
+    "fri": "Ven",
+    "sat": "Sab",
+    "sun": "Dom"
+  },
+  "months": {
+    "january": "Gennaio",
+    "february": "Febbraio",
+    "march": "Marzo",
+    "april": "Aprile",
+    "may": "Maggio",
+    "june": "Giugno",
+    "july": "Luglio",
+    "august": "Agosto",
+    "september": "Settembre",
+    "october": "Ottobre",
+    "november": "Novembre",
+    "december": "Dicembre"
+  }
+}
