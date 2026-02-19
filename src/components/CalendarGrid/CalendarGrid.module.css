@@ -1,0 +1,118 @@
+.calendar {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) 0;
+  margin-bottom: var(--space-sm);
+}
+
+.monthLabel {
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.navButton {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.navButton:hover {
+  background: var(--color-bg-secondary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+
+.dayHeader {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  padding: var(--space-xs) 0;
+  text-transform: uppercase;
+}
+
+.dayCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-xs) 2px;
+  min-height: 48px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  transition: background-color 0.2s;
+}
+
+.dayCell:hover:not(:disabled) {
+  background: var(--color-bg-secondary);
+}
+
+.dayCell:disabled {
+  cursor: default;
+}
+
+.outsideMonth {
+  opacity: 0.3;
+}
+
+.today .dayNumber {
+  background: var(--color-primary);
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selected {
+  border-color: var(--color-primary);
+  background: var(--color-bg-secondary);
+}
+
+.holiday {
+  opacity: 0.6;
+}
+
+.holiday .dayNumber {
+  text-decoration: line-through;
+}
+
+.dayNumber {
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.dots {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 8px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}

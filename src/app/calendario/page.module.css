@@ -1,0 +1,33 @@
+.page {
+  padding: var(--space-md);
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+}
+
+.detail {
+  padding: var(--space-sm) 0;
+}
+
+.wasteList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.holiday {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  padding: var(--space-md);
+}
+
+.noCollection {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  padding: var(--space-md);
+}

@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "DifferenziaComiso",
+    "shortName": "Differenzia"
+  },
+  "nav": {
+    "home": "Home",
+    "calendar": "Calendar",
+    "dictionary": "Dictionary",
+    "news": "News",
+    "info": "Info"
+  },
+  "home": {
+    "tomorrowCollection": "Tomorrow's collection:",
+    "noCollection": "No collection tomorrow",
+    "holiday": "Holiday",
+    "nextDays": "Next days"
+  },
+  "calendar": {
+    "title": "Collection Calendar",
+    "noCollection": "No collection",
+    "holiday": "Holiday"
+  },
+  "dictionary": {
+    "title": "Waste Dictionary",
+    "searchPlaceholder": "Search for an item...",
+    "noResults": "No results found",
+    "tip": "Tip"
+  },
+  "news": {
+    "title": "News",
+    "noNews": "No news at this time"
+  },
+  "info": {
+    "title": "Information",
+    "contacts": "Contacts",
+    "greenNumber": "Free Number",
+    "website": "Website",
+    "socialMedia": "Social Media",
+    "notifications": "Notifications",
+    "notificationSettings": "Notification settings",
+    "enableNotifications": "Enable notifications",
+    "disableNotifications": "Disable notifications",
+    "notificationsEnabled": "Notifications enabled",
+    "notificationsDisabled": "Notifications disabled",
+    "appVersion": "App version",
+    "credits": "Developed for the citizens of Comiso"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "dashboard": "Dashboard",
+    "calendarManager": "Calendar Manager",
+    "dictionaryManager": "Dictionary Manager",
+    "newsManager": "News Manager",
+    "notificationManager": "Notification Manager",
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "save": "Save",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "add": "Add",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "bulkFill": "Fill with Typical Week",
+    "fromDate": "From date",
+    "toDate": "To date",
+    "markHoliday": "Mark as holiday",
+    "holidayNote": "Holiday note",
+    "subscribers": "Subscribers",
+    "sendNotification": "Send notification",
+    "notificationText": "Notification text",
+    "preview": "Preview"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "offline": "You are offline — data updated on",
+    "close": "Close",
+    "confirm": "Confirm"
+  },
+  "days": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "daysShort": {
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
+  },
+  "months": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
+  }
+}
