@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import '@/styles/globals.css';
 import Navbar from '@/components/Navbar/Navbar';
 import I18nProvider from '@/components/I18nProvider';
+import ThemeProvider from '@/components/ThemeProvider';
 import { ToastProvider } from '@/components/ui/Toast/Toast';
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
 
@@ -33,8 +34,11 @@ export default function RootLayout({
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192x192.svg" />
         <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+        {/* Prevent flash of wrong theme: read localStorage before React hydrates */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();` }} />
       </head>
       <body>
+        <ThemeProvider>
         <I18nProvider>
           <ToastProvider>
             <div className="appShell">
@@ -46,6 +50,7 @@ export default function RootLayout({
             <ServiceWorkerRegistrar />
           </ToastProvider>
         </I18nProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
