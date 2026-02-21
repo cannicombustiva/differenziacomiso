@@ -51,8 +51,9 @@
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Auto dark: follows system, but not when user explicitly chose light */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --color-bg: #121212;
     --color-bg-secondary: #1E1E1E;
     --color-bg-tertiary: #2C2C2C;
@@ -62,6 +63,18 @@
     --color-border: #333333;
     --color-shadow: rgba(0, 0, 0, 0.3);
   }
+}
+
+/* Explicit dark: user chose dark regardless of system */
+:root[data-theme="dark"] {
+  --color-bg: #121212;
+  --color-bg-secondary: #1E1E1E;
+  --color-bg-tertiary: #2C2C2C;
+  --color-text: #F5F5F5;
+  --color-text-secondary: #B0B0B0;
+  --color-text-muted: #777777;
+  --color-border: #333333;
+  --color-shadow: rgba(0, 0, 0, 0.3);
 }
 
 *,
