@@ -7,61 +7,65 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-sm) 0;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-md);
 }
 
 .monthLabel {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   text-transform: capitalize;
+  letter-spacing: -0.01em;
 }
 
 .navButton {
-  background: none;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-xs);
-  color: var(--color-text);
+  background: var(--color-bg-secondary);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  transition: background-color 0.15s, color 0.15s;
 }
 
 .navButton:hover {
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
+  gap: 4px;
 }
 
 .dayHeader {
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 600;
   color: var(--color-text-muted);
   padding: var(--space-xs) 0;
+  padding-bottom: var(--space-sm);
   text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .dayCell {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: var(--space-xs) 2px;
-  min-height: 48px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  background: none;
-  transition: background-color 0.2s;
+  gap: 4px;
+  padding: var(--space-sm) 2px;
+  min-height: 54px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
 .dayCell:hover:not(:disabled) {
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-tertiary);
 }
 
 .dayCell:disabled {
@@ -69,15 +73,16 @@
 }
 
 .outsideMonth {
-  opacity: 0.3;
+  opacity: 0.22;
+  background: transparent;
 }
 
 .today .dayNumber {
   background: var(--color-primary);
   color: white;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,11 +90,11 @@
 
 .selected {
   border-color: var(--color-primary);
-  background: var(--color-bg-secondary);
+  background: rgba(46, 125, 50, 0.08);
 }
 
 .holiday {
-  opacity: 0.6;
+  opacity: 0.45;
 }
 
 .holiday .dayNumber {
@@ -98,8 +103,20 @@
 
 .dayNumber {
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1;
+  color: var(--color-text-secondary); /* light: #666 — softens pure black */
+}
+
+/* In dark mode boost numbers to full text color for legibility */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .dayNumber {
+    color: var(--color-text);
+  }
+}
+
+:root[data-theme="dark"] .dayNumber {
+  color: var(--color-text);
 }
 
 .dots {
@@ -111,8 +128,8 @@
 }
 
 .dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   display: inline-block;
 }
