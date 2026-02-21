@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { urlBase64ToUint8Array } from '@/lib/utils';
 
 export function usePushSubscription() {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -24,12 +25,12 @@ export function usePushSubscription() {
 
     try {
       const registration = await navigator.serviceWorker.ready;
+      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey),
       });
 
-      // Send subscription to server
       await fetch('/api/push/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -50,6 +51,13 @@ export function usePushSubscription() {
       const subscription = await registration.pushManager.getSubscription();
 
       if (subscription) {
+        // Remove from DB first
+        await fetch('/api/push/unsubscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ endpoint: subscription.endpoint }),
+        });
+
         await subscription.unsubscribe();
         setIsSubscribed(false);
       }
