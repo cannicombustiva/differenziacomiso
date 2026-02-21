@@ -10,7 +10,10 @@
     "lint": "next lint",
     "prepare": "husky",
     "deploy": "vercel --prod",
-    "deploy:preview": "vercel"
+    "deploy:preview": "vercel",
+    "change": "changeset",
+    "version": "changeset version",
+    "release": "changeset version && git push --follow-tags"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
@@ -26,9 +29,12 @@
     "*.{ts,tsx,js}": "eslint --fix"
   },
   "commitlint": {
-    "extends": ["@commitlint/config-conventional"]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "@commitlint/cli": "^20.4.2",
     "@commitlint/config-conventional": "^20.4.2",
     "@types/node": "^20.17.0",
