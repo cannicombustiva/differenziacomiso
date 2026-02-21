@@ -4,10 +4,14 @@ import { sendPushNotification } from '@/lib/push';
 
 export async function POST(request: Request) {
   try {
-    const { title, body } = await request.json();
+    const body = await request.json();
 
-    if (!title || !body) {
-      return NextResponse.json({ error: 'Title and body are required' }, { status: 400 });
+    // Support both { message } (from admin panel) and { title, body } (from cron)
+    const title: string = body.title || 'DifferenziaComiso';
+    const text: string = body.body || body.message;
+
+    if (!text) {
+      return NextResponse.json({ error: 'Message body is required' }, { status: 400 });
     }
 
     const supabase = createAdminClient();
@@ -23,8 +27,9 @@ export async function POST(request: Request) {
 
     const payload = {
       title,
-      body,
+      body: text,
       icon: '/icons/icon-192x192.png',
+      url: '/',
     };
 
     let sent = 0;
@@ -42,7 +47,7 @@ export async function POST(request: Request) {
         sent++;
       } catch (err) {
         failed++;
-        // Remove expired subscriptions
+        // Remove expired/invalid subscriptions
         if ((err as { statusCode?: number })?.statusCode === 410) {
           await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
         }
