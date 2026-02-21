@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
