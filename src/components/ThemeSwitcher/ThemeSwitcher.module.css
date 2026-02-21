@@ -1,0 +1,35 @@
+.switcher {
+  display: flex;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+  width: 100%;
+}
+
+.option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-xs);
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: background-color 0.18s, color 0.18s;
+}
+
+.option:hover:not(.active) {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+}
+
+.active {
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+}

@@ -4,10 +4,11 @@ import { useLocale } from '@/hooks/useLocale';
 import { usePushSubscription } from '@/hooks/usePushSubscription';
 import Card from '@/components/ui/Card/Card';
 import Button from '@/components/ui/Button/Button';
+import ThemeSwitcher from '@/components/ThemeSwitcher/ThemeSwitcher';
 import styles from './page.module.css';
 
 export default function InfoPage() {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const { isSubscribed, isSupported, subscribe, unsubscribe } = usePushSubscription();
 
   return (
@@ -69,6 +70,11 @@ export default function InfoPage() {
             {isSubscribed ? t('info.disableNotifications') : t('info.enableNotifications')}
           </Button>
         )}
+      </Card>
+
+      <Card className={styles.section}>
+        <h2 className={styles.sectionTitle}>{t('info.appearance')}</h2>
+        <ThemeSwitcher locale={locale} />
       </Card>
 
       <Card className={styles.section}>
