@@ -5,7 +5,8 @@
       "Bash(npm install:*)",
       "Bash(npm run build:*)",
       "Bash(pnpm add:*)",
-      "Bash(pnpm exec husky:*)"
+      "Bash(pnpm exec husky:*)",
+      "Bash(git rm --cached -r supabase/.temp/)"
     ]
   }
 }

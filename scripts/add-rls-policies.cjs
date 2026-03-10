@@ -1,7 +1,12 @@
 const https = require('https');
 
-const SERVICE_KEY = 'REDACTED_SERVICE_ROLE_KEY';
-const PROJECT_REF = 'REDACTED_PROJECT_REF';
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const PROJECT_REF = process.env.SUPABASE_PROJECT_REF;
+
+if (!SERVICE_KEY || !PROJECT_REF) {
+  console.error('ERROR: Set SUPABASE_SERVICE_ROLE_KEY and SUPABASE_PROJECT_REF environment variables');
+  process.exit(1);
+}
 
 // Add write policies for authenticated (admin) users
 const sql = `
@@ -24,19 +29,7 @@ CREATE POLICY IF NOT EXISTS "Authenticated full access push_subscriptions"
 
 const body = JSON.stringify({ query: sql });
 
-const opts = {
-  hostname: `${PROJECT_REF}.supabase.co`,
-  path: '/rest/v1/rpc/exec_sql',
-  method: 'POST',
-  headers: {
-    'apikey': SERVICE_KEY,
-    'Authorization': `Bearer ${SERVICE_KEY}`,
-    'Content-Type': 'application/json',
-    'Content-Length': Buffer.byteLength(body),
-  },
-};
-
-// Use management API instead
+// Use management API
 const managementOpts = {
   hostname: 'api.supabase.com',
   path: `/v1/projects/${PROJECT_REF}/database/query`,

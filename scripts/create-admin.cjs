@@ -1,11 +1,22 @@
 const https = require('https');
 
-const SERVICE_KEY = 'REDACTED_SERVICE_ROLE_KEY';
-const PROJECT_REF = 'REDACTED_PROJECT_REF';
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const PROJECT_REF = process.env.SUPABASE_PROJECT_REF;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+if (!SERVICE_KEY || !PROJECT_REF || !ADMIN_EMAIL || !ADMIN_PASSWORD) {
+  console.error('ERROR: Set the following environment variables:');
+  console.error('  SUPABASE_SERVICE_ROLE_KEY');
+  console.error('  SUPABASE_PROJECT_REF');
+  console.error('  ADMIN_EMAIL');
+  console.error('  ADMIN_PASSWORD');
+  process.exit(1);
+}
 
 const body = JSON.stringify({
-  email: 'REDACTED_EMAIL',
-  password: process.env.ADMIN_PASSWORD,
+  email: ADMIN_EMAIL,
+  password: ADMIN_PASSWORD,
   email_confirm: true,
 });
 
@@ -32,7 +43,6 @@ const req = https.request(opts, (res) => {
       console.log('  Email:', parsed.email);
     } else if (parsed.msg && parsed.msg.includes('already been registered')) {
       console.log('User already exists — updating password...');
-      // User exists, just confirm
       console.log('Done. Use the Supabase dashboard to reset the password if needed.');
     } else {
       console.error('Unexpected response:', data);

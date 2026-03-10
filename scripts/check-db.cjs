@@ -1,7 +1,14 @@
 const https = require('https');
 
-const SERVICE_KEY = 'REDACTED_SERVICE_ROLE_KEY';
-const BASE = 'REDACTED_PROJECT_REF.supabase.co';
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const PROJECT_REF = process.env.SUPABASE_PROJECT_REF;
+
+if (!SERVICE_KEY || !PROJECT_REF) {
+  console.error('ERROR: Set SUPABASE_SERVICE_ROLE_KEY and SUPABASE_PROJECT_REF environment variables');
+  process.exit(1);
+}
+
+const BASE = `${PROJECT_REF}.supabase.co`;
 
 function get(path) {
   return new Promise((resolve, reject) => {

@@ -7,12 +7,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Supabase direct connection string
 // Format: postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres
-const PROJECT_REF = 'REDACTED_PROJECT_REF';
+const PROJECT_REF = process.env.SUPABASE_PROJECT_REF;
 const DB_PASSWORD = process.env.SUPABASE_DB_PASSWORD;
 
-if (!DB_PASSWORD) {
-  console.error('ERROR: Set SUPABASE_DB_PASSWORD environment variable');
-  console.error('You can find it in: Supabase Dashboard > Settings > Database > Connection string');
+if (!PROJECT_REF || !DB_PASSWORD) {
+  console.error('ERROR: Set SUPABASE_PROJECT_REF and SUPABASE_DB_PASSWORD environment variables');
+  console.error('You can find the password in: Supabase Dashboard > Settings > Database > Connection string');
   process.exit(1);
 }
 
