@@ -23,10 +23,11 @@ export function usePushSubscription() {
   const subscribe = useCallback(async () => {
     if (!isSupported) return;
 
+    let subscription: PushSubscription | null = null;
     try {
       const registration = await navigator.serviceWorker.ready;
       const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
-      const subscription = await registration.pushManager.subscribe({
+      subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidKey),
       });
@@ -38,12 +39,14 @@ export function usePushSubscription() {
       });
 
       if (!res.ok) {
-        await subscription.unsubscribe();
         throw new Error('Server failed to save subscription');
       }
 
       setIsSubscribed(true);
     } catch (err) {
+      if (subscription) {
+        await subscription.unsubscribe().catch(() => {});
+      }
       console.error('Failed to subscribe:', err);
     }
   }, [isSupported]);
@@ -56,18 +59,14 @@ export function usePushSubscription() {
       const subscription = await registration.pushManager.getSubscription();
 
       if (subscription) {
-        const res = await fetch('/api/push/unsubscribe', {
+        await subscription.unsubscribe();
+        setIsSubscribed(false);
+
+        fetch('/api/push/unsubscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ endpoint: subscription.endpoint }),
-        });
-
-        if (!res.ok) {
-          throw new Error('Server failed to remove subscription');
-        }
-
-        await subscription.unsubscribe();
-        setIsSubscribed(false);
+        }).catch(() => {});
       }
     } catch (err) {
       console.error('Failed to unsubscribe:', err);
