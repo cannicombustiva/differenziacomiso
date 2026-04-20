@@ -7,7 +7,10 @@ CREATE TABLE admins (
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated users can check if they're admin
-CREATE POLICY "Authenticated read admins" ON admins FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated read admins" ON admins
+  FOR SELECT
+  TO authenticated
+  USING (email = auth.jwt()->>'email');
 
 -- Only service role can manage admins (bypasses RLS anyway)
 
