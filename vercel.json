@@ -2,6 +2,10 @@
   "crons": [
     {
       "path": "/api/cron/daily-notification",
+      "schedule": "0 18 * * *"
+    },
+    {
+      "path": "/api/cron/daily-notification",
       "schedule": "0 19 * * *"
     }
   ]

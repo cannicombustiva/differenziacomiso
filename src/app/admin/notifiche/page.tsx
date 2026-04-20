@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useLocale } from '@/hooks/useLocale';
-import { createClient } from '@/lib/supabase/client';
 import Card from '@/components/ui/Card/Card';
 import Button from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -16,11 +15,10 @@ export default function AdminNotifichePage() {
   const [subscriberCount, setSubscriberCount] = useState(0);
 
   useEffect(() => {
-    const supabase = createClient();
-    supabase
-      .from('push_subscriptions')
-      .select('id', { count: 'exact', head: true })
-      .then(({ count }) => setSubscriberCount(count ?? 0));
+    fetch('/api/push/subscribers')
+      .then((res) => res.json())
+      .then((data) => setSubscriberCount(data.count ?? 0))
+      .catch(() => setSubscriberCount(0));
   }, []);
 
   const handleSend = async () => {

@@ -1,12 +1,18 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { sendPushNotification } from '@/lib/push';
 
 export async function POST(request: Request) {
   try {
+    const supabaseAuth = createServerSupabaseClient();
+    const { data: { session } } = await supabaseAuth.auth.getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
 
-    // Support both { message } (from admin panel) and { title, body } (from cron)
     const title: string = body.title || 'DifferenziaComiso';
     const text: string = body.body || body.message;
 
@@ -28,7 +34,7 @@ export async function POST(request: Request) {
     const payload = {
       title,
       body: text,
-      icon: '/icons/icon-192x192.png',
+      icon: '/icons/icon-192x192.svg',
       url: '/',
     };
 

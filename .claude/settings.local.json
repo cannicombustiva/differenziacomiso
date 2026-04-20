@@ -6,7 +6,15 @@
       "Bash(npm run build:*)",
       "Bash(pnpm add:*)",
       "Bash(pnpm exec husky:*)",
-      "Bash(git rm --cached -r supabase/.temp/)"
+      "Bash(git rm --cached -r supabase/.temp/)",
+      "Bash(git log --all -p -S \"password: ''1234''\" --oneline)",
+      "Bash(git remote add origin git@github.com:cannicombustiva/differenziacomiso.git)",
+      "Bash(npx vercel *)",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "Bash(pnpm dev *)",
+      "Bash(curl *)",
+      "Bash(node *)"
     ]
   }
 }

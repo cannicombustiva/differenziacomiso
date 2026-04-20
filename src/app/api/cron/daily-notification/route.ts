@@ -1,18 +1,40 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendPushNotification } from '@/lib/push';
-import { format, addDays } from 'date-fns';
+
+const ITALY_TZ = 'Europe/Rome';
+
+function getItalyHour(): number {
+  return parseInt(
+    new Intl.DateTimeFormat('en', { timeZone: ITALY_TZ, hour: 'numeric', hour12: false }).format(new Date()),
+    10
+  );
+}
+
+function getTomorrowInItaly(): string {
+  const now = new Date();
+  const tomorrow = new Date(now.getTime() + 86_400_000);
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: ITALY_TZ }).formatToParts(tomorrow);
+  const year = parts.find(p => p.type === 'year')!.value;
+  const month = parts.find(p => p.type === 'month')!.value;
+  const day = parts.find(p => p.type === 'day')!.value;
+  return `${year}-${month}-${day}`;
+}
 
 export async function GET(request: Request) {
-  // Vercel Cron sends Authorization: Bearer <CRON_SECRET>
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const italyHour = getItalyHour();
+  if (italyHour !== 20) {
+    return NextResponse.json({ skipped: true, reason: `Italy hour is ${italyHour}, not 20` });
+  }
+
   const supabase = createAdminClient();
-  const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd');
+  const tomorrow = getTomorrowInItaly();
 
   // Fetch tomorrow's schedule with waste type names
   const { data: rows, error } = await supabase
@@ -47,7 +69,7 @@ export async function GET(request: Request) {
   const payload = {
     title: 'DifferenziaComiso',
     body: notifBody,
-    icon: '/icons/icon-192x192.png',
+    icon: '/icons/icon-192x192.svg',
     url: '/',
   };
 

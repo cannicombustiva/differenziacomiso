@@ -31,11 +31,16 @@ export function usePushSubscription() {
         applicationServerKey: urlBase64ToUint8Array(vapidKey),
       });
 
-      await fetch('/api/push/subscribe', {
+      const res = await fetch('/api/push/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(subscription),
       });
+
+      if (!res.ok) {
+        await subscription.unsubscribe();
+        throw new Error('Server failed to save subscription');
+      }
 
       setIsSubscribed(true);
     } catch (err) {
@@ -51,12 +56,15 @@ export function usePushSubscription() {
       const subscription = await registration.pushManager.getSubscription();
 
       if (subscription) {
-        // Remove from DB first
-        await fetch('/api/push/unsubscribe', {
+        const res = await fetch('/api/push/unsubscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ endpoint: subscription.endpoint }),
         });
+
+        if (!res.ok) {
+          throw new Error('Server failed to remove subscription');
+        }
 
         await subscription.unsubscribe();
         setIsSubscribed(false);
