@@ -34,6 +34,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  const { data: admin } = await supabase
+    .from('admins')
+    .select('id')
+    .eq('email', session.user.email?.toLowerCase() ?? '')
+    .single();
+
+  if (!admin) {
+    const loginUrl = new URL('/admin/login', request.url);
+    return NextResponse.redirect(loginUrl);
+  }
+
   return response;
 }
 
