@@ -14,5 +14,4 @@ CREATE POLICY "Authenticated read admins" ON admins
 
 -- Only service role can manage admins (bypasses RLS anyway)
 
--- Seed initial admin
-INSERT INTO admins (email) VALUES ('salvatoredifranco8@gmail.com');
+-- Seed admin records separately per environment (for example via a seed script or manual insert)
