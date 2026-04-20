@@ -13,8 +13,7 @@
       "Bash(npx tsc *)",
       "Bash(npx next *)",
       "Bash(pnpm dev *)",
-      "Bash(curl *)",
-      "Bash(node *)"
+      "Bash(curl *)"
     ]
   }
 }
