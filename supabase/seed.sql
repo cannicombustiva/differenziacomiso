@@ -183,6 +183,13 @@ INSERT INTO riciclabolario (item_name_it, item_name_en, waste_type_id, tip_it, t
 -- ============================================================
 -- SEED: Sample announcements
 -- ============================================================
+-- ============================================================
+-- SEED: Admins
+-- ============================================================
+INSERT INTO admins (email) VALUES
+  ('salvatoredifranco8@gmail.com')
+ON CONFLICT (email) DO NOTHING;
+
 INSERT INTO announcements (title_it, title_en, body_it, body_en, is_published, published_at) VALUES
   ('Nuova app DifferenziaComiso disponibile!', 'New DifferenziaComiso app available!',
    'È disponibile la nuova app DifferenziaComiso per consultare il calendario di raccolta differenziata porta a porta. Installala sul tuo smartphone!',

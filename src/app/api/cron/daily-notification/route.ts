@@ -8,17 +8,19 @@ function getItalyHour(): number {
   return parseInt(
     new Intl.DateTimeFormat('en', { timeZone: ITALY_TZ, hour: 'numeric', hour12: false }).format(new Date()),
     10
-  );
+  ) % 24;
 }
 
 function getTomorrowInItaly(): string {
-  const now = new Date();
-  const tomorrow = new Date(now.getTime() + 86_400_000);
-  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: ITALY_TZ }).formatToParts(tomorrow);
-  const year = parts.find(p => p.type === 'year')!.value;
-  const month = parts.find(p => p.type === 'month')!.value;
-  const day = parts.find(p => p.type === 'day')!.value;
-  return `${year}-${month}-${day}`;
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: ITALY_TZ }).formatToParts(new Date());
+  const year = parseInt(parts.find(p => p.type === 'year')!.value, 10);
+  const month = parseInt(parts.find(p => p.type === 'month')!.value, 10);
+  const day = parseInt(parts.find(p => p.type === 'day')!.value, 10);
+  const tomorrow = new Date(year, month - 1, day + 1);
+  const y = tomorrow.getFullYear();
+  const m = String(tomorrow.getMonth() + 1).padStart(2, '0');
+  const d = String(tomorrow.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 export async function GET(request: Request) {

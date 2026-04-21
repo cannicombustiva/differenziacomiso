@@ -17,13 +17,16 @@ function getPendingUnsubscribeEndpoints() {
   }
 }
 
+const MAX_PENDING_ENDPOINTS = 20;
+
 function setPendingUnsubscribeEndpoints(endpoints: string[]) {
   if (typeof window === 'undefined') return;
   if (endpoints.length === 0) {
     window.localStorage.removeItem(PENDING_UNSUBSCRIBE_ENDPOINTS_KEY);
     return;
   }
-  window.localStorage.setItem(PENDING_UNSUBSCRIBE_ENDPOINTS_KEY, JSON.stringify(endpoints));
+  const capped = endpoints.slice(-MAX_PENDING_ENDPOINTS);
+  window.localStorage.setItem(PENDING_UNSUBSCRIBE_ENDPOINTS_KEY, JSON.stringify(capped));
 }
 
 async function removeSubscriptionFromServer(endpoint: string) {

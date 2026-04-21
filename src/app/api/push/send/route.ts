@@ -3,6 +3,8 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { getAdminAuthError, requireAdmin } from '@/lib/admin';
 import { sendPushNotification } from '@/lib/push';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   try {
     await requireAdmin();
