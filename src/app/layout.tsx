@@ -5,6 +5,7 @@ import I18nProvider from '@/components/I18nProvider';
 import ThemeProvider from '@/components/ThemeProvider';
 import { ToastProvider } from '@/components/ui/Toast/Toast';
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'DifferenziaComiso',
@@ -51,6 +52,7 @@ export default function RootLayout({
           </ToastProvider>
         </I18nProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
