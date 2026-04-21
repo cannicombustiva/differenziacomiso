@@ -13,6 +13,13 @@ function redirectWithCookies(url: URL, baseResponse: NextResponse) {
   return redirectResponse;
 }
 
+function withCookies(responseToReturn: NextResponse, baseResponse: NextResponse) {
+  baseResponse.cookies.getAll().forEach(({ name, value, ...options }) => {
+    responseToReturn.cookies.set(name, value, options);
+  });
+  return responseToReturn;
+}
+
 export async function middleware(request: NextRequest) {
   // Only protect admin routes (except login)
   if (!request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname === '/admin/login') {
@@ -62,7 +69,7 @@ export async function middleware(request: NextRequest) {
       hasUserEmail: Boolean(session.user.email),
       error: adminError,
     });
-    return new NextResponse('Internal Server Error', { status: 500 });
+    return withCookies(new NextResponse('Internal Server Error', { status: 500 }), response);
   }
 
   if (!admin) {
