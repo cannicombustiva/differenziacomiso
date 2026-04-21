@@ -62,11 +62,16 @@ export function usePushSubscription() {
         await subscription.unsubscribe();
         setIsSubscribed(false);
 
-        fetch('/api/push/unsubscribe', {
+        const res = await fetch('/api/push/unsubscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ endpoint: subscription.endpoint }),
-        }).catch(() => {});
+          keepalive: true,
+        });
+
+        if (!res.ok) {
+          console.error('Server failed to remove subscription');
+        }
       }
     } catch (err) {
       console.error('Failed to unsubscribe:', err);

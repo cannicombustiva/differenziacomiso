@@ -10,7 +10,7 @@ ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Authenticated read admins" ON admins
   FOR SELECT
   TO authenticated
-  USING (email = auth.jwt()->>'email');
+  USING (lower(email) = lower(auth.jwt()->>'email'));
 
 -- Only service role can manage admins (bypasses RLS anyway)
 

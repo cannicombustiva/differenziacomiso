@@ -1,16 +1,31 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { requireAdmin } from '@/lib/admin';
+import { AdminAuthError, requireAdmin } from '@/lib/admin';
 import { sendPushNotification } from '@/lib/push';
+
+function getAdminAuthErrorResponse(error: unknown) {
+  if (error instanceof AdminAuthError) {
+    if (error.status === 500) {
+      return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+
+    return NextResponse.json(
+      { error: error.status === 403 ? 'Forbidden' : 'Unauthorized' },
+      { status: error.status }
+    );
+  }
+
+  return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+}
 
 export async function POST(request: Request) {
   try {
-    try {
-      await requireAdmin();
-    } catch {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    await requireAdmin();
+  } catch (error) {
+    return getAdminAuthErrorResponse(error);
+  }
 
+  try {
     const body = await request.json();
 
     const title: string = body.title || 'DifferenziaComiso';

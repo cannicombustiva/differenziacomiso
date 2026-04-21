@@ -34,11 +34,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const { data: admin } = await supabase
+  const email = session.user.email?.toLowerCase() ?? '';
+
+  const { data: admin, error: adminError } = await supabase
     .from('admins')
     .select('id')
-    .eq('email', session.user.email?.toLowerCase() ?? '')
+    .eq('email', email)
     .single();
+
+  if (adminError) {
+    console.error('Admin lookup failed in middleware', { email, error: adminError });
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
 
   if (!admin) {
     const loginUrl = new URL('/admin/login', request.url);
