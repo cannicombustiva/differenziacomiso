@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
+function redirectWithCookies(url: URL, baseResponse: NextResponse) {
+  const redirectResponse = NextResponse.redirect(url);
+  baseResponse.cookies.getAll().forEach(({ name, value, ...options }) => {
+    redirectResponse.cookies.set(name, value, options);
+  });
+  return redirectResponse;
+}
+
 export async function middleware(request: NextRequest) {
   // Only protect admin routes (except login)
   if (!request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname === '/admin/login') {
@@ -31,13 +39,13 @@ export async function middleware(request: NextRequest) {
 
   if (!session) {
     const loginUrl = new URL('/admin/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    return redirectWithCookies(loginUrl, response);
   }
 
   const email = session.user.email?.toLowerCase();
   if (!email) {
     const loginUrl = new URL('/admin/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    return redirectWithCookies(loginUrl, response);
   }
 
   const { data: admin, error: adminError } = await supabase
@@ -47,13 +55,16 @@ export async function middleware(request: NextRequest) {
     .maybeSingle();
 
   if (adminError) {
-    console.error('Admin lookup query error in middleware', { email, error: adminError });
+    console.error('Admin lookup query error in middleware', {
+      hasUserEmail: Boolean(session.user.email),
+      error: adminError,
+    });
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 
   if (!admin) {
     const loginUrl = new URL('/admin/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    return redirectWithCookies(loginUrl, response);
   }
 
   return response;

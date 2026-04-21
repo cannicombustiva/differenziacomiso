@@ -16,10 +16,17 @@ export default function AdminNotifichePage() {
 
   useEffect(() => {
     fetch('/api/push/subscribers')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('subscribers fetch failed');
+        }
+        return res.json();
+      })
       .then((data) => setSubscriberCount(data.count ?? 0))
-      .catch(() => setSubscriberCount(0));
-  }, []);
+      .catch(() => {
+        showToast(t('common.error'), 'error');
+      });
+  }, [showToast, t]);
 
   const handleSend = async () => {
     if (!notificationText.trim()) return;
