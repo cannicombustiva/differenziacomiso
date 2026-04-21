@@ -43,7 +43,7 @@ export async function requireAdmin(): Promise<{ email: string }> {
     .maybeSingle();
 
   if (error) {
-    throw new AdminAuthError('Admin lookup failed', 500);
+    throw new AdminAuthError('Admin lookup query failed', 500);
   }
 
   if (!data) {

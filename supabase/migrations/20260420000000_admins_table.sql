@@ -4,8 +4,6 @@ CREATE TABLE admins (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE UNIQUE INDEX admins_email_lower_idx ON admins (lower(email));
-
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated users can check if they're admin

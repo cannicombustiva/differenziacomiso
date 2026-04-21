@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const email = session.user.email?.toLowerCase() ?? '';
+  const email = session.user.email?.toLowerCase();
   if (!email) {
     const loginUrl = new URL('/admin/login', request.url);
     return NextResponse.redirect(loginUrl);
@@ -47,7 +47,7 @@ export async function middleware(request: NextRequest) {
     .maybeSingle();
 
   if (adminError) {
-    console.error('Admin lookup failed in middleware', { email, error: adminError });
+    console.error('Admin lookup query error in middleware', { email, error: adminError });
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 
