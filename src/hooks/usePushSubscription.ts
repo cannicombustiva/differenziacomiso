@@ -63,7 +63,8 @@ export function usePushSubscription() {
       for (const endpoint of pendingEndpoints) {
         try {
           await removeSubscriptionFromServer(endpoint);
-        } catch {
+        } catch (error) {
+          console.error('Failed to retry server unsubscribe cleanup', error);
           remainingEndpoints.push(endpoint);
         }
       }

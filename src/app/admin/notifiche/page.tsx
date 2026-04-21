@@ -23,7 +23,8 @@ export default function AdminNotifichePage() {
         return res.json();
       })
       .then((data) => setSubscriberCount(data.count ?? 0))
-      .catch(() => {
+      .catch((error) => {
+        console.error('Failed to fetch push subscribers count', error);
         showToast(t('common.error'), 'error');
       });
   }, [showToast, t]);

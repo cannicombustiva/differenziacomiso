@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
+/**
+ * Preserve Supabase-set cookies on redirects so refreshed auth tokens are not lost.
+ */
 function redirectWithCookies(url: URL, baseResponse: NextResponse) {
   const redirectResponse = NextResponse.redirect(url);
   baseResponse.cookies.getAll().forEach(({ name, value, ...options }) => {
