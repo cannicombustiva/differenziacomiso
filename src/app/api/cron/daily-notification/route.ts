@@ -1,18 +1,45 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendPushNotification } from '@/lib/push';
-import { format, addDays } from 'date-fns';
+
+const ITALY_TZ = 'Europe/Rome';
+
+function getItalyHour(): number {
+  return parseInt(
+    new Intl.DateTimeFormat('en', { timeZone: ITALY_TZ, hour: 'numeric', hour12: false }).format(new Date()),
+    10
+  ) % 24;
+}
+
+function getTomorrowInItaly(): string {
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: ITALY_TZ }).formatToParts(new Date());
+  const year = parseInt(parts.find(p => p.type === 'year')!.value, 10);
+  const month = parseInt(parts.find(p => p.type === 'month')!.value, 10);
+  const day = parseInt(parts.find(p => p.type === 'day')!.value, 10);
+  const tomorrow = new Date(year, month - 1, day + 1);
+  const y = tomorrow.getFullYear();
+  const m = String(tomorrow.getMonth() + 1).padStart(2, '0');
+  const d = String(tomorrow.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
 
 export async function GET(request: Request) {
-  // Vercel Cron sends Authorization: Bearer <CRON_SECRET>
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret) {
+    return NextResponse.json({ error: 'CRON_SECRET is not configured' }, { status: 500 });
+  }
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const italyHour = getItalyHour();
+  if (italyHour !== 20) {
+    return NextResponse.json({ skipped: true, reason: `Italy hour is ${italyHour}, not 20` });
+  }
+
   const supabase = createAdminClient();
-  const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd');
+  const tomorrow = getTomorrowInItaly();
 
   // Fetch tomorrow's schedule with waste type names
   const { data: rows, error } = await supabase
@@ -47,7 +74,7 @@ export async function GET(request: Request) {
   const payload = {
     title: 'DifferenziaComiso',
     body: notifBody,
-    icon: '/icons/icon-192x192.png',
+    icon: '/icons/icon-192x192.svg',
     url: '/',
   };
 

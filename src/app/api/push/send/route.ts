@@ -1,12 +1,21 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { getAdminAuthError, requireAdmin } from '@/lib/admin';
 import { sendPushNotification } from '@/lib/push';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
+    await requireAdmin();
+  } catch (error) {
+    const authError = getAdminAuthError(error);
+    return NextResponse.json({ error: authError.message }, { status: authError.status });
+  }
+
+  try {
     const body = await request.json();
 
-    // Support both { message } (from admin panel) and { title, body } (from cron)
     const title: string = body.title || 'DifferenziaComiso';
     const text: string = body.body || body.message;
 
@@ -28,7 +37,7 @@ export async function POST(request: Request) {
     const payload = {
       title,
       body: text,
-      icon: '/icons/icon-192x192.png',
+      icon: '/icons/icon-192x192.svg',
       url: '/',
     };
 

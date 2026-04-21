@@ -9,11 +9,19 @@ const STATIC_ASSETS = [
   '/icons/icon.svg',
 ];
 
-// Install: cache static assets
+// Install: cache static assets (individual fetches so one failure doesn't block SW activation)
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
+      return Promise.allSettled(
+        STATIC_ASSETS.map((url) =>
+          fetch(url)
+            .then((res) => {
+              if (res.ok) return cache.put(url, res);
+            })
+            .catch(() => {})
+        )
+      );
     })
   );
   self.skipWaiting();
