@@ -1,8 +1,10 @@
 CREATE TABLE admins (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL UNIQUE CHECK (email = lower(email)),
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
+CREATE UNIQUE INDEX admins_email_lower_idx ON admins (lower(email));
 
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 

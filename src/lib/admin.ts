@@ -40,7 +40,7 @@ export async function requireAdmin(): Promise<{ email: string }> {
     .from('admins')
     .select('id')
     .eq('email', email)
-    .single();
+    .maybeSingle();
 
   if (error) {
     throw new AdminAuthError('Admin lookup failed', 500);
