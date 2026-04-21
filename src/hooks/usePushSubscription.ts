@@ -71,7 +71,9 @@ export function usePushSubscription() {
       setPendingUnsubscribeEndpoints(remainingEndpoints);
     };
 
-    void flushPendingUnsubscribes();
+    void flushPendingUnsubscribes().catch((error) => {
+      console.error('Failed to flush pending unsubscribe cleanup queue', error);
+    });
   }, []);
 
   const subscribe = useCallback(async () => {
