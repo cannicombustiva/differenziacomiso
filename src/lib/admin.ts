@@ -11,6 +11,21 @@ export class AdminAuthError extends Error {
   }
 }
 
+export function getAdminAuthError(error: unknown): { status: 401 | 403 | 500; message: string } {
+  if (error instanceof AdminAuthError) {
+    if (error.status === 500) {
+      return { status: 500, message: 'Internal server error' };
+    }
+
+    return {
+      status: error.status,
+      message: error.status === 403 ? 'Forbidden' : 'Unauthorized',
+    };
+  }
+
+  return { status: 401, message: 'Unauthorized' };
+}
+
 export async function requireAdmin(): Promise<{ email: string }> {
   const supabase = createServerSupabaseClient();
   const { data: { session } } = await supabase.auth.getSession();

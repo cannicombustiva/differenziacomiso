@@ -1,23 +1,13 @@
 import { NextResponse } from 'next/server';
-import { AdminAuthError, requireAdmin } from '@/lib/admin';
+import { getAdminAuthError, requireAdmin } from '@/lib/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function GET() {
   try {
     await requireAdmin();
   } catch (error) {
-    if (error instanceof AdminAuthError) {
-      if (error.status === 500) {
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-      }
-
-      return NextResponse.json(
-        { error: error.status === 403 ? 'Forbidden' : 'Unauthorized' },
-        { status: error.status }
-      );
-    }
-
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const authError = getAdminAuthError(error);
+    return NextResponse.json({ error: authError.message }, { status: authError.status });
   }
 
   const supabase = createAdminClient();
