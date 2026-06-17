@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendPushNotification } from '@/lib/push';
+import { referenceDay } from '@/lib/reference-day';
 
 const ITALY_TZ = 'Europe/Rome';
 
@@ -9,18 +10,6 @@ function getItalyHour(): number {
     new Intl.DateTimeFormat('en', { timeZone: ITALY_TZ, hour: 'numeric', hour12: false }).format(new Date()),
     10
   ) % 24;
-}
-
-function getTomorrowInItaly(): string {
-  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: ITALY_TZ }).formatToParts(new Date());
-  const year = parseInt(parts.find(p => p.type === 'year')!.value, 10);
-  const month = parseInt(parts.find(p => p.type === 'month')!.value, 10);
-  const day = parseInt(parts.find(p => p.type === 'day')!.value, 10);
-  const tomorrow = new Date(year, month - 1, day + 1);
-  const y = tomorrow.getFullYear();
-  const m = String(tomorrow.getMonth() + 1).padStart(2, '0');
-  const d = String(tomorrow.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
 }
 
 export async function GET(request: Request) {
@@ -39,7 +28,7 @@ export async function GET(request: Request) {
   }
 
   const supabase = createAdminClient();
-  const tomorrow = getTomorrowInItaly();
+  const tomorrow = referenceDay();
 
   // Fetch tomorrow's schedule with waste type names
   const { data: rows, error } = await supabase

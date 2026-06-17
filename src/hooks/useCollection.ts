@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { format, addDays, startOfMonth, endOfMonth } from 'date-fns';
+import { format, addDays, parseISO, startOfMonth, endOfMonth } from 'date-fns';
 import { createClient } from '@/lib/supabase/client';
+import { referenceDay, romeToday } from '@/lib/reference-day';
 import type { CollectionDayGrouped, WasteType } from '@/types';
 
 type RawRow = {
@@ -36,7 +37,7 @@ export function useTomorrowCollection() {
   const [collection, setCollection] = useState<CollectionDayGrouped | null>(null);
 
   useEffect(() => {
-    const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd');
+    const tomorrow = referenceDay();
     const supabase = createClient();
     supabase
       .from('collection_schedule')
@@ -57,8 +58,8 @@ export function useWeekCollections() {
   const [collections, setCollections] = useState<CollectionDayGrouped[]>([]);
 
   useEffect(() => {
-    const today = format(new Date(), 'yyyy-MM-dd');
-    const end = format(addDays(new Date(), 6), 'yyyy-MM-dd');
+    const today = romeToday();
+    const end = format(addDays(parseISO(today), 6), 'yyyy-MM-dd');
     const supabase = createClient();
     supabase
       .from('collection_schedule')
