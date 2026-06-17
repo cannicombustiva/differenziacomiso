@@ -1,10 +1,6 @@
-import { addDays, format, startOfWeek, endOfWeek, eachDayOfInterval, getWeek, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
+import { format, startOfWeek, endOfWeek, eachDayOfInterval, getWeek, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
 import { it } from 'date-fns/locale';
 import type { CollectionDay, CollectionDayGrouped, WasteType, Locale } from '@/types';
-
-export function getTomorrow(): Date {
-  return addDays(new Date(), 1);
-}
 
 export function formatDate(date: Date, formatStr: string = 'yyyy-MM-dd'): string {
   return format(date, formatStr);
