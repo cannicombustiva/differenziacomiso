@@ -5,6 +5,7 @@ import { format, addDays, startOfMonth, endOfMonth } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
 import { useLocale } from '@/hooks/useLocale';
 import { createClient } from '@/lib/supabase/client';
+import { settimanaTipo, WASTE_TYPE_NAME_IT } from '@/lib/settimana-tipo';
 import CalendarGrid from '@/components/CalendarGrid/CalendarGrid';
 import Modal from '@/components/ui/Modal/Modal';
 import Button from '@/components/ui/Button/Button';
@@ -40,23 +41,9 @@ function groupRows(rows: RawRow[]): CollectionDayGrouped[] {
 }
 
 function getSettimanaTypes(date: Date, allTypes: WasteType[]): string[] {
-  const byName = (name: string) => allTypes.find(wt => wt.name_it === name)?.id;
-  const dow = date.getDay(); // 0=Sun, 1=Mon...6=Sat
-  const weekOfMonth = Math.ceil(date.getDate() / 7);
-
-  switch (dow) {
-    case 0: return []; // Domenica — no collection
-    case 1: return [byName('Umido'), byName('Vetro')].filter(Boolean) as string[];
-    case 2: return [byName('Plastica')].filter(Boolean) as string[];
-    case 3: return [byName('Umido'), byName('Lattine')].filter(Boolean) as string[];
-    case 4: return (weekOfMonth % 2 === 1
-      ? [byName('Secco Residuo')]
-      : [byName('Abiti Usati')]
-    ).filter(Boolean) as string[];
-    case 5: return [byName('Carta e Cartone')].filter(Boolean) as string[];
-    case 6: return [byName('Umido')].filter(Boolean) as string[];
-    default: return [];
-  }
+  return settimanaTipo(date)
+    .map(key => allTypes.find(wt => wt.name_it === WASTE_TYPE_NAME_IT[key])?.id)
+    .filter((id): id is string => Boolean(id));
 }
 
 export default function AdminCalendarioPage() {
