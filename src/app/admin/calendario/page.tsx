@@ -39,6 +39,9 @@ export default function AdminCalendarioPage() {
   const [selectedWasteTypes, setSelectedWasteTypes] = useState<string[]>([]);
   const [isHoliday, setIsHoliday] = useState(false);
   const [holidayNote, setHolidayNote] = useState('');
+  const [noteIt, setNoteIt] = useState('');
+  const [noteEn, setNoteEn] = useState('');
+  const [noteByDate, setNoteByDate] = useState<Record<string, { it: string; en: string }>>({});
   const [bulkFrom, setBulkFrom] = useState('');
   const [bulkTo, setBulkTo] = useState('');
   const [saving, setSaving] = useState(false);
@@ -57,7 +60,15 @@ export default function AdminCalendarioPage() {
       .order('date')
       .then(({ data, error }) => {
         if (error) { console.error(error); return; }
-        setCollections(groupCollections((data || []) as unknown as ScheduleRow[], locale));
+        const rows = (data || []) as unknown as ScheduleRow[];
+        setCollections(groupCollections(rows, locale));
+        const notes: Record<string, { it: string; en: string }> = {};
+        for (const row of rows) {
+          if (!notes[row.date] && (row.note_it || row.note_en)) {
+            notes[row.date] = { it: row.note_it || '', en: row.note_en || '' };
+          }
+        }
+        setNoteByDate(notes);
       });
   }, [currentMonth, locale]);
 
@@ -74,6 +85,9 @@ export default function AdminCalendarioPage() {
   const handleDayClick = useCallback((dateStr: string) => {
     setSelectedDate(dateStr);
     const existing = collections.find((c) => c.date === dateStr);
+    const note = noteByDate[dateStr];
+    setNoteIt(note?.it || '');
+    setNoteEn(note?.en || '');
     if (existing) {
       setSelectedWasteTypes(existing.wasteTypes.map((wt) => wt.id));
       setIsHoliday(existing.isHoliday);
@@ -83,7 +97,7 @@ export default function AdminCalendarioPage() {
       setIsHoliday(false);
       setHolidayNote('');
     }
-  }, [collections]);
+  }, [collections, noteByDate]);
 
   const toggleWasteType = (id: string) => {
     setSelectedWasteTypes((prev) =>
@@ -99,6 +113,8 @@ export default function AdminCalendarioPage() {
     await supabase.from('collection_schedule').delete().eq('date', selectedDate);
 
     // Build rows to insert
+    const note_it = noteIt.trim() || null;
+    const note_en = noteEn.trim() || null;
     const rows: object[] = [];
     if (selectedWasteTypes.length > 0) {
       for (const wtId of selectedWasteTypes) {
@@ -108,6 +124,8 @@ export default function AdminCalendarioPage() {
           is_holiday: isHoliday,
           holiday_note_it: isHoliday && holidayNote ? holidayNote : null,
           holiday_note_en: null,
+          note_it,
+          note_en,
         });
       }
     } else if (isHoliday) {
@@ -118,6 +136,8 @@ export default function AdminCalendarioPage() {
         is_holiday: true,
         holiday_note_it: holidayNote || null,
         holiday_note_en: null,
+        note_it,
+        note_en,
       });
     }
 
@@ -248,6 +268,27 @@ export default function AdminCalendarioPage() {
               />
             </div>
           )}
+
+          <div className={styles.field}>
+            <label className={styles.label}>{t('admin.noteIt')}</label>
+            <input
+              type="text"
+              value={noteIt}
+              onChange={(e) => setNoteIt(e.target.value)}
+              className={styles.input}
+              placeholder={t('admin.noteHint')}
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>{t('admin.noteEn')}</label>
+            <input
+              type="text"
+              value={noteEn}
+              onChange={(e) => setNoteEn(e.target.value)}
+              className={styles.input}
+            />
+          </div>
 
           <div className={styles.actions}>
             <Button variant="secondary" onClick={() => setSelectedDate(null)}>{t('admin.cancel')}</Button>
