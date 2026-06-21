@@ -58,4 +58,6 @@ export interface CollectionDayGrouped {
   wasteTypes: WasteType[];
   isHoliday: boolean;
   holidayNote?: string;
+  /** Per-Pickup explanatory notes for the day, e.g. a Recupero ("Recupero del 6/1"). */
+  notes?: string[];
 }

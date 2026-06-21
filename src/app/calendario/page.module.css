@@ -31,3 +31,9 @@
   font-size: 1rem;
   padding: var(--space-md);
 }
+
+.pickupNote {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}

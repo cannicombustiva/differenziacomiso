@@ -64,6 +64,12 @@
   font-style: italic;
 }
 
+.pickupNote {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
 .noCollectionCard {
   display: flex;
   align-items: center;

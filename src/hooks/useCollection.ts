@@ -4,36 +4,13 @@ import { useState, useEffect } from 'react';
 import { format, addDays, parseISO, startOfMonth, endOfMonth } from 'date-fns';
 import { createClient } from '@/lib/supabase/client';
 import { referenceDay, romeToday } from '@/lib/reference-day';
-import type { CollectionDayGrouped, WasteType } from '@/types';
+import { groupCollections, type ScheduleRow } from '@/lib/group-collections';
+import type { CollectionDayGrouped, Locale } from '@/types';
 
-type RawRow = {
-  date: string;
-  is_holiday: boolean;
-  holiday_note_it: string | null;
-  holiday_note_en: string | null;
-  waste_types: WasteType | null;
-};
+const SCHEDULE_SELECT =
+  'date, is_holiday, holiday_note_it, holiday_note_en, note_it, note_en, waste_types:waste_type_id(*)';
 
-function groupRows(rows: RawRow[]): CollectionDayGrouped[] {
-  const map = new Map<string, CollectionDayGrouped>();
-  for (const row of rows) {
-    if (!map.has(row.date)) {
-      map.set(row.date, {
-        date: row.date,
-        wasteTypes: [],
-        isHoliday: row.is_holiday,
-        holidayNote: row.holiday_note_it || undefined,
-      });
-    }
-    const group = map.get(row.date)!;
-    if (row.waste_types && !group.wasteTypes.find(wt => wt.id === (row.waste_types as WasteType).id)) {
-      group.wasteTypes.push(row.waste_types);
-    }
-  }
-  return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
-}
-
-export function useTomorrowCollection() {
+export function useTomorrowCollection(locale: Locale) {
   const [collection, setCollection] = useState<CollectionDayGrouped | null>(null);
 
   useEffect(() => {
@@ -41,20 +18,20 @@ export function useTomorrowCollection() {
     const supabase = createClient();
     supabase
       .from('collection_schedule')
-      .select('date, is_holiday, holiday_note_it, holiday_note_en, waste_types:waste_type_id(*)')
+      .select(SCHEDULE_SELECT)
       .eq('date', tomorrow)
       .then(({ data, error }) => {
         if (error) { console.error(error); return; }
-        const rows = (data || []) as unknown as RawRow[];
-        const grouped = groupRows(rows);
+        const rows = (data || []) as unknown as ScheduleRow[];
+        const grouped = groupCollections(rows, locale);
         setCollection(grouped[0] || { date: tomorrow, wasteTypes: [], isHoliday: false });
       });
-  }, []);
+  }, [locale]);
 
   return collection;
 }
 
-export function useWeekCollections() {
+export function useWeekCollections(locale: Locale) {
   const [collections, setCollections] = useState<CollectionDayGrouped[]>([]);
 
   useEffect(() => {
@@ -63,21 +40,21 @@ export function useWeekCollections() {
     const supabase = createClient();
     supabase
       .from('collection_schedule')
-      .select('date, is_holiday, holiday_note_it, holiday_note_en, waste_types:waste_type_id(*)')
+      .select(SCHEDULE_SELECT)
       .gte('date', today)
       .lte('date', end)
       .order('date')
       .then(({ data, error }) => {
         if (error) { console.error(error); return; }
-        const rows = (data || []) as unknown as RawRow[];
-        setCollections(groupRows(rows));
+        const rows = (data || []) as unknown as ScheduleRow[];
+        setCollections(groupCollections(rows, locale));
       });
-  }, []);
+  }, [locale]);
 
   return collections;
 }
 
-export function useMonthCollections(year: number, month: number) {
+export function useMonthCollections(year: number, month: number, locale: Locale) {
   const [collections, setCollections] = useState<CollectionDayGrouped[]>([]);
 
   useEffect(() => {
@@ -86,16 +63,16 @@ export function useMonthCollections(year: number, month: number) {
     const supabase = createClient();
     supabase
       .from('collection_schedule')
-      .select('date, is_holiday, holiday_note_it, holiday_note_en, waste_types:waste_type_id(*)')
+      .select(SCHEDULE_SELECT)
       .gte('date', start)
       .lte('date', end)
       .order('date')
       .then(({ data, error }) => {
         if (error) { console.error(error); return; }
-        const rows = (data || []) as unknown as RawRow[];
-        setCollections(groupRows(rows));
+        const rows = (data || []) as unknown as ScheduleRow[];
+        setCollections(groupCollections(rows, locale));
       });
-  }, [year, month]);
+  }, [year, month, locale]);
 
   return collections;
 }
