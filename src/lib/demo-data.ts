@@ -1,5 +1,6 @@
 import type { WasteType, CollectionDayGrouped, RiciclabolarioItem, Announcement } from '@/types';
-import { format, addDays, getDay, getDate } from 'date-fns';
+import { format, addDays } from 'date-fns';
+import { settimanaTipo } from '@/lib/settimana-tipo';
 
 /**
  * Demo/placeholder data used until Supabase is connected.
@@ -19,31 +20,12 @@ export const WASTE_TYPES: WasteType[] = [
 const WT = Object.fromEntries(WASTE_TYPES.map(wt => [wt.name_it.toLowerCase().replace(/\s+/g, '_'), wt]));
 
 /**
- * Generate collections for a date range based on the Settimana Tipo.
- * dayOfWeek: 1=Monday...7=Sunday (date-fns getDay: 0=Sun...6=Sat)
+ * Resolve the Settimana Tipo for a date into demo WasteType objects.
+ * Derives from the single rule module (src/lib/settimana-tipo) so the demo
+ * data and the Admin bulk-fill can never disagree about the 5th-Thursday gap.
  */
 function getSettimanaTypes(date: Date): WasteType[] {
-  const dow = getDay(date); // 0=Sun, 1=Mon, ...6=Sat
-  const dayOfMonth = getDate(date);
-  const weekOfMonth = Math.ceil(dayOfMonth / 7);
-
-  switch (dow) {
-    case 1: // Lunedì: Umido, Vetro
-      return [WT.umido, WT.vetro];
-    case 2: // Martedì: Plastica
-      return [WT.plastica];
-    case 3: // Mercoledì: Umido, Lattine
-      return [WT.umido, WT.lattine];
-    case 4: // Giovedì: Secco (weeks 1,3) / Abiti Usati (weeks 2,4)
-      return (weekOfMonth % 2 === 1) ? [WT.secco_residuo] : [WT.abiti_usati];
-    case 5: // Venerdì: Carta e Cartone
-      return [WT.carta_e_cartone];
-    case 6: // Sabato: Umido
-      return [WT.umido];
-    case 0: // Domenica: nessuna raccolta
-    default:
-      return [];
-  }
+  return settimanaTipo(date).map(key => WT[key]).filter(Boolean);
 }
 
 export function generateCollectionsForRange(start: Date, days: number): CollectionDayGrouped[] {

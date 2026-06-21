@@ -9,6 +9,7 @@ import CalendarGrid from '@/components/CalendarGrid/CalendarGrid';
 import Modal from '@/components/ui/Modal/Modal';
 import Button from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
+import { settimanaTipo, WASTE_KEY_NAME_IT } from '@/lib/settimana-tipo';
 import type { WasteType, CollectionDayGrouped } from '@/types';
 import styles from './page.module.css';
 
@@ -39,24 +40,16 @@ function groupRows(rows: RawRow[]): CollectionDayGrouped[] {
   return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
 }
 
+/**
+ * Resolve the Settimana Tipo for a date into waste_type ids for bulk-fill.
+ * Derives from the single rule module (src/lib/settimana-tipo) — including the
+ * empty 5th Thursday — so bulk-filling never overwrites seeded truth.
+ */
 function getSettimanaTypes(date: Date, allTypes: WasteType[]): string[] {
-  const byName = (name: string) => allTypes.find(wt => wt.name_it === name)?.id;
-  const dow = date.getDay(); // 0=Sun, 1=Mon...6=Sat
-  const weekOfMonth = Math.ceil(date.getDate() / 7);
-
-  switch (dow) {
-    case 0: return []; // Domenica — no collection
-    case 1: return [byName('Umido'), byName('Vetro')].filter(Boolean) as string[];
-    case 2: return [byName('Plastica')].filter(Boolean) as string[];
-    case 3: return [byName('Umido'), byName('Lattine')].filter(Boolean) as string[];
-    case 4: return (weekOfMonth % 2 === 1
-      ? [byName('Secco Residuo')]
-      : [byName('Abiti Usati')]
-    ).filter(Boolean) as string[];
-    case 5: return [byName('Carta e Cartone')].filter(Boolean) as string[];
-    case 6: return [byName('Umido')].filter(Boolean) as string[];
-    default: return [];
-  }
+  const idByName = (name: string) => allTypes.find(wt => wt.name_it === name)?.id;
+  return settimanaTipo(date)
+    .map(key => idByName(WASTE_KEY_NAME_IT[key]))
+    .filter(Boolean) as string[];
 }
 
 export default function AdminCalendarioPage() {
