@@ -5,6 +5,7 @@ import { useLocale } from '@/hooks/useLocale';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import Card from '@/components/ui/Card/Card';
 import { createClient } from '@/lib/supabase/client';
+import { searchRiciclabolario } from '@/lib/riciclabolario-search';
 import type { RiciclabolarioItem, Locale } from '@/types';
 import styles from './page.module.css';
 
@@ -33,15 +34,7 @@ export default function RiciclabolarioPage() {
       });
   }, []);
 
-  const filtered = useMemo(() => {
-    if (!search.trim()) return items;
-    const q = search.toLowerCase();
-    return items.filter(
-      (item) =>
-        item.item_name_it.toLowerCase().includes(q) ||
-        (item.item_name_en && item.item_name_en.toLowerCase().includes(q))
-    );
-  }, [search, items]);
+  const filtered = useMemo(() => searchRiciclabolario(items, search), [search, items]);
 
   return (
     <div className={styles.page}>
