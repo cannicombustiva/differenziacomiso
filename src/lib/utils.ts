@@ -1,4 +1,4 @@
-import { format, startOfWeek, endOfWeek, eachDayOfInterval, getWeek, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
+import { format, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
 import { it } from 'date-fns/locale';
 import type { CollectionDay, CollectionDayGrouped, WasteType, Locale } from '@/types';
 
@@ -8,16 +8,6 @@ export function formatDate(date: Date, formatStr: string = 'yyyy-MM-dd'): string
 
 export function formatDateLocalized(date: Date, formatStr: string, locale: Locale): string {
   return format(date, formatStr, { locale: locale === 'it' ? it : undefined });
-}
-
-export function getWeekNumber(date: Date): number {
-  return getWeek(date, { weekStartsOn: 1 });
-}
-
-export function getWeekOfMonth(date: Date): number {
-  const start = startOfMonth(date);
-  const dayOfMonth = date.getDate();
-  return Math.ceil((dayOfMonth + start.getDay()) / 7);
 }
 
 export function getCurrentWeekDays(referenceDate: Date = new Date()): Date[] {
