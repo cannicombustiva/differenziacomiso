@@ -10,35 +10,12 @@ import Modal from '@/components/ui/Modal/Modal';
 import Button from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { settimanaTipo, WASTE_KEY_NAME_IT } from '@/lib/settimana-tipo';
+import { groupCollections, type ScheduleRow } from '@/lib/group-collections';
 import type { WasteType, CollectionDayGrouped } from '@/types';
 import styles from './page.module.css';
 
-type RawRow = {
-  date: string;
-  is_holiday: boolean;
-  holiday_note_it: string | null;
-  holiday_note_en: string | null;
-  waste_types: WasteType | null;
-};
-
-function groupRows(rows: RawRow[]): CollectionDayGrouped[] {
-  const map = new Map<string, CollectionDayGrouped>();
-  for (const row of rows) {
-    if (!map.has(row.date)) {
-      map.set(row.date, {
-        date: row.date,
-        wasteTypes: [],
-        isHoliday: row.is_holiday,
-        holidayNote: row.holiday_note_it || undefined,
-      });
-    }
-    const group = map.get(row.date)!;
-    if (row.waste_types && !group.wasteTypes.find(wt => wt.id === (row.waste_types as WasteType).id)) {
-      group.wasteTypes.push(row.waste_types);
-    }
-  }
-  return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
-}
+const SCHEDULE_SELECT =
+  'date, is_holiday, holiday_note_it, holiday_note_en, note_it, note_en, waste_types:waste_type_id(*)';
 
 /**
  * Resolve the Settimana Tipo for a date into waste_type ids for bulk-fill.
@@ -74,15 +51,15 @@ export default function AdminCalendarioPage() {
     const end = format(endOfMonth(currentMonth), 'yyyy-MM-dd');
     supabase
       .from('collection_schedule')
-      .select('date, is_holiday, holiday_note_it, holiday_note_en, waste_types:waste_type_id(*)')
+      .select(SCHEDULE_SELECT)
       .gte('date', start)
       .lte('date', end)
       .order('date')
       .then(({ data, error }) => {
         if (error) { console.error(error); return; }
-        setCollections(groupRows((data || []) as unknown as RawRow[]));
+        setCollections(groupCollections((data || []) as unknown as ScheduleRow[], locale));
       });
-  }, [currentMonth]);
+  }, [currentMonth, locale]);
 
   useEffect(() => {
     supabase

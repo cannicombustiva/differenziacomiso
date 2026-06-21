@@ -10,8 +10,8 @@ import styles from './page.module.css';
 
 export default function HomePage() {
   const { locale, t } = useLocale();
-  const tomorrowCollection = useTomorrowCollection();
-  const weekCollections = useWeekCollections();
+  const tomorrowCollection = useTomorrowCollection(locale);
+  const weekCollections = useWeekCollections(locale);
 
   return (
     <div className={styles.page}>
@@ -53,6 +53,9 @@ export default function HomePage() {
           <div className={styles.wasteCards}>
             {tomorrowCollection.wasteTypes.map((wt) => (
               <WasteCard key={wt.id} wasteType={wt} locale={locale} size="lg" />
+            ))}
+            {tomorrowCollection.notes?.map((note, i) => (
+              <p key={i} className={styles.pickupNote}>{note}</p>
             ))}
           </div>
         )}

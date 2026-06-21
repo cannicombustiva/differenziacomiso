@@ -17,7 +17,8 @@ export default function CalendarioPage() {
 
   const collections = useMonthCollections(
     currentMonth.getFullYear(),
-    currentMonth.getMonth()
+    currentMonth.getMonth(),
+    locale
   );
 
   const selectedCollection = selectedDate
@@ -55,6 +56,9 @@ export default function CalendarioPage() {
               <div className={styles.wasteList}>
                 {selectedCollection.wasteTypes.map((wt) => (
                   <WasteCard key={wt.id} wasteType={wt} locale={locale} />
+                ))}
+                {selectedCollection.notes?.map((note, i) => (
+                  <p key={i} className={styles.pickupNote}>{note}</p>
                 ))}
               </div>
             ) : (
