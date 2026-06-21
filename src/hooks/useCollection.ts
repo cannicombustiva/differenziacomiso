@@ -5,6 +5,7 @@ import { format, addDays, parseISO, startOfMonth, endOfMonth } from 'date-fns';
 import { createClient } from '@/lib/supabase/client';
 import { referenceDay, romeToday } from '@/lib/reference-day';
 import { groupCollections, type ScheduleRow } from '@/lib/group-collections';
+import { writeCache, readCache } from '@/lib/offline-cache';
 import type { CollectionDayGrouped, Locale } from '@/types';
 
 const SCHEDULE_SELECT =
@@ -15,17 +16,27 @@ export function useTomorrowCollection(locale: Locale) {
 
   useEffect(() => {
     const tomorrow = referenceDay();
-    const supabase = createClient();
-    supabase
-      .from('collection_schedule')
-      .select(SCHEDULE_SELECT)
-      .eq('date', tomorrow)
-      .then(({ data, error }) => {
-        if (error) { console.error(error); return; }
+    const key = `tomorrow:${tomorrow}`;
+    const show = (rows: ScheduleRow[]) => {
+      const grouped = groupCollections(rows, locale);
+      setCollection(grouped[0] || { date: tomorrow, wasteTypes: [], isHoliday: false });
+    };
+    (async () => {
+      try {
+        const { data, error } = await createClient()
+          .from('collection_schedule')
+          .select(SCHEDULE_SELECT)
+          .eq('date', tomorrow);
+        if (error) throw error;
         const rows = (data || []) as unknown as ScheduleRow[];
-        const grouped = groupCollections(rows, locale);
-        setCollection(grouped[0] || { date: tomorrow, wasteTypes: [], isHoliday: false });
-      });
+        writeCache(key, rows);
+        show(rows);
+      } catch {
+        const cached = readCache<ScheduleRow[]>(key);
+        if (cached) show(cached);
+        else setCollection({ date: tomorrow, wasteTypes: [], isHoliday: false });
+      }
+    })();
   }, [locale]);
 
   return collection;
@@ -37,18 +48,24 @@ export function useWeekCollections(locale: Locale) {
   useEffect(() => {
     const today = romeToday();
     const end = format(addDays(parseISO(today), 6), 'yyyy-MM-dd');
-    const supabase = createClient();
-    supabase
-      .from('collection_schedule')
-      .select(SCHEDULE_SELECT)
-      .gte('date', today)
-      .lte('date', end)
-      .order('date')
-      .then(({ data, error }) => {
-        if (error) { console.error(error); return; }
+    const key = `week:${today}`;
+    (async () => {
+      try {
+        const { data, error } = await createClient()
+          .from('collection_schedule')
+          .select(SCHEDULE_SELECT)
+          .gte('date', today)
+          .lte('date', end)
+          .order('date');
+        if (error) throw error;
         const rows = (data || []) as unknown as ScheduleRow[];
+        writeCache(key, rows);
         setCollections(groupCollections(rows, locale));
-      });
+      } catch {
+        const cached = readCache<ScheduleRow[]>(key);
+        if (cached) setCollections(groupCollections(cached, locale));
+      }
+    })();
   }, [locale]);
 
   return collections;
@@ -60,18 +77,24 @@ export function useMonthCollections(year: number, month: number, locale: Locale)
   useEffect(() => {
     const start = format(startOfMonth(new Date(year, month)), 'yyyy-MM-dd');
     const end = format(endOfMonth(new Date(year, month)), 'yyyy-MM-dd');
-    const supabase = createClient();
-    supabase
-      .from('collection_schedule')
-      .select(SCHEDULE_SELECT)
-      .gte('date', start)
-      .lte('date', end)
-      .order('date')
-      .then(({ data, error }) => {
-        if (error) { console.error(error); return; }
+    const key = `month:${start}`;
+    (async () => {
+      try {
+        const { data, error } = await createClient()
+          .from('collection_schedule')
+          .select(SCHEDULE_SELECT)
+          .gte('date', start)
+          .lte('date', end)
+          .order('date');
+        if (error) throw error;
         const rows = (data || []) as unknown as ScheduleRow[];
+        writeCache(key, rows);
         setCollections(groupCollections(rows, locale));
-      });
+      } catch {
+        const cached = readCache<ScheduleRow[]>(key);
+        if (cached) setCollections(groupCollections(cached, locale));
+      }
+    })();
   }, [year, month, locale]);
 
   return collections;
