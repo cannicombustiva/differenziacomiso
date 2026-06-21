@@ -5,6 +5,7 @@ import I18nProvider from '@/components/I18nProvider';
 import ThemeProvider from '@/components/ThemeProvider';
 import { ToastProvider } from '@/components/ui/Toast/Toast';
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
+import OfflineBanner from '@/components/OfflineBanner/OfflineBanner';
 import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
@@ -43,6 +44,7 @@ export default function RootLayout({
         <I18nProvider>
           <ToastProvider>
             <div className="appShell">
+              <OfflineBanner />
               <main className="pageContent">
                 {children}
               </main>

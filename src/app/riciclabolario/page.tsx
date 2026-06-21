@@ -6,6 +6,7 @@ import SearchBar from '@/components/SearchBar/SearchBar';
 import Card from '@/components/ui/Card/Card';
 import { createClient } from '@/lib/supabase/client';
 import { searchRiciclabolario } from '@/lib/riciclabolario-search';
+import { writeCache, readCache } from '@/lib/offline-cache';
 import type { RiciclabolarioItem, Locale } from '@/types';
 import styles from './page.module.css';
 
@@ -23,15 +24,21 @@ export default function RiciclabolarioPage() {
   const [items, setItems] = useState<RiciclabolarioItem[]>([]);
 
   useEffect(() => {
-    const supabase = createClient();
-    supabase
-      .from('riciclabolario')
-      .select('*, waste_types:waste_type_id(*)')
-      .order('item_name_it')
-      .then(({ data, error }) => {
-        if (error) { console.error(error); return; }
-        setItems((data || []).map(row => ({ ...row, waste_type: row.waste_types })) as RiciclabolarioItem[]);
-      });
+    (async () => {
+      try {
+        const { data, error } = await createClient()
+          .from('riciclabolario')
+          .select('*, waste_types:waste_type_id(*)')
+          .order('item_name_it');
+        if (error) throw error;
+        const list = (data || []).map(row => ({ ...row, waste_type: row.waste_types })) as RiciclabolarioItem[];
+        writeCache('riciclabolario', list);
+        setItems(list);
+      } catch {
+        const cached = readCache<RiciclabolarioItem[]>('riciclabolario');
+        if (cached) setItems(cached);
+      }
+    })();
   }, []);
 
   const filtered = useMemo(() => searchRiciclabolario(items, search), [search, items]);
