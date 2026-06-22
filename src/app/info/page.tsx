@@ -5,11 +5,13 @@ import { usePushSubscription } from '@/hooks/usePushSubscription';
 import Card from '@/components/ui/Card/Card';
 import Button from '@/components/ui/Button/Button';
 import ThemeSwitcher from '@/components/ThemeSwitcher/ThemeSwitcher';
+import { getAppVersion } from '@/lib/app-version';
 import styles from './page.module.css';
 
 export default function InfoPage() {
   const { locale, t } = useLocale();
   const { isSubscribed, isSupported, subscribe, unsubscribe } = usePushSubscription();
+  const appVersion = getAppVersion(process.env.NEXT_PUBLIC_APP_VERSION);
 
   return (
     <div className={styles.page}>
@@ -79,7 +81,11 @@ export default function InfoPage() {
 
       <Card className={styles.section}>
         <div className={styles.appInfo}>
-          <p className={styles.version}>{t('info.appVersion')}: 0.1.0</p>
+          {appVersion && (
+            <p className={styles.version}>
+              {t('info.appVersion')}: {appVersion}
+            </p>
+          )}
           <p className={styles.credits}>{t('info.credits')}</p>
         </div>
       </Card>
