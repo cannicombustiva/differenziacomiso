@@ -26,7 +26,8 @@
   "calendar": {
     "title": "Calendario",
     "noCollection": "Nessuna raccolta",
-    "holiday": "Festivo"
+    "holiday": "Festivo",
+    "detailHint": "Tocca un giorno del calendario per vedere cosa esporre. I colori corrispondono al tipo di rifiuto."
   },
   "dictionary": {
     "title": "Riciclabolario",

@@ -26,7 +26,8 @@
   "calendar": {
     "title": "Calendar",
     "noCollection": "No collection",
-    "holiday": "Holiday"
+    "holiday": "Holiday",
+    "detailHint": "Tap a day on the calendar to see what to put out. Colours match the waste type."
   },
   "dictionary": {
     "title": "Waste Dictionary",
