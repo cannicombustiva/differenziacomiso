@@ -1,33 +1,42 @@
 .card {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  color: white;
-  font-weight: 700;
-  text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 18px;
+  font-weight: 800;
   animation: fadeIn 0.3s ease;
 }
 
 .sm {
-  padding: var(--space-xs) var(--space-sm);
-  font-size: 0.8rem;
-  border-radius: var(--radius-sm);
+  padding: 12px;
+  border-radius: 14px;
 }
 
 .md {
-  padding: var(--space-md) var(--space-lg);
-  font-size: 1.1rem;
+  padding: 14px;
 }
 
 .lg {
-  padding: var(--space-lg) var(--space-xl);
-  font-size: 1.4rem;
+  padding: 16px 14px;
 }
 
 .name {
-  line-height: 1.3;
+  line-height: 1;
+}
+
+.sm .name {
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.md .name {
+  font-size: 1rem;
+  margin-top: 12px;
+}
+
+.lg .name {
+  font-size: 18px;
+  margin-top: 14px;
 }
 
 @keyframes fadeIn {

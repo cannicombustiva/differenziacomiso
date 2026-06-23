@@ -14,7 +14,14 @@
     "tomorrowCollection": "Domani si raccoglie:",
     "noCollection": "Domani non si effettua la raccolta",
     "holiday": "Giorno festivo",
-    "nextDays": "Prossimi giorni"
+    "nextDays": "Prossimi giorni",
+    "greeting": "Buongiorno!",
+    "tomorrow": "Domani",
+    "exposeBy": "Esponi entro le 06:00",
+    "reminder": "Ti ricordiamo stasera alle 20:00",
+    "seeCalendar": "Calendario",
+    "rest": "Riposo",
+    "brandTagline": "Raccolta differenziata"
   },
   "calendar": {
     "title": "Calendario Raccolta",
