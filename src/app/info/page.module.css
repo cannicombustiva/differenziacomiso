@@ -1,64 +1,143 @@
 .page {
-  padding: var(--space-md);
+  padding: 8px 0 16px;
+  background: var(--color-bg);
 }
 
+.heading {
+  padding: 14px 22px 16px;
+}
 .title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: var(--space-md);
-}
-
-.section {
-  margin-bottom: var(--space-md);
-}
-
-.sectionTitle {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: var(--space-md);
-}
-
-.contactList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-.contactItem {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-sm);
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.6px;
   color: var(--color-text);
 }
 
-.contactLabel {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
+.cards {
+  padding: 0 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.contactValue {
-  font-size: 0.95rem;
-  font-weight: 600;
+.card {
+  background: var(--color-surface);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sectionLabel {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 12px;
+}
+
+/* contact rows */
+.contactRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.contactRow + .contactRow {
+  margin-top: 14px;
+}
+.iconWell {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-primary-50);
   color: var(--color-primary);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.contactText {
+  display: flex;
+  flex-direction: column;
+}
+.contactLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.contactValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.contactValueStrong {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-primary-dark);
 }
 
+/* notifications */
+.notifCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .notifText {
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-md);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.notifTitle {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+.notifHint {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.toggle {
+  width: 46px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--color-bg-tertiary);
+  border: none;
+  position: relative;
+  flex: none;
+  transition: background-color 0.2s;
+}
+.toggle:disabled {
+  opacity: 0.5;
+}
+.toggleOn {
+  background: var(--color-primary);
+}
+.knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff;
+  transition: transform 0.2s;
+}
+.toggleOn .knob {
+  transform: translateX(18px);
 }
 
-.appInfo {
+/* appearance */
+.aspectTitle {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 12px;
+}
+
+.footer {
   text-align: center;
-}
-
-.version {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-xs);
-}
-
-.credits {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-faint);
+  padding-top: 4px;
 }
