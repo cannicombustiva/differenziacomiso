@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useLocale } from '@/hooks/useLocale';
-import Card from '@/components/ui/Card/Card';
-import Button from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import styles from './page.module.css';
 
@@ -51,45 +49,60 @@ export default function AdminNotifichePage() {
 
   return (
     <div>
-      <h2 className={styles.heading}>{t('admin.notificationManager')}</h2>
+      <h1 className={styles.heading}>{t('admin.sendNotification')}</h1>
 
-      <Card className={styles.statsCard}>
-        <div className={styles.stat}>
-          <span className={styles.statNumber}>{subscriberCount}</span>
-          <span className={styles.statLabel}>{t('admin.subscribers')}</span>
-        </div>
-      </Card>
-
-      <Card className={styles.section}>
-        <h3 className={styles.subheading}>{t('admin.sendNotification')}</h3>
-
-        <div className={styles.form}>
-          <div className={styles.field}>
-            <label className={styles.label}>{t('admin.notificationText')}</label>
-            <textarea
-              className={styles.textarea}
-              value={notificationText}
-              onChange={(e) => setNotificationText(e.target.value)}
-              rows={3}
-              placeholder="Domani si raccoglie: Umido, Vetro"
-            />
+      <div className={styles.layout}>
+        {/* composer */}
+        <div className={styles.formCard}>
+          <div className={styles.statRow}>
+            <span className={styles.statIcon}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </span>
+            <span className={styles.statText}>
+              <span className={styles.statLabel}>{t('admin.willReceive')}</span>
+              <span className={styles.statNumber}>{subscriberCount}</span>
+            </span>
           </div>
 
-          {notificationText.trim() && (
-            <div className={styles.preview}>
-              <p className={styles.previewLabel}>{t('admin.preview')}:</p>
-              <div className={styles.previewCard}>
-                <strong>DifferenziaComiso</strong>
-                <p>{notificationText}</p>
+          <label className={styles.label}>{t('admin.notificationTextLabel')}</label>
+          <textarea
+            className={styles.textarea}
+            value={notificationText}
+            onChange={(e) => setNotificationText(e.target.value)}
+            rows={4}
+            placeholder="Domani esponi Plastica e Lattine entro le 06:00."
+          />
+
+          <button className={styles.sendBtn} onClick={handleSend} disabled={!notificationText.trim() || sending}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+            {sending ? t('common.loading') : t('admin.sendNotification')}
+          </button>
+        </div>
+
+        {/* live preview */}
+        <div className={styles.previewCol}>
+          <div className={styles.previewLabel}>{t('admin.preview')}</div>
+          <div className={styles.previewPanel}>
+            <div className={styles.notifCard}>
+              <span className={styles.notifLogo}>C</span>
+              <div className={styles.notifBody}>
+                <div className={styles.notifTop}>
+                  <span className={styles.notifApp}>DifferenziaComiso</span>
+                  <span className={styles.notifTime}>{t('admin.now')}</span>
+                </div>
+                <p className={styles.notifText}>
+                  {notificationText.trim() || 'Domani esponi Plastica e Lattine entro le 06:00.'}
+                </p>
               </div>
             </div>
-          )}
-
-          <Button onClick={handleSend} disabled={!notificationText.trim() || sending} fullWidth>
-            {sending ? t('common.loading') : t('admin.sendNotification')}
-          </Button>
+            <p className={styles.previewHint}>{t('admin.previewHint')}</p>
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

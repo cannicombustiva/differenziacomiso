@@ -106,7 +106,14 @@
     "descCalendar": "Modifica i giorni di raccolta",
     "descDictionary": "Voci e consigli di smaltimento",
     "descNews": "Avvisi e comunicazioni",
-    "descNotifications": "Invia un avviso push"
+    "descNotifications": "Invia un avviso push",
+    "published": "Pubblicato",
+    "draft": "Bozza",
+    "announcements": "avvisi",
+    "willReceive": "Iscritti che riceveranno",
+    "previewHint": "Così apparirà sul telefono dei cittadini",
+    "now": "ora",
+    "notificationTextLabel": "Testo della notifica"
   },
   "common": {
     "loading": "Caricamento...",

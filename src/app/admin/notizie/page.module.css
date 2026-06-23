@@ -1,64 +1,103 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-md);
+  margin-bottom: 24px;
 }
 
 .heading {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -0.6px;
+  color: var(--color-text);
+}
+.count {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.addBtn {
+  margin-left: auto;
+  height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 13px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 12px;
 }
 
-.card {
-  cursor: default;
-}
-
-.row {
+.rowCard {
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm);
+  gap: 16px;
 }
 
-.rowActions {
+.rowMeta {
+  flex: 1;
   display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+  flex-direction: column;
 }
 
 .annTitle {
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text);
 }
 
 .annDate {
-  font-size: 0.8rem;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--color-text-muted);
+  margin-top: 3px;
 }
 
 .badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 13px;
+  border-radius: 999px;
+  white-space: nowrap;
 }
 
 .published {
-  background: var(--color-success);
-  color: white;
+  background: var(--color-primary-50);
+  color: var(--color-primary-dark);
 }
 
 .draft {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-muted);
+  background: var(--waste-plastica-tint, #fbf1cc);
+  color: #9a7b00;
+}
+
+.editBtn {
+  height: 38px;
+  padding: 0 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
 }
 
 .form {
