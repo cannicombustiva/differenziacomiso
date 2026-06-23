@@ -141,3 +141,45 @@
   color: var(--color-text-faint);
   padding-top: 4px;
 }
+
+/* On mobile the right group is transparent — children stack in .cards flow. */
+.rightGroup {
+  display: contents;
+}
+
+/* ---------- Desktop: two-column card grid ---------- */
+@media (min-width: 900px) {
+  .page {
+    padding: 34px 40px;
+  }
+  .heading {
+    padding: 0 0 22px;
+  }
+  .title {
+    font-size: 30px;
+  }
+  .cards {
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    align-items: start;
+    gap: 18px;
+  }
+  .rightGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .card {
+    border-radius: 20px;
+    padding: 26px;
+  }
+  .notifCard {
+    padding: 24px;
+  }
+  .footer {
+    text-align: center;
+    padding-top: 0;
+    font-size: 13px;
+  }
+}

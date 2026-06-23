@@ -61,6 +61,7 @@ export default function InfoPage() {
           </a>
         </section>
 
+        <div className={styles.rightGroup}>
         {/* Notifications */}
         <section className={`${styles.card} ${styles.notifCard}`}>
           <span className={styles.iconWell}>
@@ -96,6 +97,7 @@ export default function InfoPage() {
           {appVersion ? `${t('info.appVersion')} ${appVersion} · ` : ''}
           {t('info.credits')}
         </p>
+        </div>
       </div>
     </div>
   );
