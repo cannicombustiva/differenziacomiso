@@ -1,20 +1,24 @@
 .heading {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: var(--space-md);
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -0.6px;
+  color: var(--color-text);
+  margin-bottom: 20px;
 }
 
 .subheading {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: var(--space-sm);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 12px;
 }
 
 .bulkSection {
-  background: var(--color-bg-secondary);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-lg);
+  background: var(--color-surface);
+  padding: 20px 22px;
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
 }
 
 .bulkRow {
@@ -66,16 +70,18 @@
 }
 
 .label {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--color-text-secondary);
 }
 
 .input {
-  padding: var(--space-xs) var(--space-sm);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
+  height: 46px;
+  padding: 0 13px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 11px;
+  font-size: 14.5px;
+  font-family: inherit;
   background: var(--color-bg);
   color: var(--color-text);
   outline: none;
@@ -83,6 +89,8 @@
 
 .input:focus {
   border-color: var(--color-primary);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px var(--color-primary-50);
 }
 
 .actions {
