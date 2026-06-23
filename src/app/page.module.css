@@ -252,3 +252,91 @@
   font-weight: 700;
   color: var(--color-text-faint);
 }
+
+/* desktop 6-up day grid (hidden on mobile) */
+.agendaGrid {
+  display: none;
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 900px) {
+  /* brand + bell live in the sidebar on desktop */
+  .header {
+    display: none;
+  }
+  .greet {
+    padding: 34px 40px 0;
+  }
+  .greeting {
+    font-size: 34px;
+    letter-spacing: -0.8px;
+  }
+  .hero {
+    margin: 22px 40px 0;
+    padding: 28px 30px;
+  }
+  .tile {
+    padding: 22px;
+  }
+  .agendaHead {
+    padding: 30px 40px 14px;
+  }
+  /* swap the stacked list for a 6-up grid of vertical day cards */
+  .agendaList {
+    display: none;
+  }
+  .agendaGrid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+    padding: 0 40px;
+  }
+  .gridCard {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    border-radius: 18px;
+    padding: 18px 16px;
+    box-shadow: var(--shadow-sm);
+    border-top: 4px solid var(--color-text-faint);
+  }
+  .gridDow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .gridDate {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--color-text);
+    margin: 2px 0 14px;
+  }
+  .gridWell {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 10px;
+  }
+  .gridName {
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .gridRest {
+    background: transparent;
+    border: 1.5px dashed var(--color-border);
+    box-shadow: none;
+    border-top-color: var(--color-border) !important;
+  }
+  .gridRest .gridDow,
+  .gridRest .gridDate,
+  .gridRest .gridName {
+    color: var(--color-text-faint);
+  }
+  .gridRest .gridWell {
+    background: var(--color-bg-tertiary);
+  }
+}

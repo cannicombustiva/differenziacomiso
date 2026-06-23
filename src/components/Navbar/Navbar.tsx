@@ -69,6 +69,13 @@ export default function Navbar() {
 
   return (
     <nav className={styles.navbar} aria-label="Navigazione principale">
+      <Link href="/" className={styles.brand} aria-label="Comiso">
+        <span className={styles.brandLogo}>C</span>
+        <span className={styles.brandText}>
+          <span className={styles.brandName}>Comiso</span>
+          <span className={styles.brandSub}>Differenziata</span>
+        </span>
+      </Link>
       {NAV_ITEMS.map((item) => {
         const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
         return (

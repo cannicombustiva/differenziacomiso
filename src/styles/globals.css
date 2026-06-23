@@ -171,10 +171,29 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
    a bottom tab bar on mobile, a vertical sidebar on desktop
    (same links, `.navbar` becomes `position:fixed; left:0; top:0`).
    See README section "3. Desktop layout". */
-/* NOTE: the desktop sidebar dashboard (grid + hidden bottom nav) lands in a
-   later step that also builds the sidebar variant of <Navbar>. Activating the
-   grid here without a sidebar element drops content into the empty sidebar
-   column, so until then the centered mobile column is kept at all widths. */
+/* ---------- Desktop layout ----------
+   Above --desktop-min the shell becomes a two-column grid: the Navbar renders
+   its sidebar variant in column 1 (full height), content fills column 2.
+   The Navbar's own desktop styles place it into the grid. */
+@media (min-width: 900px) {
+  .appShell {
+    max-width: none;
+    display: grid;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+  .offlineBanner {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .pageContent {
+    grid-column: 2;
+    grid-row: 2;
+    width: 100%;
+    max-width: 1100px;
+    padding-bottom: var(--space-xl);
+  }
+}
 
 /* Offline banner */
 .offlineBanner {
