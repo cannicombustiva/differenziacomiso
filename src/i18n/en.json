@@ -106,7 +106,14 @@
     "descCalendar": "Edit collection days",
     "descDictionary": "Entries and disposal tips",
     "descNews": "Announcements",
-    "descNotifications": "Send a push alert"
+    "descNotifications": "Send a push alert",
+    "published": "Published",
+    "draft": "Draft",
+    "announcements": "announcements",
+    "willReceive": "Subscribers who will receive",
+    "previewHint": "This is how it appears on residents phones",
+    "now": "now",
+    "notificationTextLabel": "Notification text"
   },
   "common": {
     "loading": "Loading...",

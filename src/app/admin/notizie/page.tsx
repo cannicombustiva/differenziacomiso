@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useLocale } from '@/hooks/useLocale';
 import { createClient } from '@/lib/supabase/client';
 import Button from '@/components/ui/Button/Button';
-import Card from '@/components/ui/Card/Card';
 import Modal from '@/components/ui/Modal/Modal';
 import { useToast } from '@/components/ui/Toast/Toast';
 import type { Announcement } from '@/types';
@@ -95,29 +94,36 @@ export default function AdminNotiziePage() {
   return (
     <div>
       <div className={styles.header}>
-        <h2 className={styles.heading}>{t('admin.newsManager')}</h2>
-        <Button size="sm" onClick={openAdd}>{t('admin.add')}</Button>
+        <div>
+          <h1 className={styles.heading}>{t('admin.navNews')}</h1>
+          <p className={styles.count}>{announcements.length} {t('admin.announcements')}</p>
+        </div>
+        <button className={styles.addBtn} onClick={openAdd}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          {t('admin.add')}
+        </button>
       </div>
 
       <div className={styles.list}>
-        {announcements.map((ann) => (
-          <Card key={ann.id} className={styles.card}>
-            <div className={styles.row}>
-              <div>
-                <p className={styles.annTitle}>{ann.title_it}</p>
-                <p className={styles.annDate}>{format(new Date(ann.published_at || ann.created_at), 'dd/MM/yyyy')}</p>
-              </div>
-              <div className={styles.rowActions}>
-                <span className={`${styles.badge} ${ann.is_published ? styles.published : styles.draft}`}>
-                  {ann.is_published ? t('admin.publish') : t('admin.unpublish')}
+        {announcements.map((ann) => {
+          const date = format(new Date(ann.published_at || ann.created_at), 'dd/MM/yyyy');
+          return (
+            <div key={ann.id} className={styles.rowCard}>
+              <div className={styles.rowMeta}>
+                <span className={styles.annTitle}>{ann.title_it}</span>
+                <span className={styles.annDate}>
+                  {ann.is_published ? date : `${t('admin.draft')} · ${date}`}
                 </span>
-                <Button variant="ghost" size="sm" onClick={() => openEdit(ann)}>
-                  {t('admin.edit')}
-                </Button>
               </div>
+              <span className={`${styles.badge} ${ann.is_published ? styles.published : styles.draft}`}>
+                {ann.is_published ? t('admin.published') : t('admin.draft')}
+              </span>
+              <button className={styles.editBtn} onClick={() => openEdit(ann)}>{t('admin.edit')}</button>
             </div>
-          </Card>
-        ))}
+          );
+        })}
       </div>
 
       <Modal
