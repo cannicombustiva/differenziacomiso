@@ -34,7 +34,8 @@
     "searchPlaceholder": "Cerca un oggetto...",
     "noResults": "Nessun risultato trovato",
     "tip": "Consiglio",
-    "subtitle": "Dove si butta?"
+    "subtitle": "Dove si butta?",
+    "allCategories": "Tutti"
   },
   "news": {
     "title": "Notizie",

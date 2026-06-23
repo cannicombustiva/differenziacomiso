@@ -5,9 +5,10 @@ import { useLocale } from '@/hooks/useLocale';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import { createClient } from '@/lib/supabase/client';
 import { searchRiciclabolario } from '@/lib/riciclabolario-search';
-import { wasteVisual } from '@/lib/waste-style';
+import { wasteVisual, wasteSlug, type WasteSlug } from '@/lib/waste-style';
+import { getWasteTypeName } from '@/lib/utils';
 import { writeCache, readCache } from '@/lib/offline-cache';
-import type { RiciclabolarioItem, Locale } from '@/types';
+import type { RiciclabolarioItem, WasteType, Locale } from '@/types';
 import styles from './page.module.css';
 
 function getItemName(item: RiciclabolarioItem, locale: Locale) {
@@ -21,6 +22,7 @@ function getTip(item: RiciclabolarioItem, locale: Locale) {
 export default function RiciclabolarioPage() {
   const { locale, t } = useLocale();
   const [search, setSearch] = useState('');
+  const [category, setCategory] = useState<WasteSlug | 'all'>('all');
   const [items, setItems] = useState<RiciclabolarioItem[]>([]);
 
   useEffect(() => {
@@ -41,7 +43,25 @@ export default function RiciclabolarioPage() {
     })();
   }, []);
 
-  const filtered = useMemo(() => searchRiciclabolario(items, search), [search, items]);
+  // Distinct waste categories present, for the desktop filter chips.
+  const categories = useMemo(() => {
+    const seen = new Map<WasteSlug, WasteType>();
+    for (const it of items) {
+      if (it.waste_type) {
+        const slug = wasteSlug(it.waste_type);
+        if (!seen.has(slug)) seen.set(slug, it.waste_type);
+      }
+    }
+    return Array.from(seen.entries())
+      .map(([slug, wt]) => ({ slug, wt }))
+      .sort((a, b) => a.wt.sort_order - b.wt.sort_order);
+  }, [items]);
+
+  const filtered = useMemo(() => {
+    const bySearch = searchRiciclabolario(items, search);
+    if (category === 'all') return bySearch;
+    return bySearch.filter((i) => i.waste_type && wasteSlug(i.waste_type) === category);
+  }, [search, items, category]);
 
   return (
     <div className={styles.page}>
@@ -57,6 +77,37 @@ export default function RiciclabolarioPage() {
           placeholder={t('dictionary.searchPlaceholder')}
         />
       </div>
+
+      {categories.length > 0 && (
+        <div className={styles.chips}>
+          <button
+            type="button"
+            className={`${styles.chip} ${category === 'all' ? styles.chipAllActive : ''}`}
+            onClick={() => setCategory('all')}
+          >
+            {t('dictionary.allCategories')}
+          </button>
+          {categories.map(({ slug, wt }) => {
+            const v = wasteVisual(wt);
+            const active = category === slug;
+            return (
+              <button
+                key={slug}
+                type="button"
+                className={styles.chip}
+                onClick={() => setCategory(active ? 'all' : slug)}
+                style={
+                  active
+                    ? { background: v.color, color: v.ink }
+                    : { background: v.tint, color: v.pill }
+                }
+              >
+                {getWasteTypeName(wt, locale)}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <div className={styles.results}>
         {filtered.length === 0 ? (

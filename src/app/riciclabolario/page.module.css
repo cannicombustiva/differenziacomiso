@@ -77,3 +77,58 @@
   color: var(--color-primary);
   font-weight: 800;
 }
+
+/* category filter chips — desktop only */
+.chips {
+  display: none;
+}
+.chip {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+}
+.chipAllActive {
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 800;
+}
+
+/* ---------- Desktop: chips + 3-up grid ---------- */
+@media (min-width: 900px) {
+  .page {
+    padding: 34px 40px;
+  }
+  .heading {
+    padding: 0;
+  }
+  .title {
+    font-size: 30px;
+  }
+  .subtitle {
+    font-size: 15px;
+    margin-top: 6px;
+  }
+  .searchWrapper {
+    margin: 22px 0 18px;
+    max-width: 560px;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 22px;
+  }
+  .results {
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .itemCard {
+    border-radius: 16px;
+  }
+}

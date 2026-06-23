@@ -34,7 +34,8 @@
     "searchPlaceholder": "Search for an item...",
     "noResults": "No results found",
     "tip": "Tip",
-    "subtitle": "Where does it go?"
+    "subtitle": "Where does it go?",
+    "allCategories": "All"
   },
   "news": {
     "title": "News",
