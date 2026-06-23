@@ -37,7 +37,8 @@
   },
   "news": {
     "title": "News",
-    "noNews": "No news at this time"
+    "noNews": "No news at this time",
+    "featuredLabel": "Notice"
   },
   "info": {
     "title": "Information",
@@ -53,7 +54,8 @@
     "notificationsDisabled": "Notifications disabled",
     "appearance": "Appearance",
     "appVersion": "App version",
-    "credits": "Developed for the citizens of Comiso"
+    "credits": "Developed for the citizens of Comiso",
+    "notificationsHint": "Reminder the evening before"
   },
   "admin": {
     "title": "Admin Panel",

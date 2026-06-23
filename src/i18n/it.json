@@ -37,7 +37,8 @@
   },
   "news": {
     "title": "Notizie",
-    "noNews": "Nessuna notizia al momento"
+    "noNews": "Nessuna notizia al momento",
+    "featuredLabel": "Avviso"
   },
   "info": {
     "title": "Informazioni",
@@ -53,7 +54,8 @@
     "notificationsDisabled": "Notifiche disattivate",
     "appearance": "Aspetto",
     "appVersion": "Versione app",
-    "credits": "Sviluppato per i cittadini di Comiso"
+    "credits": "Sviluppato per i cittadini di Comiso",
+    "notificationsHint": "Promemoria la sera prima"
   },
   "admin": {
     "title": "Pannello Admin",

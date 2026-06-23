@@ -1,35 +1,28 @@
 .switcher {
   display: flex;
+  gap: 8px;
   background: var(--color-bg-secondary);
-  border-radius: var(--radius-full);
-  padding: 3px;
-  gap: 2px;
+  border-radius: 13px;
+  padding: 5px;
   width: 100%;
 }
 
 .option {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-xs);
+  text-align: center;
+  padding: 9px 0;
   border: none;
-  border-radius: var(--radius-full);
+  border-radius: 9px;
   background: transparent;
   color: var(--color-text-muted);
-  font-size: 0.82rem;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 700;
   transition: background-color 0.18s, color 0.18s;
 }
 
-.option:hover:not(.active) {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-secondary);
-}
-
 .active {
-  background: var(--color-primary);
-  color: white;
-  font-weight: 600;
+  background: var(--color-surface);
+  color: var(--color-primary-dark);
+  font-weight: 800;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }

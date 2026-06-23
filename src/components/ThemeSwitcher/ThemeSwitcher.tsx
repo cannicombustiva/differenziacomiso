@@ -53,16 +53,18 @@ interface ThemeSwitcherProps {
 export default function ThemeSwitcher({ locale = 'it' }: ThemeSwitcherProps) {
   const { theme, setTheme } = useTheme();
 
+  // Display order matches the mock: Chiaro · Scuro · Auto.
+  const ordered = [OPTIONS[0], OPTIONS[2], OPTIONS[1]];
+
   return (
     <div className={styles.switcher} role="group" aria-label={locale === 'it' ? 'Tema' : 'Theme'}>
-      {OPTIONS.map((opt) => (
+      {ordered.map((opt) => (
         <button
           key={opt.value}
           className={`${styles.option} ${theme === opt.value ? styles.active : ''}`}
           onClick={() => setTheme(opt.value)}
           aria-pressed={theme === opt.value}
         >
-          {opt.icon}
           <span>{locale === 'it' ? opt.labelIt : opt.labelEn}</span>
         </button>
       ))}

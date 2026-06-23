@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useLocale } from '@/hooks/useLocale';
-import Card from '@/components/ui/Card/Card';
 import { createClient } from '@/lib/supabase/client';
 import { format } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
@@ -34,9 +33,18 @@ export default function NotiziePage() {
       });
   }, []);
 
+  const dateOf = (ann: Announcement, fmt: string) =>
+    format(new Date(ann.published_at || ann.created_at), fmt, {
+      locale: locale === 'it' ? itLocale : undefined,
+    });
+
+  const [featured, ...rest] = announcements;
+
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>{t('news.title')}</h1>
+      <div className={styles.heading}>
+        <h1 className={styles.title}>{t('news.title')}</h1>
+      </div>
 
       {announcements.length === 0 ? (
         <div className={styles.empty}>
@@ -49,18 +57,21 @@ export default function NotiziePage() {
         </div>
       ) : (
         <div className={styles.feed}>
-          {announcements.map((ann) => (
-            <Card key={ann.id} className={styles.newsCard}>
-              <article>
-                <time className={styles.date}>
-                  {format(new Date(ann.published_at || ann.created_at), 'd MMMM yyyy', {
-                    locale: locale === 'it' ? itLocale : undefined,
-                  })}
-                </time>
-                <h2 className={styles.newsTitle}>{getTitle(ann, locale)}</h2>
-                <p className={styles.newsBody}>{getBody(ann, locale)}</p>
-              </article>
-            </Card>
+          <article className={styles.featured}>
+            <span className={styles.featuredBlob} />
+            <span className={styles.overline}>
+              {t('news.featuredLabel')} · {dateOf(featured, 'd MMM')}
+            </span>
+            <h2 className={styles.featuredTitle}>{getTitle(featured, locale)}</h2>
+            <p className={styles.featuredBody}>{getBody(featured, locale)}</p>
+          </article>
+
+          {rest.map((ann) => (
+            <article key={ann.id} className={styles.newsCard}>
+              <time className={styles.date}>{dateOf(ann, 'd MMMM yyyy')}</time>
+              <h2 className={styles.newsTitle}>{getTitle(ann, locale)}</h2>
+              <p className={styles.newsBody}>{getBody(ann, locale)}</p>
+            </article>
           ))}
         </div>
       )}
