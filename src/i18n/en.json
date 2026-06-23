@@ -113,7 +113,15 @@
     "willReceive": "Subscribers who will receive",
     "previewHint": "This is how it appears on residents phones",
     "now": "now",
-    "notificationTextLabel": "Notification text"
+    "notificationTextLabel": "Notification text",
+    "editItem": "Edit entry",
+    "newEntry": "Entry",
+    "nameIt": "Name (IT)",
+    "nameEn": "Name (EN)",
+    "wasteType": "Waste type",
+    "tipItLabel": "Tip (IT)",
+    "saveChanges": "Save changes",
+    "noSelection": "Select an entry to edit it."
   },
   "common": {
     "loading": "Loading...",
