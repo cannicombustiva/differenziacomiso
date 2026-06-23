@@ -14,7 +14,14 @@
     "tomorrowCollection": "Tomorrow's collection:",
     "noCollection": "No collection tomorrow",
     "holiday": "Holiday",
-    "nextDays": "Next days"
+    "nextDays": "Next days",
+    "greeting": "Good morning!",
+    "tomorrow": "Tomorrow",
+    "exposeBy": "Put out by 06:00",
+    "reminder": "We will remind you tonight at 20:00",
+    "seeCalendar": "Calendar",
+    "rest": "Rest day",
+    "brandTagline": "Waste sorting"
   },
   "calendar": {
     "title": "Collection Calendar",

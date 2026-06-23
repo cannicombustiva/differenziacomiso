@@ -1,32 +1,67 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* ============================================================
+   DifferenziaComiso — Refreshed design tokens
+   Drop-in replacement for src/styles/globals.css.
+   Every component reads these vars, so updating the values
+   here shifts most of the refreshed look at once.
+   Inline notes mark NEW and CHANGED tokens vs the original.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-  /* Waste type colors */
-  --waste-secco: #8C8C8C;
-  --waste-umido: #8B5E3C;
-  --waste-carta: #2B7BD5;
-  --waste-plastica: #F5C518;
-  --waste-vetro: #2E8B57;
-  --waste-lattine: #5BC0DE;
-  --waste-abiti: #C77DBA;
+  /* Waste type colors — tuned for AA contrast & recognizability */
+  --waste-secco:    #6B6B6B; /* CHANGED  was #8C8C8C — darker, white text */
+  --waste-umido:    #7A4F2E; /* CHANGED  was #8B5E3C */
+  --waste-carta:    #1E6FCB; /* CHANGED  was #2B7BD5 */
+  --waste-plastica: #E8B500; /* CHANGED  was #F5C518 — pair with DARK text */
+  --waste-vetro:    #2E8B57; /* same */
+  --waste-lattine:  #1796A6; /* CHANGED  was #5BC0DE — teal, no longer collides with carta-blue */
+  --waste-abiti:    #B5559E; /* CHANGED  was #C77DBA */
 
-  /* Brand colors */
-  --color-primary: #2E7D32;
-  --color-primary-light: #4CAF50;
+  /* Per-waste text color — use instead of always-white labels */
+  --waste-plastica-ink: #1A1A1A; /* NEW  yellow needs dark text */
+
+  /* Light tints (chips, day-card backgrounds, icon wells) */
+  --waste-secco-tint:    #ECECEC; /* NEW */
+  --waste-umido-tint:    #EFE5DC; /* NEW */
+  --waste-carta-tint:    #DCEAFA; /* NEW */
+  --waste-plastica-tint: #FBF1CC; /* NEW */
+  --waste-vetro-tint:    #DDF0E5; /* NEW */
+  --waste-lattine-tint:  #DAF1F4; /* NEW */
+  --waste-abiti-tint:    #F4E2EF; /* NEW */
+
+  /* Brand greens — scale anchored on the original primary */
+  --color-primary-50:   #E9F5EC; /* NEW */
+  --color-primary-100:  #C6E6CD; /* NEW */
+  --color-primary-300:  #6FBF7E; /* NEW */
+  --color-primary-light:#4CAF50;
+  --color-primary-500:  #3F9D4A; /* NEW */
+  --color-primary:      #2E7D32; /* kept — recognizable */
+  --color-primary-700:  #246127; /* NEW */
   --color-primary-dark: #1B5E20;
+  --color-primary-900:  #103C16; /* NEW */
+  --color-accent-soft:  #9FE0A6; /* NEW  on-green highlight (pills, overlines) */
 
-  /* Neutral palette */
-  --color-bg: #FFFFFF;
-  --color-bg-secondary: #F5F5F5;
-  --color-bg-tertiary: #EEEEEE;
-  --color-text: #1A1A1A;
-  --color-text-secondary: #666666;
-  --color-text-muted: #999999;
-  --color-border: #E0E0E0;
-  --color-shadow: rgba(0, 0, 0, 0.08);
+  /* Admin back-office chrome (NEW) — dark sidebar so staff know they're in admin */
+  --admin-sidebar-bg:    #1B3A1E;
+  --admin-sidebar-idle:  #b8d4bb; /* idle label */
+  --admin-sidebar-icon:  #7fae84; /* idle icon */
+  --admin-sidebar-line:  #2c5230; /* logout border */
+
+  /* Neutral palette — warmer canvas */
+  --color-bg:            #FBF6EC; /* CHANGED  was #FFFFFF — warm cream */
+  --color-surface:       #FFFFFF; /* NEW  cards sit on the cream */
+  --color-bg-secondary:  #F4EFE3; /* CHANGED  was #F5F5F5 — warm */
+  --color-bg-tertiary:   #EFE9DC; /* CHANGED  was #EEEEEE */
+  --color-text:          #211E16; /* CHANGED  was #1A1A1A — warm near-black */
+  --color-text-secondary:#6B6457; /* CHANGED  was #666666 */
+  --color-text-muted:    #9A9384; /* CHANGED  was #999999 */
+  --color-text-faint:    #B3AA97; /* NEW  disabled / rest days */
+  --color-border:        #EFE9DC; /* CHANGED  was #E0E0E0 — warm */
+  --color-shadow:        rgba(60, 50, 30, 0.08); /* CHANGED  warm shadow */
 
   /* Semantic */
-  --color-error: #D32F2F;
+  --color-error:   #D32F2F;
   --color-success: #2E7D32;
   --color-warning: #F9A825;
 
@@ -38,14 +73,23 @@
   --space-xl: 32px;
   --space-2xl: 48px;
 
-  /* Border radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  /* Border radius — friendlier */
+  --radius-sm:   8px;  /* CHANGED  was 6px */
+  --radius-md:   12px; /* CHANGED  was 10px */
+  --radius-lg:   18px; /* CHANGED  was 16px */
+  --radius-xl:   26px; /* NEW  hero cards */
   --radius-full: 9999px;
 
-  /* Navbar height */
+  /* Elevation scale */
+  --shadow-sm: 0 1px 3px var(--color-shadow);            /* NEW */
+  --shadow-md: 0 2px 8px var(--color-shadow);            /* NEW */
+  --shadow-lg: 0 14px 30px rgba(27, 94, 32, 0.20);       /* NEW  green-tinted hero shadow */
+
+  /* Layout */
   --navbar-height: 64px;
+  --sidebar-width: 248px; /* NEW  desktop nav */
+  --content-max:   480px; /* mobile shell cap */
+  --desktop-min:   900px; /* NEW  breakpoint where desktop layout kicks in */
 
   /* Typography */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -54,27 +98,31 @@
 /* Auto dark: follows system, but not when user explicitly chose light */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg: #121212;
-    --color-bg-secondary: #1E1E1E;
-    --color-bg-tertiary: #2C2C2C;
-    --color-text: #F5F5F5;
-    --color-text-secondary: #B0B0B0;
-    --color-text-muted: #777777;
-    --color-border: #333333;
-    --color-shadow: rgba(0, 0, 0, 0.3);
+    --color-bg:            #121212;
+    --color-surface:       #1E1E1E;
+    --color-bg-secondary:  #1E1E1E;
+    --color-bg-tertiary:   #2C2C2C;
+    --color-text:          #F5F5F5;
+    --color-text-secondary:#B0B0B0;
+    --color-text-muted:    #777777;
+    --color-text-faint:    #5C5C5C;
+    --color-border:        #333333;
+    --color-shadow:        rgba(0, 0, 0, 0.3);
   }
 }
 
 /* Explicit dark: user chose dark regardless of system */
 :root[data-theme="dark"] {
-  --color-bg: #121212;
-  --color-bg-secondary: #1E1E1E;
-  --color-bg-tertiary: #2C2C2C;
-  --color-text: #F5F5F5;
-  --color-text-secondary: #B0B0B0;
-  --color-text-muted: #777777;
-  --color-border: #333333;
-  --color-shadow: rgba(0, 0, 0, 0.3);
+  --color-bg:            #121212;
+  --color-surface:       #1E1E1E;
+  --color-bg-secondary:  #1E1E1E;
+  --color-bg-tertiary:   #2C2C2C;
+  --color-text:          #F5F5F5;
+  --color-text-secondary:#B0B0B0;
+  --color-text-muted:    #777777;
+  --color-text-faint:    #5C5C5C;
+  --color-border:        #333333;
+  --color-shadow:        rgba(0, 0, 0, 0.3);
 }
 
 *,
@@ -98,41 +146,35 @@ body {
   min-height: 100dvh;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+img { max-width: 100%; display: block; }
+input, textarea, select { font-family: inherit; font-size: inherit; }
 
-button {
-  font-family: inherit;
-  cursor: pointer;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-input,
-textarea,
-select {
-  font-family: inherit;
-  font-size: inherit;
-}
-
-/* App shell — center on desktop */
+/* ---------- App shell ---------- */
+/* Mobile-first: centered phone-width column */
 .appShell {
-  max-width: 480px;
+  max-width: var(--content-max);
   margin: 0 auto;
   min-height: 100dvh;
   position: relative;
   background: var(--color-bg);
 }
 
-/* Page content area - account for navbar */
 .pageContent {
   padding-bottom: calc(var(--navbar-height) + env(safe-area-inset-bottom, 0px));
 }
+
+/* ---------- Desktop layout (NEW) ----------
+   Above --desktop-min, drop the phone cap, hide the bottom nav,
+   and make room for a left sidebar. Render <Navbar> in two modes:
+   a bottom tab bar on mobile, a vertical sidebar on desktop
+   (same links, `.navbar` becomes `position:fixed; left:0; top:0`).
+   See README section "3. Desktop layout". */
+/* NOTE: the desktop sidebar dashboard (grid + hidden bottom nav) lands in a
+   later step that also builds the sidebar variant of <Navbar>. Activating the
+   grid here without a sidebar element drops content into the empty sidebar
+   column, so until then the centered mobile column is kept at all widths. */
 
 /* Offline banner */
 .offlineBanner {

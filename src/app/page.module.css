@@ -1,102 +1,254 @@
 .page {
-  padding: var(--space-md);
+  background: var(--color-bg);
 }
 
+/* ── header ── */
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-lg);
+  gap: 11px;
+  padding: 26px 22px 0;
 }
-
 .brand {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 11px;
 }
-
 .logo {
-  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 900;
+  font-size: 19px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.brandText {
+  line-height: 1.1;
+}
+.brandName {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--color-primary-dark);
+}
+.brandSub {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.bell {
+  margin-left: auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  place-items: center;
+  color: var(--color-text-secondary);
+  position: relative;
+}
+.bellDot {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--waste-plastica);
+  border: 2px solid var(--color-surface);
 }
 
-.appName {
-  font-size: 1.15rem;
+/* ── greeting ── */
+.greet {
+  padding: 22px 22px 18px;
+}
+.greeting {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -0.6px;
+  line-height: 1.05;
+  color: var(--color-text);
+}
+.date {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* ── hero ── */
+.hero {
+  margin: 0 18px;
+  background: var(--color-primary-dark);
+  border-radius: var(--radius-xl);
+  padding: 22px 20px 20px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+.heroBlob1 {
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 150px;
+  height: 150px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.heroBlob2 {
+  position: absolute;
+  right: 24px;
+  bottom: -50px;
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+}
+.heroTop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.overline {
+  font-size: 11px;
   font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--color-accent-soft);
+}
+.pickupPill {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  background: var(--color-accent-soft);
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+.tiles {
+  display: flex;
+  gap: 12px;
+  position: relative;
+}
+.tiles > * {
+  flex: 1;
+}
+.heroEmpty {
+  position: relative;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+}
+.pickupNote {
+  position: relative;
+  margin-top: 12px;
+  color: #c8e6c9;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.reminder {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 16px;
+  color: #c8e6c9;
+  font-size: 12.5px;
+  font-weight: 600;
+  position: relative;
+}
+
+/* ── agenda ── */
+.agendaHead {
+  display: flex;
+  align-items: center;
+  padding: 24px 22px 8px;
+}
+.agendaTitle {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.agendaLink {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--color-primary);
 }
-
-.hero {
-  margin-bottom: var(--space-xl);
-}
-
-.heroTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-md);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.wasteCards {
+.agendaList {
+  list-style: none;
+  padding: 0 18px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 10px;
 }
-
-.holidayCard {
+.dayCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--color-surface);
+  border-radius: 18px;
+  padding: 13px 14px;
+  box-shadow: var(--shadow-sm);
+  border-left: 5px solid var(--color-text-faint);
+}
+.iconWell {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.dayMeta {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-xl);
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius-lg);
-  text-align: center;
-  color: var(--color-text-secondary);
-  font-size: 1.05rem;
-  font-weight: 500;
 }
-
-.holidayNote {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-  font-style: italic;
+.dayName {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text);
 }
-
-.pickupNote {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  font-style: italic;
-}
-
-.noCollectionCard {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xl);
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius-lg);
-  color: var(--color-text-secondary);
-  font-size: 1.05rem;
-  font-weight: 500;
-}
-
-.loading {
-  text-align: center;
-  color: var(--color-text-muted);
-  padding: var(--space-xl);
-}
-
-.weekSection {
-  margin-bottom: var(--space-lg);
-}
-
-.sectionTitle {
-  font-size: 0.9rem;
+.daySub {
+  font-size: 13px;
   font-weight: 600;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+  color: var(--color-text-muted);
+}
+.dayPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+.dayPill {
+  font-size: 13px;
+  font-weight: 800;
+  padding: 7px 13px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.dayRest {
+  background: transparent;
+  border: 1.5px dashed var(--color-border);
+  box-shadow: none;
+}
+.dayRest .dayName,
+.dayRest .daySub {
+  color: var(--color-text-faint);
+}
+.restWell {
+  background: var(--color-bg-tertiary);
+}
+.restLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-faint);
 }
