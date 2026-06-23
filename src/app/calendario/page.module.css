@@ -1,11 +1,14 @@
 .page {
-  padding: var(--space-md);
+  padding: 8px 18px 16px;
+  background: var(--color-bg);
 }
 
 .title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: var(--space-md);
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.6px;
+  color: var(--color-text);
+  padding: 14px 4px 16px;
 }
 
 .detail {

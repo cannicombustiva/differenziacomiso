@@ -2,134 +2,134 @@
   width: 100%;
 }
 
-.header {
+/* ── month switcher pill ── */
+.switcher {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-sm) 0;
-  margin-bottom: var(--space-md);
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 12px 16px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
 }
-
-.monthLabel {
-  font-size: 1.2rem;
-  font-weight: 700;
-  text-transform: capitalize;
-  letter-spacing: -0.01em;
-}
-
 .navButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   background: var(--color-bg-secondary);
   border: none;
-  border-radius: var(--radius-md);
-  padding: var(--space-sm);
+  display: grid;
+  place-items: center;
   color: var(--color-text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.15s, color 0.15s;
+  transition: background-color 0.15s;
 }
-
 .navButton:hover {
   background: var(--color-bg-tertiary);
+}
+.monthLabel {
+  font-size: 16px;
+  font-weight: 800;
   color: var(--color-text);
+  text-transform: capitalize;
 }
 
+/* ── calendar card ── */
+.card {
+  background: var(--color-surface);
+  border-radius: 20px;
+  padding: 16px 14px;
+  box-shadow: var(--shadow-sm);
+}
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 6px;
+}
+.weekday {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-faint);
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 3px;
 }
-
-.dayHeader {
-  text-align: center;
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  padding: var(--space-xs) 0;
-  padding-bottom: var(--space-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.empty {
+  aspect-ratio: 1;
 }
-
 .dayCell {
+  aspect-ratio: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: var(--space-sm) 2px;
-  min-height: 54px;
-  border: 1.5px solid transparent;
-  border-radius: var(--radius-md);
-  background: var(--color-bg-secondary);
-  transition: background-color 0.15s, border-color 0.15s;
-}
-
-.dayCell:hover:not(:disabled) {
-  background: var(--color-bg-tertiary);
-}
-
-.dayCell:disabled {
-  cursor: default;
-}
-
-.outsideMonth {
-  opacity: 0.22;
-  background: transparent;
-}
-
-.today .dayNumber {
-  background: var(--color-primary);
-  color: white;
-  border-radius: 50%;
-  width: 26px;
-  height: 26px;
-  display: flex;
-  align-items: center;
   justify-content: center;
+  gap: 3px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: transparent;
+  transition: background-color 0.15s;
 }
-
-.selected {
-  border-color: var(--color-primary);
-  background: rgba(46, 125, 50, 0.08);
+.dayCell:hover {
+  background: var(--color-bg-secondary);
 }
-
-.holiday {
-  opacity: 0.45;
-}
-
-.holiday .dayNumber {
-  text-decoration: line-through;
-}
-
 .dayNumber {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   line-height: 1;
-  color: var(--color-text-secondary); /* light: #666 — softens pure black */
-}
-
-/* In dark mode boost numbers to full text color for legibility */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .dayNumber {
-    color: var(--color-text);
-  }
-}
-
-:root[data-theme="dark"] .dayNumber {
   color: var(--color-text);
 }
-
 .dots {
   display: flex;
   gap: 2px;
-  flex-wrap: wrap;
-  justify-content: center;
-  min-height: 8px;
+  align-items: center;
+  min-height: 6px;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9px;
 }
 
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  display: inline-block;
+/* states */
+.today {
+  background: var(--color-bg-secondary);
+}
+.today .dayNumber {
+  font-weight: 800;
+}
+.highlight {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary);
+}
+.highlight .dayNumber {
+  font-weight: 900;
+  color: var(--color-primary-dark);
+}
+.rest .dayNumber {
+  color: var(--color-text-faint);
+}
+
+/* ── legend ── */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 16px;
+}
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9px;
 }
