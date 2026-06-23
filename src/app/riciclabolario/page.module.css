@@ -1,21 +1,33 @@
 .page {
-  padding: var(--space-md);
+  padding: 8px 0 16px;
+  background: var(--color-bg);
 }
 
+.heading {
+  padding: 14px 22px 6px;
+}
 .title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: var(--space-md);
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.6px;
+  color: var(--color-text);
+}
+.subtitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-top: 4px;
 }
 
 .searchWrapper {
-  margin-bottom: var(--space-md);
+  margin: 14px 22px 18px;
 }
 
 .results {
+  padding: 0 18px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 10px;
 }
 
 .noResults {
@@ -26,38 +38,42 @@
 }
 
 .itemCard {
-  cursor: default;
+  background: var(--color-surface);
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  border-left: 5px solid var(--color-text-faint);
 }
 
 .itemHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-xs);
+  gap: 10px;
+  margin-bottom: 6px;
 }
 
 .itemName {
-  font-weight: 600;
-  font-size: 0.95rem;
+  flex: 1;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text);
 }
 
 .badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  color: white;
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 5px 11px;
+  border-radius: 999px;
   white-space: nowrap;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
 }
 
 .tip {
-  font-size: 0.85rem;
+  font-size: 13px;
+  line-height: 1.5;
   color: var(--color-text-secondary);
 }
 
 .tipLabel {
-  font-weight: 600;
+  color: var(--color-primary);
+  font-weight: 800;
 }

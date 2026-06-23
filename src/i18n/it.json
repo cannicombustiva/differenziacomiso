@@ -32,7 +32,8 @@
     "title": "Riciclabolario",
     "searchPlaceholder": "Cerca un oggetto...",
     "noResults": "Nessun risultato trovato",
-    "tip": "Suggerimento"
+    "tip": "Consiglio",
+    "subtitle": "Dove si butta?"
   },
   "news": {
     "title": "Notizie",
