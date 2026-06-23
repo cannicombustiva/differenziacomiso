@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.1.0](https://github.com/cannicombustiva/differenziacomiso/compare/v1.0.0...v1.1.0) (2026-06-23)
+
+
+### Features
+
+* admin shell, login and dashboard redesign ([#50](https://github.com/cannicombustiva/differenziacomiso/issues/50)) ([5b704de](https://github.com/cannicombustiva/differenziacomiso/commit/5b704dec5449bdf800b4b74899777b31b59fcf5b))
+* desktop Calendario layout (month grid + detail panel) ([#47](https://github.com/cannicombustiva/differenziacomiso/issues/47)) ([452c8b5](https://github.com/cannicombustiva/differenziacomiso/commit/452c8b53c3e9eb25fbb7a41afb200930f0af8264))
+* desktop Info layout (two-column card grid) ([#48](https://github.com/cannicombustiva/differenziacomiso/issues/48)) ([b18d03e](https://github.com/cannicombustiva/differenziacomiso/commit/b18d03e72bbe54667d2a3143eb455cf77ef5245a))
+* desktop layout with sidebar nav and Home dashboard ([#46](https://github.com/cannicombustiva/differenziacomiso/issues/46)) ([0356934](https://github.com/cannicombustiva/differenziacomiso/commit/0356934af4f648d91ec258fc38b0064b5e98b589))
+* desktop Riciclabolario and Notizie layouts ([#49](https://github.com/cannicombustiva/differenziacomiso/issues/49)) ([0d90153](https://github.com/cannicombustiva/differenziacomiso/commit/0d90153e43715f019861443236a30ea5e3842abe))
+* redesign admin Notizie and Notifiche managers ([#51](https://github.com/cannicombustiva/differenziacomiso/issues/51)) ([479ae32](https://github.com/cannicombustiva/differenziacomiso/commit/479ae323fb6b0b7fd9dd28e4895cf79d66fb5121))
+* redesign admin Riciclabolario (master-detail) and restyle Calendario ([#52](https://github.com/cannicombustiva/differenziacomiso/issues/52)) ([da8dea2](https://github.com/cannicombustiva/differenziacomiso/commit/da8dea2b3ed57bc00dd0cf293f99324c3fc28b8d))
+* refresh Calendario with new design system ([#43](https://github.com/cannicombustiva/differenziacomiso/issues/43)) ([f70d033](https://github.com/cannicombustiva/differenziacomiso/commit/f70d0335b1a73fd58693efe942c20e65d224bbf9))
+* refresh Home with new design system (tokens, WasteCard, agenda) ([#42](https://github.com/cannicombustiva/differenziacomiso/issues/42)) ([872182d](https://github.com/cannicombustiva/differenziacomiso/commit/872182d176b468c87908c35ab03d179f8b14a245))
+* refresh Notizie and Info with new design system ([#45](https://github.com/cannicombustiva/differenziacomiso/issues/45)) ([759f9fe](https://github.com/cannicombustiva/differenziacomiso/commit/759f9fead0504193a8db4de96aa54690886a6e5b))
+* refresh Riciclabolario with new design system ([#44](https://github.com/cannicombustiva/differenziacomiso/issues/44)) ([561363b](https://github.com/cannicombustiva/differenziacomiso/commit/561363b4f7d57702a2da39edf44ddea213c939e6))
+
+
+### Bug Fixes
+
+* show real app version on /info instead of hardcoded value ([#40](https://github.com/cannicombustiva/differenziacomiso/issues/40)) ([ae61ab4](https://github.com/cannicombustiva/differenziacomiso/commit/ae61ab4d6b7bfb9148a16979ad0909e9bee39a5c))
+
 ## 1.0.0 (2026-06-21)
 
 
