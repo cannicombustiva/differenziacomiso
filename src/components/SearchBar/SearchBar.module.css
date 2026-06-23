@@ -2,42 +2,42 @@
   position: relative;
   display: flex;
   align-items: center;
+  height: 52px;
+  background: var(--color-surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  padding: 0 16px;
 }
 
 .icon {
-  position: absolute;
-  left: var(--space-md);
-  color: var(--color-text-muted);
+  color: var(--color-primary);
+  flex: none;
   pointer-events: none;
 }
 
 .input {
-  width: 100%;
-  padding: var(--space-sm) var(--space-md) var(--space-sm) calc(var(--space-md) + 28px);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  background: var(--color-bg-secondary);
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: transparent;
+  padding: 0 8px 0 11px;
   color: var(--color-text);
-  font-size: 0.95rem;
+  font-size: 15px;
+  font-weight: 500;
   outline: none;
-  transition: border-color 0.2s;
-}
-
-.input:focus {
-  border-color: var(--color-primary);
 }
 
 .input::placeholder {
   color: var(--color-text-muted);
+  font-weight: 400;
 }
 
 .clear {
-  position: absolute;
-  right: var(--space-sm);
   background: none;
   border: none;
   padding: var(--space-xs);
   color: var(--color-text-muted);
   display: flex;
   align-items: center;
+  flex: none;
 }

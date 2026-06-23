@@ -32,7 +32,8 @@
     "title": "Waste Dictionary",
     "searchPlaceholder": "Search for an item...",
     "noResults": "No results found",
-    "tip": "Tip"
+    "tip": "Tip",
+    "subtitle": "Where does it go?"
   },
   "news": {
     "title": "News",

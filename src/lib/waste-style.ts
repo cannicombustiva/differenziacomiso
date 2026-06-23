@@ -26,16 +26,19 @@ export interface WasteVisual {
   tint: string;
   /** Readable text/icon colour when placed on `color`. */
   ink: string;
+  /** Readable text colour when placed on `tint` (pills/chips). */
+  pill: string;
 }
 
 const STYLES: Record<WasteSlug, Omit<WasteVisual, 'slug'>> = {
-  secco: { color: '#6B6B6B', tint: '#ECECEC', ink: '#FFFFFF' },
-  umido: { color: '#7A4F2E', tint: '#EFE5DC', ink: '#FFFFFF' },
-  carta: { color: '#1E6FCB', tint: '#DCEAFA', ink: '#FFFFFF' },
-  plastica: { color: '#E8B500', tint: '#FBF1CC', ink: '#3A2E00' },
-  vetro: { color: '#2E8B57', tint: '#DDF0E5', ink: '#FFFFFF' },
-  lattine: { color: '#1796A6', tint: '#DAF1F4', ink: '#FFFFFF' },
-  abiti: { color: '#B5559E', tint: '#F4E2EF', ink: '#FFFFFF' },
+  secco: { color: '#6B6B6B', tint: '#ECECEC', ink: '#FFFFFF', pill: '#5B5B5B' },
+  umido: { color: '#7A4F2E', tint: '#EFE5DC', ink: '#FFFFFF', pill: '#7A4F2E' },
+  carta: { color: '#1E6FCB', tint: '#DCEAFA', ink: '#FFFFFF', pill: '#1E6FCB' },
+  // Yellow needs a much darker ink to stay readable on its pale tint (AA).
+  plastica: { color: '#E8B500', tint: '#FBF1CC', ink: '#3A2E00', pill: '#8A6C00' },
+  vetro: { color: '#2E8B57', tint: '#DDF0E5', ink: '#FFFFFF', pill: '#2E8B57' },
+  lattine: { color: '#1796A6', tint: '#DAF1F4', ink: '#FFFFFF', pill: '#0E7A88' },
+  abiti: { color: '#B5559E', tint: '#F4E2EF', ink: '#FFFFFF', pill: '#B5559E' },
 };
 
 /** Map a waste type to its slug via its Italian name. Falls back to `secco`. */

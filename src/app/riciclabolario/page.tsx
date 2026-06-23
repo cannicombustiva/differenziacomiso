@@ -3,9 +3,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useLocale } from '@/hooks/useLocale';
 import SearchBar from '@/components/SearchBar/SearchBar';
-import Card from '@/components/ui/Card/Card';
 import { createClient } from '@/lib/supabase/client';
 import { searchRiciclabolario } from '@/lib/riciclabolario-search';
+import { wasteVisual } from '@/lib/waste-style';
 import { writeCache, readCache } from '@/lib/offline-cache';
 import type { RiciclabolarioItem, Locale } from '@/types';
 import styles from './page.module.css';
@@ -45,7 +45,10 @@ export default function RiciclabolarioPage() {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>{t('dictionary.title')}</h1>
+      <div className={styles.heading}>
+        <h1 className={styles.title}>{t('dictionary.title')}</h1>
+        <p className={styles.subtitle}>{t('dictionary.subtitle')}</p>
+      </div>
 
       <div className={styles.searchWrapper}>
         <SearchBar
@@ -59,31 +62,32 @@ export default function RiciclabolarioPage() {
         {filtered.length === 0 ? (
           <p className={styles.noResults}>{t('dictionary.noResults')}</p>
         ) : (
-          filtered.map((item) => (
-            <Card
-              key={item.id}
-              accentColor={item.waste_type?.color_hex}
-              className={styles.itemCard}
-            >
-              <div className={styles.itemHeader}>
-                <span className={styles.itemName}>{getItemName(item, locale)}</span>
-                {item.waste_type && (
-                  <span
-                    className={styles.badge}
-                    style={{ backgroundColor: item.waste_type.color_hex }}
-                  >
-                    {locale === 'en' ? item.waste_type.name_en : item.waste_type.name_it}
-                  </span>
+          filtered.map((item) => {
+            const wt = item.waste_type;
+            const v = wt ? wasteVisual(wt) : null;
+            const tip = getTip(item, locale);
+            return (
+              <article
+                key={item.id}
+                className={styles.itemCard}
+                style={v ? { borderLeftColor: v.color } : undefined}
+              >
+                <div className={styles.itemHeader}>
+                  <span className={styles.itemName}>{getItemName(item, locale)}</span>
+                  {wt && v && (
+                    <span className={styles.badge} style={{ background: v.tint, color: v.pill }}>
+                      {locale === 'en' ? wt.name_en : wt.name_it}
+                    </span>
+                  )}
+                </div>
+                {tip && (
+                  <p className={styles.tip}>
+                    <strong className={styles.tipLabel}>{t('dictionary.tip')}:</strong> {tip}
+                  </p>
                 )}
-              </div>
-              {getTip(item, locale) && (
-                <p className={styles.tip}>
-                  <span className={styles.tipLabel}>{t('dictionary.tip')}:</span>{' '}
-                  {getTip(item, locale)}
-                </p>
-              )}
-            </Card>
-          ))
+              </article>
+            );
+          })
         )}
       </div>
     </div>

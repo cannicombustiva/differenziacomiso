@@ -125,7 +125,7 @@ export default function HomePage() {
                 {types.map((wt) => {
                   const v = wasteVisual(wt);
                   return (
-                    <span key={wt.id} className={styles.dayPill} style={{ background: v.tint, color: v.color }}>
+                    <span key={wt.id} className={styles.dayPill} style={{ background: v.tint, color: v.pill }}>
                       {getWasteTypeName(wt, locale)}
                     </span>
                   );
