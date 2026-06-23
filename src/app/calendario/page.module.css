@@ -40,3 +40,90 @@
   color: var(--color-text-secondary);
   font-style: italic;
 }
+
+/* detail panel is desktop-only */
+.panel {
+  display: none;
+}
+
+/* ---------- Desktop: month grid + detail panel ---------- */
+@media (min-width: 900px) {
+  .page {
+    padding: 34px 36px;
+  }
+  .layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+  }
+  .calColumn {
+    flex: 1;
+    min-width: 0;
+  }
+  .title {
+    font-size: 30px;
+    padding: 0 0 22px;
+  }
+
+  .panel {
+    display: block;
+    width: 300px;
+    flex-shrink: 0;
+  }
+  .panelLabel {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 14px;
+  }
+  .panelHero {
+    background: var(--color-primary-dark);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .panelOverline {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-accent-soft);
+    margin-bottom: 14px;
+  }
+  .panelTiles {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .panelTile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .panelTileName {
+    font-size: 17px;
+    font-weight: 800;
+  }
+  .panelEmpty {
+    background: var(--color-primary-dark);
+    color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 14px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .panelHint {
+    background: var(--color-surface);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+}

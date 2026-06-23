@@ -31,6 +31,8 @@ interface CalendarGridProps {
 
 const DAY_HEADERS_IT = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
 const DAY_HEADERS_EN = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const DAY_HEADERS_IT_LONG = ['LUN', 'MAR', 'MER', 'GIO', 'VEN', 'SAB', 'DOM'];
+const DAY_HEADERS_EN_LONG = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
 export default function CalendarGrid({
   currentMonth,
@@ -41,6 +43,7 @@ export default function CalendarGrid({
   selectedDate,
 }: CalendarGridProps) {
   const dayHeaders = locale === 'it' ? DAY_HEADERS_IT : DAY_HEADERS_EN;
+  const dayHeadersLong = locale === 'it' ? DAY_HEADERS_IT_LONG : DAY_HEADERS_EN_LONG;
   const refDay = referenceDay();
 
   const calendarDays = useMemo(() => {
@@ -91,7 +94,10 @@ export default function CalendarGrid({
       <div className={styles.card}>
         <div className={styles.weekdays}>
           {dayHeaders.map((day, i) => (
-            <span key={i} className={styles.weekday}>{day}</span>
+            <span key={i} className={styles.weekday}>
+              <span className={styles.wkShort}>{day}</span>
+              <span className={styles.wkLong}>{dayHeadersLong[i]}</span>
+            </span>
           ))}
         </div>
 
