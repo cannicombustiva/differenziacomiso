@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useLocale } from '@/hooks/useLocale';
-import Button from '@/components/ui/Button/Button';
 import styles from './page.module.css';
 
 export default function AdminLoginPage() {
@@ -21,10 +20,7 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
     if (authError) {
       setError(authError.message);
@@ -35,10 +31,13 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-admin>
       <div className={styles.card}>
-        <h1 className={styles.title}>{t('admin.login')}</h1>
-        <p className={styles.subtitle}>{t('admin.title')}</p>
+        <div className={styles.head}>
+          <span className={styles.logo}>C</span>
+          <h1 className={styles.title}>{t('admin.loginTitle')}</h1>
+          <p className={styles.subtitle}>{t('admin.loginSubtitle')}</p>
+        </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
@@ -69,9 +68,9 @@ export default function AdminLoginPage() {
 
           {error && <p className={styles.error}>{error}</p>}
 
-          <Button type="submit" fullWidth disabled={loading}>
-            {loading ? t('common.loading') : t('admin.login')}
-          </Button>
+          <button type="submit" className={styles.submit} disabled={loading}>
+            {loading ? t('common.loading') : t('admin.signIn')}
+          </button>
         </form>
       </div>
     </div>

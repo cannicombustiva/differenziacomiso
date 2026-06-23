@@ -195,6 +195,17 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   }
 }
 
+/* Admin owns its full layout (its own dark sidebar) — opt the shell out of the
+   citizen centering/grid and the bottom-nav padding on /admin routes. */
+.appShell:has([data-admin]) {
+  max-width: none;
+  display: block;
+}
+.appShell:has([data-admin]) .pageContent {
+  max-width: none;
+  padding: 0;
+}
+
 /* Offline banner */
 .offlineBanner {
   background: var(--color-warning);

@@ -67,6 +67,9 @@ export default function Navbar() {
   const pathname = usePathname();
   const { t } = useLocale();
 
+  // Admin has its own (dark) sidebar; don't show the citizen nav there.
+  if (pathname.startsWith('/admin')) return null;
+
   return (
     <nav className={styles.navbar} aria-label="Navigazione principale">
       <Link href="/" className={styles.brand} aria-label="Comiso">
