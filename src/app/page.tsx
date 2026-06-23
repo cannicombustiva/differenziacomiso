@@ -135,6 +135,31 @@ export default function HomePage() {
           );
         })}
       </ul>
+
+      {/* Desktop 6-up day grid (shown >=900px; the list above is hidden there). */}
+      <div className={styles.agendaGrid} aria-hidden="true">
+        {upcoming.slice(0, 6).map((day) => {
+          const lead = day.wasteTypes[0];
+          const rest = day.isHoliday || !lead;
+          const v = lead ? wasteVisual(lead) : null;
+          return (
+            <div
+              key={day.date}
+              className={`${styles.gridCard} ${rest ? styles.gridRest : ''}`}
+              style={v ? { borderTopColor: v.color } : undefined}
+            >
+              <span className={styles.gridDow}>{fmt(day.date, { weekday: 'short' })}</span>
+              <span className={styles.gridDate}>{fmt(day.date, { day: 'numeric' })}</span>
+              <span className={styles.gridWell} style={v ? { background: v.tint } : undefined}>
+                <WasteIcon slug={v ? v.slug : 'secco'} color={v ? v.color : 'var(--color-text-faint)'} size={22} />
+              </span>
+              <span className={styles.gridName} style={v ? { color: v.color } : undefined}>
+                {lead ? getWasteTypeName(lead, locale) : t('home.rest')}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
