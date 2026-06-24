@@ -2,15 +2,8 @@ import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendPushNotification } from '@/lib/push';
 import { referenceDay } from '@/lib/reference-day';
-
-const ITALY_TZ = 'Europe/Rome';
-
-function getItalyHour(): number {
-  return parseInt(
-    new Intl.DateTimeFormat('en', { timeZone: ITALY_TZ, hour: 'numeric', hour12: false }).format(new Date()),
-    10
-  ) % 24;
-}
+import { isWithinSendWindow } from '@/lib/send-window';
+import { buildNotificationMessage, type ScheduleRow } from '@/lib/notification-message';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -22,9 +15,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const italyHour = getItalyHour();
-  if (italyHour !== 20) {
-    return NextResponse.json({ skipped: true, reason: `Italy hour is ${italyHour}, not 20` });
+  if (!isWithinSendWindow()) {
+    return NextResponse.json({ skipped: true, reason: 'Outside the 20:00 Europe/Rome send window' });
   }
 
   const supabase = createAdminClient();
@@ -42,20 +34,7 @@ export async function GET(request: Request) {
   }
 
   // Build notification text
-  let notifBody: string;
-  const isHoliday = rows?.some((r) => r.is_holiday);
-  if (!rows || rows.length === 0 || (isHoliday && !rows.some((r) => r.waste_types))) {
-    const note = rows?.[0]?.holiday_note_it;
-    notifBody = note
-      ? `Domani non si effettua la raccolta (${note})`
-      : 'Domani non si effettua la raccolta';
-  } else {
-    const names = rows
-      .map((r) => (r.waste_types as unknown as { name_it: string } | null)?.name_it)
-      .filter(Boolean)
-      .filter((v, i, a) => a.indexOf(v) === i); // deduplicate
-    notifBody = `Domani si raccoglie: ${names.join(', ')}`;
-  }
+  const notifBody = buildNotificationMessage((rows ?? []) as unknown as ScheduleRow[]);
 
   // Fetch all subscriptions
   const { data: subscriptions } = await supabase.from('push_subscriptions').select('*');
