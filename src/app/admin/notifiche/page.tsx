@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useLocale } from '@/hooks/useLocale';
 import { useToast } from '@/components/ui/Toast/Toast';
+import { formatSendResult } from '@/lib/send-result';
 import styles from './page.module.css';
 
 export default function AdminNotifichePage() {
@@ -42,25 +43,21 @@ export default function AdminNotifichePage() {
       if (!res.ok) throw new Error('send failed');
 
       const data = await res.json();
-      const sent = Number(data.sent) || 0;
-      const failed = Number(data.failed) || 0;
+      const { kind, sentCount, failedCount } = formatSendResult(data.sent, data.failed);
+      const counts = `${t('admin.sendResultSent')} ${sentCount}, ${t('admin.sendResultFailed')} ${failedCount}`;
 
-      let result: { text: string; type: 'success' | 'error' | 'info' };
-      if (sent === 0 && failed === 0) {
-        result = { text: t('admin.sendResultNoRecipients'), type: 'info' };
-      } else if (failed === 0) {
-        result = { text: `${t('admin.sendResultSent')} ${sent}`, type: 'success' };
-      } else {
-        result = {
-          text: `${t('admin.sendResultSent')} ${sent}, ${t('admin.sendResultFailed')} ${failed}`,
-          type: sent === 0 ? 'error' : 'info',
-        };
-      }
+      const display: Record<typeof kind, { text: string; type: 'success' | 'error' | 'info' }> = {
+        'all-sent': { text: `${t('admin.sendResultSent')} ${sentCount}`, type: 'success' },
+        partial: { text: counts, type: 'info' },
+        'all-failed': { text: counts, type: 'error' },
+        'no-recipients': { text: t('admin.sendResultNoRecipients'), type: 'info' },
+      };
+      const result = display[kind];
 
       setSendResult(result);
       showToast(result.text, result.type);
       // Only clear the composer when every subscriber received the notification.
-      if (sent > 0 && failed === 0) {
+      if (kind === 'all-sent') {
         setNotificationText('');
       }
     } catch {
