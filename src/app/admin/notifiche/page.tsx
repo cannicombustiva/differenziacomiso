@@ -11,6 +11,7 @@ export default function AdminNotifichePage() {
   const [notificationText, setNotificationText] = useState('');
   const [sending, setSending] = useState(false);
   const [subscriberCount, setSubscriberCount] = useState(0);
+  const [sendResult, setSendResult] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   useEffect(() => {
     fetch('/api/push/subscribers')
@@ -30,6 +31,7 @@ export default function AdminNotifichePage() {
   const handleSend = async () => {
     if (!notificationText.trim()) return;
     setSending(true);
+    setSendResult(null);
 
     try {
       const res = await fetch('/api/push/send', {
@@ -38,9 +40,31 @@ export default function AdminNotifichePage() {
         body: JSON.stringify({ message: notificationText }),
       });
       if (!res.ok) throw new Error('send failed');
-      showToast(t('admin.sendNotification') + ' ✓', 'success');
-      setNotificationText('');
+
+      const data = await res.json();
+      const sent = Number(data.sent) || 0;
+      const failed = Number(data.failed) || 0;
+
+      let result: { text: string; type: 'success' | 'error' | 'info' };
+      if (sent === 0 && failed === 0) {
+        result = { text: t('admin.sendResultNoRecipients'), type: 'info' };
+      } else if (failed === 0) {
+        result = { text: `${t('admin.sendResultSent')} ${sent}`, type: 'success' };
+      } else {
+        result = {
+          text: `${t('admin.sendResultSent')} ${sent}, ${t('admin.sendResultFailed')} ${failed}`,
+          type: sent === 0 ? 'error' : 'info',
+        };
+      }
+
+      setSendResult(result);
+      showToast(result.text, result.type);
+      // Only clear the composer when every subscriber received the notification.
+      if (sent > 0 && failed === 0) {
+        setNotificationText('');
+      }
     } catch {
+      setSendResult({ text: t('common.error'), type: 'error' });
       showToast(t('common.error'), 'error');
     } finally {
       setSending(false);
@@ -81,6 +105,12 @@ export default function AdminNotifichePage() {
             </svg>
             {sending ? t('common.loading') : t('admin.sendNotification')}
           </button>
+
+          {sendResult && (
+            <p className={`${styles.sendResult} ${styles[sendResult.type]}`} role="status">
+              {sendResult.text}
+            </p>
+          )}
         </div>
 
         {/* live preview */}
