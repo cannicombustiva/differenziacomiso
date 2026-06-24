@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useLocale } from '@/hooks/useLocale';
 import { useToast } from '@/components/ui/Toast/Toast';
+import { formatSendResult } from '@/lib/send-result';
 import styles from './page.module.css';
 
 export default function AdminNotifichePage() {
@@ -11,6 +12,7 @@ export default function AdminNotifichePage() {
   const [notificationText, setNotificationText] = useState('');
   const [sending, setSending] = useState(false);
   const [subscriberCount, setSubscriberCount] = useState(0);
+  const [sendResult, setSendResult] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   useEffect(() => {
     fetch('/api/push/subscribers')
@@ -30,6 +32,7 @@ export default function AdminNotifichePage() {
   const handleSend = async () => {
     if (!notificationText.trim()) return;
     setSending(true);
+    setSendResult(null);
 
     try {
       const res = await fetch('/api/push/send', {
@@ -38,9 +41,27 @@ export default function AdminNotifichePage() {
         body: JSON.stringify({ message: notificationText }),
       });
       if (!res.ok) throw new Error('send failed');
-      showToast(t('admin.sendNotification') + ' ✓', 'success');
-      setNotificationText('');
+
+      const data = await res.json();
+      const { kind, sentCount, failedCount } = formatSendResult(data.sent, data.failed);
+      const counts = `${t('admin.sendResultSent')} ${sentCount}, ${t('admin.sendResultFailed')} ${failedCount}`;
+
+      const display: Record<typeof kind, { text: string; type: 'success' | 'error' | 'info' }> = {
+        'all-sent': { text: `${t('admin.sendResultSent')} ${sentCount}`, type: 'success' },
+        partial: { text: counts, type: 'info' },
+        'all-failed': { text: counts, type: 'error' },
+        'no-recipients': { text: t('admin.sendResultNoRecipients'), type: 'info' },
+      };
+      const result = display[kind];
+
+      setSendResult(result);
+      showToast(result.text, result.type);
+      // Only clear the composer when every subscriber received the notification.
+      if (kind === 'all-sent') {
+        setNotificationText('');
+      }
     } catch {
+      setSendResult({ text: t('common.error'), type: 'error' });
       showToast(t('common.error'), 'error');
     } finally {
       setSending(false);
@@ -81,6 +102,12 @@ export default function AdminNotifichePage() {
             </svg>
             {sending ? t('common.loading') : t('admin.sendNotification')}
           </button>
+
+          {sendResult && (
+            <p className={`${styles.sendResult} ${styles[sendResult.type]}`} role="status">
+              {sendResult.text}
+            </p>
+          )}
         </div>
 
         {/* live preview */}

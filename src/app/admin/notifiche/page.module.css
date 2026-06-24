@@ -181,3 +181,21 @@
     flex-shrink: 0;
   }
 }
+
+.sendResult {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.sendResult.success {
+  color: var(--color-success);
+}
+
+.sendResult.error {
+  color: var(--color-error);
+}
+
+.sendResult.info {
+  color: var(--color-warning);
+}
