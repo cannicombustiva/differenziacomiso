@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0](https://github.com/cannicombustiva/differenziacomiso/compare/v1.1.0...v1.2.0) (2026-06-25)
+
+
+### Features
+
+* harden daily reminder cron with tested pure helpers ([#61](https://github.com/cannicombustiva/differenziacomiso/issues/61)) ([#62](https://github.com/cannicombustiva/differenziacomiso/issues/62)) ([985305d](https://github.com/cannicombustiva/differenziacomiso/commit/985305db78a2f99ec7860f2ae6745b5d649a6cb2))
+* passwordless admin onboarding script ([#57](https://github.com/cannicombustiva/differenziacomiso/issues/57)) ([#66](https://github.com/cannicombustiva/differenziacomiso/issues/66)) ([23755cf](https://github.com/cannicombustiva/differenziacomiso/commit/23755cfb2faa3fb3a5b9be79070ece8e265d7ab8))
+* pure login state machine for passwordless OTP ([#56](https://github.com/cannicombustiva/differenziacomiso/issues/56)) ([#65](https://github.com/cannicombustiva/differenziacomiso/issues/65)) ([eebe8c4](https://github.com/cannicombustiva/differenziacomiso/commit/eebe8c4ee071a0c5e0e2926f8aede8cbc392aa78))
+* wire /admin/login onto the OTP state machine ([#67](https://github.com/cannicombustiva/differenziacomiso/issues/67)) ([#68](https://github.com/cannicombustiva/differenziacomiso/issues/68)) ([ac80dde](https://github.com/cannicombustiva/differenziacomiso/commit/ac80dde6ed0a8e7ec214d78b375a06b77fdc59c8))
+
+
+### Bug Fixes
+
+* deliver push reminders in the Android background ([#71](https://github.com/cannicombustiva/differenziacomiso/issues/71)) ([ee42549](https://github.com/cannicombustiva/differenziacomiso/commit/ee42549f5e2eab90d361d77793cf5c571f11eb12))
+* use PNG for apple-touch-icon so iOS home-screen icon renders ([#74](https://github.com/cannicombustiva/differenziacomiso/issues/74)) ([31cea88](https://github.com/cannicombustiva/differenziacomiso/commit/31cea881577b6192e4df1c7e80d1258d1e3921e3))
+
 ## [1.1.0](https://github.com/cannicombustiva/differenziacomiso/compare/v1.0.0...v1.1.0) (2026-06-23)
 
 
