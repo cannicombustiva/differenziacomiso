@@ -42,7 +42,7 @@ export async function GET(request: Request) {
   const payload = {
     title: 'DifferenziaComiso',
     body: notifBody,
-    icon: '/icons/icon-192x192.svg',
+    icon: '/icons/icon-192x192.png',
     url: '/',
   };
 

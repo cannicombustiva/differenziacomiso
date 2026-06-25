@@ -1,4 +1,4 @@
-const CACHE_NAME = 'differenzia-comiso-v1';
+const CACHE_NAME = 'differenzia-comiso-v2';
 const STATIC_ASSETS = [
   '/',
   '/calendario',
@@ -7,6 +7,8 @@ const STATIC_ASSETS = [
   '/info',
   '/manifest.json',
   '/icons/icon.svg',
+  '/icons/icon-192x192.png',
+  '/icons/badge-72x72.png',
 ];
 
 // Install: cache static assets (individual fetches so one failure doesn't block SW activation)
@@ -79,8 +81,8 @@ self.addEventListener('push', (event) => {
     const data = event.data.json();
     const options = {
       body: data.body || '',
-      icon: data.icon || '/icons/icon-192x192.svg',
-      badge: '/icons/icon-72x72.svg',
+      icon: data.icon || '/icons/icon-192x192.png',
+      badge: '/icons/badge-72x72.png',
       vibrate: [200, 100, 200],
       data: {
         url: data.url || '/',
@@ -94,7 +96,8 @@ self.addEventListener('push', (event) => {
     // If not JSON, display as text
     const options = {
       body: event.data.text(),
-      icon: '/icons/icon-192x192.svg',
+      icon: '/icons/icon-192x192.png',
+      badge: '/icons/badge-72x72.png',
     };
     event.waitUntil(
       self.registration.showNotification('DifferenziaComiso', options)
