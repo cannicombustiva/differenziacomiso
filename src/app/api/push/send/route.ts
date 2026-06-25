@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     const payload = {
       title,
       body: text,
-      icon: '/icons/icon-192x192.svg',
+      icon: '/icons/icon-192x192.png',
       url: '/',
     };
 

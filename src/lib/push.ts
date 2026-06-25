@@ -14,6 +14,12 @@ export function configurePush() {
   }
 }
 
+// Keep the device awake long enough to surface the reminder. Without a high
+// urgency, Android Doze / battery optimisation batches "normal" pushes and the
+// notification only appears when the user next opens the app. A 12h TTL means a
+// missed push still arrives the same evening but never the day after.
+const PUSH_TTL_SECONDS = 12 * 60 * 60;
+
 export async function sendPushNotification(
   subscription: { endpoint: string; keys: { p256dh: string; auth: string } },
   payload: { title: string; body: string; icon?: string; url?: string }
@@ -28,7 +34,8 @@ export async function sendPushNotification(
         auth: subscription.keys.auth,
       },
     },
-    JSON.stringify(payload)
+    JSON.stringify(payload),
+    { urgency: 'high', TTL: PUSH_TTL_SECONDS }
   );
 }
 
