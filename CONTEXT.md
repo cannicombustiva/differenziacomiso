@@ -75,6 +75,7 @@ _Avoid_: conflating with Announcement. Publishing an Announcement does **not** f
 
 **Holiday** (IT: _Festività_):
 A date with zero Pickups because of a public or local feast (Capodanno, Ferragosto, Festa patronale…). Stored as `is_holiday=true` with no waste type and a `holiday_note`. Citizen-facing message: "Domani non si effettua la raccolta".
+_Warning_: a Holiday, a Sunday, a 5th Thursday and a date the Schedule has never loaded all look identical in `collection_schedule` — no rows. Only **Coverage** distinguishes "nothing is collected" from "we do not know yet". Never read absence as a day off.
 _Avoid_: "closure", "day off".
 
 **Recupero** (EN: _Recovered pickup_):
@@ -84,3 +85,21 @@ _Avoid_: "moved collection", "rescheduled".
 **Suppressed pickup**:
 A normal Pickup cancelled outright to make room for a Recupero, and **not** recovered anywhere — e.g. Lattine dropped from 7 Jan so Plastica can take its place. **Admin-internal**: invisible to citizens (they only see what _is_ collected; nothing records what was removed).
 _Avoid_: surfacing this to citizens.
+
+### Loading the Schedule
+
+**Coverage** (IT: _Copertura_):
+A date range for which the Schedule is known to be authoritative, carrying the source that established it. Inside Coverage, a date with no Pickups is a real day off; outside it, the date is merely unknown — the app says "calendario non ancora disponibile" and the evening Notification does not fire.
+_Avoid_: inferring Coverage from the last date present in the Schedule — that cannot express a gap in the middle.
+
+**Import** (IT: _Importazione_):
+One attempt to load a range of the Schedule from an attached Busso PDF, read by an AI model. An Import produces a Proposal, never a direct write, and is retained with its source PDF whether or not it is approved. Approving an Import establishes the Coverage for its range.
+_Avoid_: "scrape", "sync" — nothing is fetched and nothing is continuous; an Admin attaches one document, once.
+
+**Proposal** (IT: _Proposta_):
+The unapplied output of an Import awaiting an Admin's approval — the Pickups the model read, the weekly pattern it inferred, and the Exceptions it identified. Applying a Proposal replaces its whole date range in one transaction.
+_Avoid_: "draft schedule", "preview" — a Proposal is a reviewable artefact that is kept, not a rendering.
+
+**Divergence** (IT: _Divergenza_):
+A date where a Proposal and the Settimana Tipo disagree. Divergences are the entire review surface of an Import: dates where the two agree are never shown. A real Exception is a Divergence; so is a model error, which is the point. Divergences clustered on one weekday mean the Settimana Tipo itself has changed and must be fixed in code, not absorbed as Exceptions.
+_Avoid_: "conflict", "error" — a Divergence is expected and usually correct.
