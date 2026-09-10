@@ -1,0 +1,32 @@
+{
+  "name": "@differenzia/core",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./settimana-tipo": "./src/settimana-tipo.ts",
+    "./waste-style": "./src/waste-style.ts",
+    "./group-collections": "./src/group-collections.ts",
+    "./types": "./src/types/index.ts",
+    "./i18n": "./src/i18n.ts",
+    "./supabase/client": "./src/supabase/client.ts",
+    "./supabase/server": "./src/supabase/server.ts",
+    "./supabase/admin": "./src/supabase/admin.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.9.0",
+    "@supabase/supabase-js": "^2.99.0"
+  },
+  "peerDependencies": {
+    "next": "^14.2.21",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "next": "^14.2.21",
+    "react": "^18.3.1",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,6 +1,6 @@
 /**
  * Regenerate the 2026 collection_schedule section of supabase/seed.sql from the
- * single Settimana Tipo rule (src/lib/settimana-tipo), then layer the documented
+ * single Settimana Tipo rule (packages/core settimana-tipo), then layer the documented
  * Exceptions on top (Holidays, Recuperi, and the 30 Apr 2026 -> Secco one-off).
  *
  * Per ADR 0001 the Schedule stores final state: each date emits the exact rows
@@ -14,7 +14,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { settimanaTipo, type WasteKey } from '../src/lib/settimana-tipo';
+import { settimanaTipo, type WasteKey } from '@differenzia/core/settimana-tipo';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SEED_PATH = join(HERE, '..', 'supabase', 'seed.sql');
