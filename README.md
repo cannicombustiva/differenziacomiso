@@ -70,21 +70,28 @@ supabase db reset --linked
 ## Push Notifications
 
 - Configure VAPID keys in env vars.
-- Daily notification endpoint: `src/app/api/cron/daily-notification/route.ts`
+- Daily notification endpoint: `apps/citizen/src/app/api/cron/daily-notification/route.ts`
   - Sends nothing when tomorrow falls outside the Schedule's Coverage: an unloaded
     year is indistinguishable from a day off in `collection_schedule`, so the run
     stays silent rather than announcing one (ADR 0006).
-- Manual send endpoint: `src/app/api/push/send/route.ts`
+- Manual send endpoint: `apps/citizen/src/app/api/push/send/route.ts`
 
 ## Project Structure
 
-- App routes: `src/app/`
-- Reusable UI/components: `src/components/`
-- Hooks: `src/hooks/`
-- Supabase clients/utilities: `src/lib/supabase/`
-- i18n messages: `src/i18n/`
-- Global styles: `src/styles/`
-- SQL migrations/seed: `supabase/`
+A pnpm workspace (ADR 0005). The Admin panel still lives at `/admin` inside the
+Citizen app; splitting it into `apps/admin` is a later slice.
+
+- Citizen app (incl. `/admin`): `apps/citizen/`
+  - App routes: `apps/citizen/src/app/`
+  - Reusable UI/components: `apps/citizen/src/components/`
+  - Hooks: `apps/citizen/src/hooks/`
+  - Global styles: `apps/citizen/src/styles/`
+- Shared domain code: `packages/core/` — imported as `@differenzia/core/*`
+  - Settimana Tipo, waste styling, collection grouping, types
+  - Supabase client factories: `@differenzia/core/supabase/{client,server,admin}`
+  - i18n messages: `packages/core/src/i18n/`
+- SQL migrations/seed: `supabase/` (repo root, shared by both apps)
+- Root scripts: `scripts/`
 
 ## Deployment (Vercel)
 

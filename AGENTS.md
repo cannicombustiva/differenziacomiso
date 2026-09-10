@@ -258,71 +258,41 @@ CREATE INDEX idx_riciclabolario_search ON riciclabolario USING gin(to_tsvector('
 ## File & Folder Structure
 
 ```
-differenzia-comiso/
-├── public/
-│   ├── icons/                  # PWA icons (Comiso coat of arms)
-│   ├── manifest.json
-│   └── sw.js                   # Service worker (if not auto-generated)
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx          # Root layout with PWA meta, global styles
-│   │   ├── page.tsx            # Home — tomorrow's collection
-│   │   ├── calendario/
-│   │   │   └── page.tsx        # Calendar page
-│   │   ├── riciclabolario/
-│   │   │   └── page.tsx        # Waste dictionary
-│   │   ├── notizie/
-│   │   │   └── page.tsx        # News feed
-│   │   ├── info/
-│   │   │   └── page.tsx        # Contact & info
-│   │   └── admin/
-│   │       ├── layout.tsx      # Admin layout with auth guard
-│   │       ├── page.tsx        # Admin dashboard
-│   │       ├── calendario/
-│   │       │   └── page.tsx    # Calendar manager
-│   │       ├── riciclabolario/
-│   │       │   └── page.tsx    # Dictionary manager
-│   │       ├── notizie/
-│   │       │   └── page.tsx    # News manager
-│   │       └── notifiche/
-│   │           └── page.tsx    # Notification manager
-│   ├── components/
-│   │   ├── ui/                 # Reusable UI (Button, Card, Modal, etc.)
-│   │   ├── WasteCard/          # Colored waste type card
-│   │   ├── WeekStrip/          # Horizontal 7-day preview
-│   │   ├── CalendarGrid/       # Monthly calendar component
-│   │   ├── SearchBar/          # Riciclabolario search
-│   │   ├── LanguageSwitcher/   # IT/EN toggle
-│   │   └── Navbar/             # Bottom navigation bar (mobile)
-│   ├── lib/
-│   │   ├── supabase/
-│   │   │   ├── client.ts       # Supabase browser client
-│   │   │   ├── server.ts       # Supabase server client
-│   │   │   └── admin.ts        # Supabase admin/service role client
-│   │   ├── push.ts             # Push notification utilities
-│   │   └── utils.ts            # Date helpers, color utils
-│   ├── hooks/
-│   │   ├── useCollection.ts    # Fetch collection for a date
-│   │   ├── useLocale.ts        # Current language
-│   │   └── usePushSubscription.ts
-│   ├── i18n/
-│   │   ├── it.json
-│   │   └── en.json
-│   ├── styles/
-│   │   ├── globals.css         # CSS variables (colors, fonts)
-│   │   └── theme.css           # Waste type color tokens
-│   └── types/
-│       └── index.ts            # TypeScript interfaces
-├── supabase/
-│   ├── migrations/             # SQL migration files
-│   ├── seed.sql                # Seed waste_types + 2026 schedule
-│   └── functions/
-│       └── send-notification/  # Edge function for daily push
-├── .env.local                  # NEXT_PUBLIC_SUPABASE_URL, ANON_KEY, VAPID keys
-├── next.config.js
-├── tsconfig.json
-├── package.json
-└── AGENTS.md                   # This file
+differenzia-comiso/                 # pnpm workspace root
+├── apps/
+│   └── citizen/                    # the Citizen PWA (still serves /admin)
+│       ├── public/                 # PWA icons, manifest.json, sw.js
+│       ├── src/
+│       │   ├── app/                # routes: /, /calendario, /riciclabolario,
+│       │   │                       #   /notizie, /info, /admin/*, /api/*
+│       │   ├── components/         # WasteCard, CalendarGrid, Navbar, ui/, ...
+│       │   ├── hooks/              # useCollection, useLocale, usePushSubscription
+│       │   ├── lib/                # app-only helpers (coverage, push, utils, ...)
+│       │   ├── styles/globals.css  # CSS variables (colors, fonts)
+│       │   └── middleware.ts
+│       ├── next.config.js          # also loads the root .env.local
+│       ├── tsconfig.json
+│       └── vercel.json             # crons; Vercel Root Directory = apps/citizen
+├── packages/
+│   └── core/                       # shared domain code, imported as @differenzia/core/*
+│       └── src/
+│           ├── settimana-tipo.ts   # the weekly pattern (ADR 0007 depends on it)
+│           ├── waste-style.ts      # waste colors/slugs
+│           ├── group-collections.ts
+│           ├── types/index.ts      # TypeScript interfaces
+│           ├── i18n.ts + i18n/{it,en}.json
+│           └── supabase/{client,server,admin}.ts
+├── supabase/                       # single owner of the database
+│   ├── migrations/                 # SQL migration files
+│   └── seed.sql                    # waste_types + 2026 schedule
+├── scripts/                        # generate-seed.ts and one-off DB scripts
+├── .env.local                      # NEXT_PUBLIC_SUPABASE_URL, ANON_KEY, VAPID keys
+├── pnpm-workspace.yaml
+├── vitest.config.ts                # runs every workspace test suite
+├── tsconfig.base.json              # compilerOptions all three tsconfigs share
+├── tsconfig.json                   # covers scripts/ only
+├── package.json                    # workspace root: test, lint, build, seed:generate
+└── AGENTS.md                       # This file
 ```
 
 ---
