@@ -239,6 +239,7 @@ CREATE INDEX idx_riciclabolario_search ON riciclabolario USING gin(to_tsvector('
 - **Orientation:** `portrait`
 - **Icons:** Generate from Comiso coat of arms (sizes: 72, 96, 128, 144, 152, 192, 384, 512)
 - **Service worker:** Cache the collection schedule for the current month + next month, riciclabolario data, and all static assets
+- **Offline cache:** The Schedule payloads are cached alongside the **Coverage** range, so an offline device still separates "nothing is collected" from "we never loaded this period" (ADR 0006). Every entry carries a shape version; entries written under any other version are dropped and evicted on read rather than deserialized
 - **Offline fallback:** Show cached schedule data when offline, with a subtle banner "Sei offline — dati aggiornati al [date]"
 
 ---

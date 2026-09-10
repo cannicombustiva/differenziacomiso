@@ -5,7 +5,7 @@ import { format, addDays, parseISO, startOfMonth, endOfMonth } from 'date-fns';
 import { createClient } from '@differenzia/core/supabase/client';
 import { referenceDay, romeToday } from '@/lib/reference-day';
 import { groupCollections, type ScheduleRow } from '@differenzia/core/group-collections';
-import { writeCache, readCache } from '@/lib/offline-cache';
+import { writeCache, readCache, writeCoverageCache, readCoverageCache } from '@/lib/offline-cache';
 import type { CoverageRange } from '@/lib/coverage';
 import type { CollectionDayGrouped, Locale } from '@differenzia/core/types';
 
@@ -15,7 +15,12 @@ const SCHEDULE_SELECT =
 /**
  * The Coverage ranges the Schedule vouches for (ADR 0006). `null` means not yet
  * read, or unreadable — callers must treat that as "unknown", never as "not
- * covered". Offline caching of Coverage is deliberately not done here yet.
+ * covered".
+ *
+ * Offline the query throws and the last cached Coverage answers instead, so a
+ * date nobody has loaded still reads as unknown rather than as a day off. A
+ * device that has never been online falls back to `null`, which is honest: it
+ * knows nothing about Coverage and says so.
  */
 export function useCoverage(): CoverageRange[] | null {
   const [ranges, setRanges] = useState<CoverageRange[] | null>(null);
@@ -27,9 +32,11 @@ export function useCoverage(): CoverageRange[] | null {
           .from('schedule_coverage')
           .select('start_date, end_date, source');
         if (error) throw error;
-        setRanges((data || []) as CoverageRange[]);
+        const fetched = (data || []) as CoverageRange[];
+        writeCoverageCache(fetched);
+        setRanges(fetched);
       } catch {
-        setRanges(null);
+        setRanges(readCoverageCache());
       }
     })();
   }, []);
