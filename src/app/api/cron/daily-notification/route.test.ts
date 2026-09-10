@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('server-only', () => ({}));
 
@@ -21,7 +21,6 @@ vi.mock('@/lib/reference-day', () => ({
 const tables: Record<string, unknown[]> = {};
 /** Tables whose read fails, per test. */
 const failing = new Set<string>();
-const deleted: string[] = [];
 
 /** Minimal stand-in for the Supabase query builder the route uses. */
 function fakeClient() {
@@ -31,10 +30,7 @@ function fakeClient() {
       : Promise.resolve({ data: tables[table] ?? [], error: null });
     const query = {
       select: () => query,
-      eq: (_col: string, value: string) => {
-        if (table === 'push_subscriptions') deleted.push(value);
-        return query;
-      },
+      eq: () => query,
       delete: () => query,
       then: (...args: Parameters<Promise<unknown>['then']>) => result.then(...args),
     };
@@ -68,12 +64,15 @@ describe('GET /api/cron/daily-notification', () => {
     sendPushNotification.mockClear().mockResolvedValue(undefined);
     isWithinSendWindow.mockReturnValue(true);
     referenceDay.mockReturnValue('2026-06-17');
-    deleted.length = 0;
     failing.clear();
     process.env.CRON_SECRET = 'test-secret';
     tables.collection_schedule = [];
     tables.schedule_coverage = YEAR_2026;
     tables.push_subscriptions = [SUBSCRIBER];
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('sends the no-collection push for a covered Reference day with zero Pickups', async () => {
@@ -92,6 +91,7 @@ describe('GET /api/cron/daily-notification', () => {
     // 1 Jan 2027 with only 2026 loaded. Absence of rows here means "not loaded",
     // and a confident "no collection tomorrow" would reach the whole town.
     referenceDay.mockReturnValue('2027-01-01');
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const body = await (await get()).json();
 
@@ -99,9 +99,12 @@ describe('GET /api/cron/daily-notification', () => {
     expect(body.skipped).toBe(true);
     expect(body.reason).toMatch(/coverage/i);
     expect(body.date).toBe('2027-01-01');
+    // The cron's HTTP response goes nowhere anyone reads; the log line is the
+    // only trace of a skipped evening in production.
+    expect(warn).toHaveBeenCalledWith(expect.stringMatching(/2027-01-01.*coverage/i));
   });
 
-  it('still sends when Coverage is unreadable, rather than going silent', async () => {
+  it('still sends when the Coverage table is empty (migration not yet applied)', async () => {
     // Empty table = migration not yet applied. Falling silent here would mute
     // the Notification for the entire seeded year.
     referenceDay.mockReturnValue('2027-01-01');
