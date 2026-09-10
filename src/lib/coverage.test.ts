@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { dayStatus, type CoverageRange } from '@/lib/coverage';
+import { dayStatus, isOutsideCoverage, type CoverageRange } from '@/lib/coverage';
 import type { CollectionDayGrouped, WasteType } from '@/types';
 
 const UMIDO: WasteType = {
@@ -88,5 +88,31 @@ describe('dayStatus', () => {
     expect(dayStatus('2026-06-17', day({ wasteTypes: [UMIDO] }), [])).toBe('pickups');
     expect(dayStatus('2026-06-21', undefined, [])).toBe('no-collection');
     expect(dayStatus('2027-01-01', undefined, [])).toBe('no-collection');
+  });
+});
+
+describe('isOutsideCoverage', () => {
+  it('is false for a date inside a Coverage range', () => {
+    expect(isOutsideCoverage('2026-06-17', YEAR_2026)).toBe(false);
+  });
+
+  it('is true for a date past the end of every range', () => {
+    expect(isOutsideCoverage('2027-01-01', YEAR_2026)).toBe(true);
+  });
+
+  it('is true for a date in a gap between two ranges', () => {
+    const ranges: CoverageRange[] = [
+      { start_date: '2026-01-01', end_date: '2026-06-30', source: 'seed' },
+      { start_date: '2026-09-01', end_date: '2026-12-31', source: 'import' },
+    ];
+    expect(isOutsideCoverage('2026-07-15', ranges)).toBe(true);
+  });
+
+  it('is false when Coverage is unknown, so callers fall back rather than go silent', () => {
+    // Same rule dayStatus applies: Coverage may withhold a claim, never
+    // manufacture one. An unreadable (null) or not-yet-migrated ([]) table must
+    // not silence the evening Notification for the whole seeded year.
+    expect(isOutsideCoverage('2027-01-01', null)).toBe(false);
+    expect(isOutsideCoverage('2027-01-01', [])).toBe(false);
   });
 });

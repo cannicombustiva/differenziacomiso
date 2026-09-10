@@ -4,6 +4,7 @@ import { sendPushNotification } from '@/lib/push';
 import { referenceDay } from '@/lib/reference-day';
 import { isWithinSendWindow } from '@/lib/send-window';
 import { buildNotificationMessage, type ScheduleRow } from '@/lib/notification-message';
+import { isOutsideCoverage, type CoverageRange } from '@/lib/coverage';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -21,6 +22,24 @@ export async function GET(request: Request) {
 
   const supabase = createAdminClient();
   const tomorrow = referenceDay();
+
+  // Is the Schedule authoritative for tomorrow at all? Outside Coverage an
+  // empty schedule means "not loaded yet", not "no collection" (ADR 0006), so
+  // the run goes silent rather than telling the whole town to put nothing out.
+  // A read failure leaves `ranges` null, which deliberately does not suppress.
+  const { data: ranges, error: coverageError } = await supabase
+    .from('schedule_coverage')
+    .select('start_date, end_date, source');
+
+  if (coverageError) {
+    console.error('Cron coverage read failed, sending anyway:', coverageError);
+  }
+
+  if (isOutsideCoverage(tomorrow, coverageError ? null : ((ranges ?? []) as CoverageRange[]))) {
+    const reason = `${tomorrow} falls outside the Schedule's Coverage — nothing to announce`;
+    console.warn(`Cron skipped: ${reason}`);
+    return NextResponse.json({ skipped: true, reason, date: tomorrow });
+  }
 
   // Fetch tomorrow's schedule with waste type names
   const { data: rows, error } = await supabase

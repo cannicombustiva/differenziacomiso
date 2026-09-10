@@ -28,6 +28,22 @@ function isCovered(date: string, ranges: CoverageRange[]): boolean {
 }
 
 /**
+ * Whether `date` is known to fall outside the Schedule's Coverage — the single
+ * gate for "we have nothing to say about this date".
+ *
+ * True only when Coverage is readable, non-empty, and still does not contain
+ * `date`. The two unknown inputs (`null`, `[]`) are false on purpose: see
+ * `dayStatus` for why Coverage may withhold a claim but never manufacture one.
+ * Callers that act on a true result — the evening Notification goes silent,
+ * the Citizen surfaces say "calendario non ancora disponibile" — get the same
+ * fallback from that one rule rather than re-deriving it.
+ */
+export function isOutsideCoverage(date: string, ranges: CoverageRange[] | null): boolean {
+  const known = ranges !== null && ranges.length > 0;
+  return known && !isCovered(date, ranges);
+}
+
+/**
  * Classify a date for display.
  *
  * Coverage is only allowed to *withhold* a claim, never to manufacture one, so
@@ -50,8 +66,7 @@ export function dayStatus(
   collection: CollectionDayGrouped | undefined,
   ranges: CoverageRange[] | null
 ): DayStatus {
-  const known = ranges !== null && ranges.length > 0;
-  if (known && !isCovered(date, ranges)) return 'unscheduled';
+  if (isOutsideCoverage(date, ranges)) return 'unscheduled';
   if (collection?.isHoliday) return 'holiday';
   if (collection && collection.wasteTypes.length > 0) return 'pickups';
   return 'no-collection';
