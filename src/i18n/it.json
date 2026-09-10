@@ -21,13 +21,16 @@
     "reminder": "Ti ricordiamo stasera alle 20:00",
     "seeCalendar": "Calendario",
     "rest": "Riposo",
-    "brandTagline": "Raccolta differenziata"
+    "brandTagline": "Raccolta differenziata",
+    "notAvailable": "Calendario non ancora disponibile",
+    "notAvailableHint": "Il calendario per questo periodo non è ancora stato pubblicato."
   },
   "calendar": {
     "title": "Calendario",
     "noCollection": "Nessuna raccolta",
     "holiday": "Festivo",
-    "detailHint": "Tocca un giorno del calendario per vedere cosa esporre. I colori corrispondono al tipo di rifiuto."
+    "detailHint": "Tocca un giorno del calendario per vedere cosa esporre. I colori corrispondono al tipo di rifiuto.",
+    "notAvailable": "Non ancora disponibile"
   },
   "dictionary": {
     "title": "Riciclabolario",

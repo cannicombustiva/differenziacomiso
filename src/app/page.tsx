@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { parseISO } from 'date-fns';
 import { useLocale } from '@/hooks/useLocale';
-import { useTomorrowCollection, useWeekCollections } from '@/hooks/useCollection';
+import { useTomorrowCollection, useWeekCollections, useCoverage } from '@/hooks/useCollection';
+import { dayStatus } from '@/lib/coverage';
 import { getWasteTypeName } from '@/lib/utils';
 import { wasteVisual } from '@/lib/waste-style';
 import WasteCard from '@/components/WasteCard/WasteCard';
@@ -16,12 +17,16 @@ export default function HomePage() {
   const { locale, t } = useLocale();
   const tomorrow = useTomorrowCollection(locale);
   const week = useWeekCollections(locale);
+  const coverage = useCoverage();
 
   const fmt = (iso: string, o: Intl.DateTimeFormatOptions) =>
     new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'it-IT', o).format(parseISO(iso));
 
   const tomorrowTypes = tomorrow?.wasteTypes ?? [];
-  const isEmpty = !tomorrow || tomorrow.isHoliday || tomorrowTypes.length === 0;
+  // Coverage decides whether an empty Reference day means "day off" or "we have
+  // not loaded this period" — the rows look identical either way (ADR 0006).
+  const status = tomorrow ? dayStatus(tomorrow.date, tomorrow, coverage) : null;
+  const isEmpty = status !== 'pickups';
   const upcoming = week.filter((d) => tomorrow && d.date > tomorrow.date);
 
   return (
@@ -63,6 +68,11 @@ export default function HomePage() {
 
         {tomorrow === null ? (
           <p className={styles.heroEmpty}>{t('common.loading')}</p>
+        ) : status === 'unscheduled' ? (
+          <div className={styles.heroUnscheduled}>
+            <p className={styles.heroEmpty}>{t('home.notAvailable')}</p>
+            <p className={styles.heroHint}>{t('home.notAvailableHint')}</p>
+          </div>
         ) : isEmpty ? (
           <p className={styles.heroEmpty}>
             {t('home.noCollection')}

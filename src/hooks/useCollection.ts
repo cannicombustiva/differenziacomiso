@@ -6,10 +6,36 @@ import { createClient } from '@/lib/supabase/client';
 import { referenceDay, romeToday } from '@/lib/reference-day';
 import { groupCollections, type ScheduleRow } from '@/lib/group-collections';
 import { writeCache, readCache } from '@/lib/offline-cache';
+import type { CoverageRange } from '@/lib/coverage';
 import type { CollectionDayGrouped, Locale } from '@/types';
 
 const SCHEDULE_SELECT =
   'date, is_holiday, holiday_note_it, holiday_note_en, note_it, note_en, waste_types:waste_type_id(*)';
+
+/**
+ * The Coverage ranges the Schedule vouches for (ADR 0006). `null` means not yet
+ * read, or unreadable — callers must treat that as "unknown", never as "not
+ * covered". Offline caching of Coverage is deliberately not done here yet.
+ */
+export function useCoverage(): CoverageRange[] | null {
+  const [ranges, setRanges] = useState<CoverageRange[] | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data, error } = await createClient()
+          .from('schedule_coverage')
+          .select('start_date, end_date, source');
+        if (error) throw error;
+        setRanges((data || []) as CoverageRange[]);
+      } catch {
+        setRanges(null);
+      }
+    })();
+  }, []);
+
+  return ranges;
+}
 
 export function useTomorrowCollection(locale: Locale) {
   const [collection, setCollection] = useState<CollectionDayGrouped | null>(null);

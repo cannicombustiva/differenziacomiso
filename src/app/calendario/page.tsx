@@ -5,7 +5,8 @@ import { format, parseISO } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
 import { useLocale } from '@/hooks/useLocale';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useMonthCollections } from '@/hooks/useCollection';
+import { useMonthCollections, useCoverage } from '@/hooks/useCollection';
+import { dayStatus } from '@/lib/coverage';
 import { referenceDay } from '@/lib/reference-day';
 import { getWasteTypeName } from '@/lib/utils';
 import { wasteVisual } from '@/lib/waste-style';
@@ -28,6 +29,7 @@ export default function CalendarioPage() {
     currentMonth.getMonth(),
     locale
   );
+  const coverage = useCoverage();
 
   const selectedCollection = selectedDate
     ? collections.find((c) => c.date === selectedDate)
@@ -40,7 +42,10 @@ export default function CalendarioPage() {
     format(parseISO(panelDate), 'EEEE d MMMM', { locale: locale === 'it' ? itLocale : undefined })
   );
 
-  const renderDetail = (coll = selectedCollection) => {
+  const renderDetail = (date: string, coll = selectedCollection) => {
+    if (dayStatus(date, coll ?? undefined, coverage) === 'unscheduled') {
+      return <p className={styles.notAvailable}>{t('calendar.notAvailable')}</p>;
+    }
     if (!coll) return <p className={styles.noCollection}>{t('calendar.noCollection')}</p>;
     if (coll.isHoliday) {
       return (
@@ -65,7 +70,8 @@ export default function CalendarioPage() {
     );
   };
 
-  const hasPickup = panelCollection && !panelCollection.isHoliday && panelCollection.wasteTypes.length > 0;
+  const panelStatus = dayStatus(panelDate, panelCollection, coverage);
+  const hasPickup = panelStatus === 'pickups';
 
   return (
     <div className={styles.page}>
@@ -75,6 +81,7 @@ export default function CalendarioPage() {
           <CalendarGrid
             currentMonth={currentMonth}
             collections={collections}
+            coverage={coverage}
             locale={locale}
             onDayClick={(date) => setSelectedDate(date)}
             onMonthChange={setCurrentMonth}
@@ -102,9 +109,11 @@ export default function CalendarioPage() {
             </div>
           ) : (
             <div className={styles.panelEmpty}>
-              {panelCollection?.isHoliday
-                ? `${t('calendar.holiday')}${panelCollection.holidayNote ? ` — ${panelCollection.holidayNote}` : ''}`
-                : t('calendar.noCollection')}
+              {panelStatus === 'unscheduled'
+                ? t('calendar.notAvailable')
+                : panelStatus === 'holiday'
+                  ? `${t('calendar.holiday')}${panelCollection?.holidayNote ? ` — ${panelCollection.holidayNote}` : ''}`
+                  : t('calendar.noCollection')}
             </div>
           )}
           <div className={styles.panelHint}>{t('calendar.detailHint')}</div>
@@ -119,7 +128,7 @@ export default function CalendarioPage() {
             locale: locale === 'it' ? itLocale : undefined,
           })) : ''}
         >
-          {renderDetail()}
+          {selectedDate && renderDetail(selectedDate)}
         </Modal>
       )}
     </div>

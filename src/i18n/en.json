@@ -21,13 +21,16 @@
     "reminder": "We will remind you tonight at 20:00",
     "seeCalendar": "Calendar",
     "rest": "Rest day",
-    "brandTagline": "Waste sorting"
+    "brandTagline": "Waste sorting",
+    "notAvailable": "Calendar not yet available",
+    "notAvailableHint": "The calendar for this period has not been published yet."
   },
   "calendar": {
     "title": "Calendar",
     "noCollection": "No collection",
     "holiday": "Holiday",
-    "detailHint": "Tap a day on the calendar to see what to put out. Colours match the waste type."
+    "detailHint": "Tap a day on the calendar to see what to put out. Colours match the waste type.",
+    "notAvailable": "Not yet available"
   },
   "dictionary": {
     "title": "Waste Dictionary",

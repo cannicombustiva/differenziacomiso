@@ -18,11 +18,14 @@ import type { CollectionDayGrouped, Locale, WasteType } from '@/types';
 import { getWasteTypeName } from '@/lib/utils';
 import { wasteVisual } from '@/lib/waste-style';
 import { referenceDay } from '@/lib/reference-day';
+import { dayStatus, type CoverageRange } from '@/lib/coverage';
 import styles from './CalendarGrid.module.css';
 
 interface CalendarGridProps {
   currentMonth: Date;
   collections: CollectionDayGrouped[];
+  /** Coverage ranges, or null when unknown — see ADR 0006. */
+  coverage: CoverageRange[] | null;
   locale: Locale;
   onDayClick?: (date: string) => void;
   onMonthChange?: (date: Date) => void;
@@ -37,6 +40,7 @@ const DAY_HEADERS_EN_LONG = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 export default function CalendarGrid({
   currentMonth,
   collections,
+  coverage,
   locale,
   onDayClick,
   onMonthChange,
@@ -109,7 +113,8 @@ export default function CalendarGrid({
             }
             const collection = collections.find((c) => c.date === dateStr);
             const types = collection?.wasteTypes ?? [];
-            const isRest = !collection || collection.isHoliday || types.length === 0;
+            const status = dayStatus(dateStr, collection, coverage);
+            const isRest = status !== 'pickups';
             const highlighted = selectedDate ? selectedDate === dateStr : dateStr === refDay;
 
             const cls = [
@@ -117,6 +122,7 @@ export default function CalendarGrid({
               isToday(date) ? styles.today : '',
               highlighted ? styles.highlight : '',
               isRest ? styles.rest : '',
+              status === 'unscheduled' ? styles.unscheduled : '',
             ]
               .filter(Boolean)
               .join(' ');

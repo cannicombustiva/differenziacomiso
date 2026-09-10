@@ -340,3 +340,17 @@
     background: var(--color-bg-tertiary);
   }
 }
+
+/* Reference day outside Coverage: the Schedule has not been loaded for this
+   period, which must not be mistaken for "no collection tomorrow" (ADR 0006). */
+.heroUnscheduled {
+  position: relative;
+}
+.heroHint {
+  position: relative;
+  margin-top: 8px;
+  color: #c8e6c9;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}

@@ -220,6 +220,11 @@ export default function AdminCalendarioPage() {
       <CalendarGrid
         currentMonth={currentMonth}
         collections={collections}
+        // The Admin editor deliberately reads dates the pre-Coverage way: it is
+        // the surface that *creates* Pickups, so an uncovered date is one to
+        // fill in, not one to warn about. Surfacing Coverage to the Admin is
+        // the dashboard warning (#78), not this grid.
+        coverage={null}
         locale={locale}
         onDayClick={handleDayClick}
         onMonthChange={setCurrentMonth}
