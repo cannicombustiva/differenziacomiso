@@ -21,7 +21,7 @@ const WT = Object.fromEntries(WASTE_TYPES.map(wt => [wt.name_it.toLowerCase().re
 
 /**
  * Resolve the Settimana Tipo for a date into demo WasteType objects.
- * Derives from the single rule module (src/lib/settimana-tipo) so the demo
+ * Derives from the single rule module (@differenzia/core/settimana-tipo) so the demo
  * data and the Admin bulk-fill can never disagree about the 5th-Thursday gap.
  */
 function getSettimanaTypes(date: Date): WasteType[] {

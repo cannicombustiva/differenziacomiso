@@ -289,6 +289,7 @@ differenzia-comiso/                 # pnpm workspace root
 ├── .env.local                      # NEXT_PUBLIC_SUPABASE_URL, ANON_KEY, VAPID keys
 ├── pnpm-workspace.yaml
 ├── vitest.config.ts                # runs every workspace test suite
+├── tsconfig.base.json              # compilerOptions all three tsconfigs share
 ├── tsconfig.json                   # covers scripts/ only
 ├── package.json                    # workspace root: test, lint, build, seed:generate
 └── CLAUDE.md                       # This file

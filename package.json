@@ -11,7 +11,7 @@
     "seed:generate": "tsx scripts/generate-seed.ts",
     "build": "pnpm --filter @differenzia/citizen build",
     "start": "pnpm --filter @differenzia/citizen start",
-    "lint": "pnpm --filter @differenzia/citizen lint",
+    "lint": "pnpm --filter @differenzia/citizen lint && pnpm exec eslint packages/core/src scripts",
     "prepare": "husky",
     "deploy": "vercel --prod",
     "deploy:preview": "vercel"

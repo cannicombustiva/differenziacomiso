@@ -19,7 +19,7 @@ const SCHEDULE_SELECT =
 
 /**
  * Resolve the Settimana Tipo for a date into waste_type ids for bulk-fill.
- * Derives from the single rule module (src/lib/settimana-tipo) — including the
+ * Derives from the single rule module (@differenzia/core/settimana-tipo) — including the
  * empty 5th Thursday — so bulk-filling never overwrites seeded truth.
  */
 function getSettimanaTypes(date: Date, allTypes: WasteType[]): string[] {
