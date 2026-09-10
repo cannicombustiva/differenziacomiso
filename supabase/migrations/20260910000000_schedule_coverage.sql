@@ -35,4 +35,7 @@ CREATE POLICY "Admins write schedule_coverage"
 -- the migration rather than a runbook step: without it, deploying this table
 -- would make the app declare the entire current year unavailable.
 INSERT INTO schedule_coverage (start_date, end_date, source)
-  VALUES ('2026-01-01', '2026-12-31', 'seed');
+  SELECT '2026-01-01', '2026-12-31', 'seed'
+  WHERE NOT EXISTS (
+    SELECT 1 FROM schedule_coverage WHERE source = 'seed' AND start_date = '2026-01-01'
+  );

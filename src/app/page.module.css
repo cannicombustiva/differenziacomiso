@@ -342,9 +342,19 @@
 }
 
 /* Reference day outside Coverage: the Schedule has not been loaded for this
-   period, which must not be mistaken for "no collection tomorrow" (ADR 0006). */
+   period, which must not be mistaken for "no collection tomorrow" (ADR 0006).
+   The two must not merely differ in wording — a Citizen glancing at the hero
+   should see that the app is withholding an answer, not giving one. */
 .heroUnscheduled {
   position: relative;
+  padding: 14px 16px;
+  border: 2px dashed rgba(255, 255, 255, 0.55);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.14);
+}
+.heroUnscheduled .heroEmpty {
+  font-size: 17px;
+  opacity: 0.95;
 }
 .heroHint {
   position: relative;

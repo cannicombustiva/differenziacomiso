@@ -26,7 +26,7 @@ export default function HomePage() {
   // Coverage decides whether an empty Reference day means "day off" or "we have
   // not loaded this period" — the rows look identical either way (ADR 0006).
   const status = tomorrow ? dayStatus(tomorrow.date, tomorrow, coverage) : null;
-  const isEmpty = status !== 'pickups';
+  const hasPickups = status === 'pickups';
   const upcoming = week.filter((d) => tomorrow && d.date > tomorrow.date);
 
   return (
@@ -63,7 +63,7 @@ export default function HomePage() {
             {t('home.tomorrow')}
             {tomorrow ? ` · ${cap(fmt(tomorrow.date, { weekday: 'short', day: 'numeric' }))}` : ''}
           </span>
-          {!isEmpty && <span className={styles.pickupPill}>{t('home.exposeBy')}</span>}
+          {hasPickups && <span className={styles.pickupPill}>{t('home.exposeBy')}</span>}
         </div>
 
         {tomorrow === null ? (
@@ -73,7 +73,7 @@ export default function HomePage() {
             <p className={styles.heroEmpty}>{t('home.notAvailable')}</p>
             <p className={styles.heroHint}>{t('home.notAvailableHint')}</p>
           </div>
-        ) : isEmpty ? (
+        ) : !hasPickups ? (
           <p className={styles.heroEmpty}>
             {t('home.noCollection')}
             {tomorrow.holidayNote ? ` · ${tomorrow.holidayNote}` : ''}

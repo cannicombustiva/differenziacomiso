@@ -23,23 +23,35 @@ export type DayStatus = 'pickups' | 'holiday' | 'no-collection' | 'unscheduled';
  * ranges may be disjoint — a gap between two of them is not covered.
  * ISO 'yyyy-MM-dd' strings compare correctly as strings, so no parsing is needed.
  */
-export function isCovered(date: string, ranges: CoverageRange[]): boolean {
+function isCovered(date: string, ranges: CoverageRange[]): boolean {
   return ranges.some((r) => date >= r.start_date && date <= r.end_date);
 }
 
 /**
- * Classify a date for display. `ranges` of `null` means Coverage could not be
- * read (offline, or the query failed) — in that case the app declines to claim
- * a date is unscheduled and falls back to reading the rows the way it did
- * before Coverage existed. Claiming "not yet available" for a year we never
- * managed to check would be its own kind of lie.
+ * Classify a date for display.
+ *
+ * Coverage is only allowed to *withhold* a claim, never to manufacture one, so
+ * two inputs mean "unknown" and both fall back to reading the rows the way the
+ * app did before Coverage existed:
+ *
+ * - `null` — Coverage could not be read (offline, or the query failed).
+ * - `[]` — the table is readable but empty. This is the deploy window: the app
+ *   is live and the migration has not run yet. Treating an empty table as "no
+ *   date is covered" would black out the whole seeded year for every Citizen —
+ *   the very outage ADR 0006 puts the 2026 INSERT inside the migration to
+ *   avoid. Failing back to the old reading is wrong in a way that costs
+ *   nothing; failing forward is wrong in a way that reaches the whole town.
+ *
+ * Once a Coverage row exists, a date outside every range is genuinely unknown
+ * and says so.
  */
 export function dayStatus(
   date: string,
   collection: CollectionDayGrouped | undefined,
   ranges: CoverageRange[] | null
 ): DayStatus {
-  if (ranges !== null && !isCovered(date, ranges)) return 'unscheduled';
+  const known = ranges !== null && ranges.length > 0;
+  if (known && !isCovered(date, ranges)) return 'unscheduled';
   if (collection?.isHoliday) return 'holiday';
   if (collection && collection.wasteTypes.length > 0) return 'pickups';
   return 'no-collection';

@@ -82,7 +82,11 @@ describe('dayStatus', () => {
     expect(dayStatus('2026-01-06', both, YEAR_2026)).toBe('holiday');
   });
 
-  it('reports unscheduled with no Coverage rows at all', () => {
-    expect(dayStatus('2026-06-17', day({ wasteTypes: [UMIDO] }), [])).toBe('unscheduled');
+  it('treats an empty Coverage table as unknown, not as "nothing is covered"', () => {
+    // The deploy window: app live, migration not yet run. Reading [] as "no date
+    // is covered" would black out the whole seeded year for every Citizen.
+    expect(dayStatus('2026-06-17', day({ wasteTypes: [UMIDO] }), [])).toBe('pickups');
+    expect(dayStatus('2026-06-21', undefined, [])).toBe('no-collection');
+    expect(dayStatus('2027-01-01', undefined, [])).toBe('no-collection');
   });
 });
