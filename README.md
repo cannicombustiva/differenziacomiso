@@ -71,6 +71,9 @@ supabase db reset --linked
 
 - Configure VAPID keys in env vars.
 - Daily notification endpoint: `src/app/api/cron/daily-notification/route.ts`
+  - Sends nothing when tomorrow falls outside the Schedule's Coverage: an unloaded
+    year is indistinguishable from a day off in `collection_schedule`, so the run
+    stays silent rather than announcing one (ADR 0006).
 - Manual send endpoint: `src/app/api/push/send/route.ts`
 
 ## Project Structure
