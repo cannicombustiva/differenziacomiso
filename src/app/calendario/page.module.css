@@ -127,3 +127,12 @@
     color: var(--color-text-secondary);
   }
 }
+
+/* Date outside Coverage — not the same claim as "nessuna raccolta". */
+.notAvailable {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  font-style: italic;
+  padding: var(--space-md);
+}

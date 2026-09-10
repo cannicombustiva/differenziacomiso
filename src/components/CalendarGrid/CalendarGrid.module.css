@@ -194,3 +194,19 @@
     display: none;
   }
 }
+
+/* Outside Coverage: the Schedule was never loaded for this date. Distinct from
+   .rest, which is a real day off the Schedule does vouch for (ADR 0006). */
+.unscheduled {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    var(--color-bg-secondary) 4px,
+    var(--color-bg-secondary) 8px
+  );
+}
+.unscheduled .dayNumber {
+  color: var(--color-text-faint);
+  opacity: 0.55;
+}

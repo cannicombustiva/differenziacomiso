@@ -5,7 +5,8 @@ import { format, parseISO } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
 import { useLocale } from '@/hooks/useLocale';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useMonthCollections } from '@/hooks/useCollection';
+import { useMonthCollections, useCoverage } from '@/hooks/useCollection';
+import { dayStatus, type DayStatus } from '@/lib/coverage';
 import { referenceDay } from '@/lib/reference-day';
 import { getWasteTypeName } from '@/lib/utils';
 import { wasteVisual } from '@/lib/waste-style';
@@ -13,9 +14,27 @@ import CalendarGrid from '@/components/CalendarGrid/CalendarGrid';
 import WasteIcon from '@/components/WasteIcon/WasteIcon';
 import Modal from '@/components/ui/Modal/Modal';
 import WasteCard from '@/components/WasteCard/WasteCard';
+import type { CollectionDayGrouped } from '@/types';
 import styles from './page.module.css';
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+/**
+ * The one mapping from a day's status to what the Citizen is told. Both the
+ * mobile detail sheet and the desktop panel read it, so they cannot describe
+ * the same date differently.
+ */
+function statusMessage(
+  status: DayStatus,
+  collection: CollectionDayGrouped | undefined,
+  t: (key: string) => string
+): string {
+  if (status === 'unscheduled') return t('calendar.notAvailable');
+  if (status === 'holiday') {
+    return `${t('calendar.holiday')}${collection?.holidayNote ? ` — ${collection.holidayNote}` : ''}`;
+  }
+  return t('calendar.noCollection');
+}
 
 export default function CalendarioPage() {
   const { locale, t } = useLocale();
@@ -28,6 +47,7 @@ export default function CalendarioPage() {
     currentMonth.getMonth(),
     locale
   );
+  const coverage = useCoverage();
 
   const selectedCollection = selectedDate
     ? collections.find((c) => c.date === selectedDate)
@@ -40,32 +60,31 @@ export default function CalendarioPage() {
     format(parseISO(panelDate), 'EEEE d MMMM', { locale: locale === 'it' ? itLocale : undefined })
   );
 
-  const renderDetail = (coll = selectedCollection) => {
-    if (!coll) return <p className={styles.noCollection}>{t('calendar.noCollection')}</p>;
-    if (coll.isHoliday) {
-      return (
-        <p className={styles.holiday}>
-          {t('calendar.holiday')}
-          {coll.holidayNote && ` — ${coll.holidayNote}`}
-        </p>
-      );
-    }
-    if (coll.wasteTypes.length === 0) {
-      return <p className={styles.noCollection}>{t('calendar.noCollection')}</p>;
+  const renderDetail = (date: string, coll = selectedCollection) => {
+    const status = dayStatus(date, coll ?? undefined, coverage);
+    if (status !== 'pickups') {
+      const cls =
+        status === 'unscheduled'
+          ? styles.notAvailable
+          : status === 'holiday'
+            ? styles.holiday
+            : styles.noCollection;
+      return <p className={cls}>{statusMessage(status, coll ?? undefined, t)}</p>;
     }
     return (
       <div className={styles.wasteList}>
-        {coll.wasteTypes.map((wt) => (
+        {coll!.wasteTypes.map((wt) => (
           <WasteCard key={wt.id} wasteType={wt} locale={locale} />
         ))}
-        {coll.notes?.map((note, i) => (
+        {coll!.notes?.map((note, i) => (
           <p key={i} className={styles.pickupNote}>{note}</p>
         ))}
       </div>
     );
   };
 
-  const hasPickup = panelCollection && !panelCollection.isHoliday && panelCollection.wasteTypes.length > 0;
+  const panelStatus = dayStatus(panelDate, panelCollection, coverage);
+  const hasPickup = panelStatus === 'pickups';
 
   return (
     <div className={styles.page}>
@@ -75,6 +94,7 @@ export default function CalendarioPage() {
           <CalendarGrid
             currentMonth={currentMonth}
             collections={collections}
+            coverage={coverage}
             locale={locale}
             onDayClick={(date) => setSelectedDate(date)}
             onMonthChange={setCurrentMonth}
@@ -102,9 +122,7 @@ export default function CalendarioPage() {
             </div>
           ) : (
             <div className={styles.panelEmpty}>
-              {panelCollection?.isHoliday
-                ? `${t('calendar.holiday')}${panelCollection.holidayNote ? ` — ${panelCollection.holidayNote}` : ''}`
-                : t('calendar.noCollection')}
+              {statusMessage(panelStatus, panelCollection, t)}
             </div>
           )}
           <div className={styles.panelHint}>{t('calendar.detailHint')}</div>
@@ -119,7 +137,7 @@ export default function CalendarioPage() {
             locale: locale === 'it' ? itLocale : undefined,
           })) : ''}
         >
-          {renderDetail()}
+          {selectedDate && renderDetail(selectedDate)}
         </Modal>
       )}
     </div>
