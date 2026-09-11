@@ -1,3 +1,4 @@
+import { addDays, differenceInCalendarDays, format, parseISO } from 'date-fns';
 import type { CollectionDayGrouped } from '@differenzia/core/types';
 
 /** One row of `schedule_coverage`: a date range the Schedule vouches for. */
@@ -78,52 +79,51 @@ export function dayStatus(
  */
 export const COVERAGE_WARNING_DAYS = 60;
 
-/**
- * How far ahead of `today` the Schedule vouches for, as the Admin needs to see
- * it (#78).
- *
- * - `covered` / `ending` — today is covered; `endDate` is the last date of the
- *   unbroken stretch that starts today, and `ending` means it is at most
- *   `COVERAGE_WARNING_DAYS` away.
- * - `expired` — today itself is outside Coverage: Citizens already see
- *   "calendario non ancora disponibile" and the evening Notification is silent.
- *   `endDate` is the last covered date before today, or null if there is none.
- * - `unknown` — Coverage is unreadable or empty; see `dayStatus` for why
- *   neither may be read as "nothing is covered".
- */
+/** What the Admin dashboard can say about how far ahead the Schedule is loaded. */
 export type CoverageHorizon =
   | { state: 'unknown' }
   | { state: 'covered' | 'ending'; endDate: string; daysLeft: number }
   | { state: 'expired'; endDate: string | null };
 
-const DAY_MS = 86_400_000;
-
-function toUtcMs(date: string): number {
-  return Date.parse(`${date}T00:00:00Z`);
-}
-
 function nextDay(date: string): string {
-  return new Date(toUtcMs(date) + DAY_MS).toISOString().slice(0, 10);
+  return format(addDays(parseISO(date), 1), 'yyyy-MM-dd');
 }
 
-export function coverageHorizon(today: string, ranges: CoverageRange[] | null): CoverageHorizon {
+/**
+ * How far past the Reference day the Schedule vouches for (#78).
+ *
+ * Anchored on the Reference day rather than today because that is the date
+ * every Citizen surface and the evening Notification act on: on the last
+ * covered date, tomorrow is already outside Coverage and the damage has begun.
+ *
+ * - `covered` / `ending` — the Reference day is covered. `endDate` closes the
+ *   unbroken stretch from it, read through ranges that overlap or start the
+ *   day after; a gap ends the stretch, whatever lies beyond. `daysLeft` counts
+ *   the covered days still ahead, the Reference day included, and `ending`
+ *   means at most `COVERAGE_WARNING_DAYS` of them.
+ * - `expired` — the Reference day is outside Coverage: Citizens see
+ *   "calendario non ancora disponibile" and the evening Notification is
+ *   silent. `endDate` is the last covered date before it, or null if none.
+ * - `unknown` — Coverage is unreadable or empty, and per `dayStatus` neither
+ *   may be read as "nothing is covered". See ADR 0006.
+ */
+export function coverageHorizon(referenceDay: string, ranges: CoverageRange[] | null): CoverageHorizon {
   if (ranges === null || ranges.length === 0) return { state: 'unknown' };
 
-  if (!isCovered(today, ranges)) {
-    const endsBefore = ranges.map((r) => r.end_date).filter((end) => end < today);
-    const endDate = endsBefore.length > 0 ? endsBefore.reduce((a, b) => (a > b ? a : b)) : null;
-    return { state: 'expired', endDate };
+  if (!isCovered(referenceDay, ranges)) {
+    const endsBefore = ranges
+      .map((r) => r.end_date)
+      .filter((end) => end < referenceDay)
+      .sort();
+    return { state: 'expired', endDate: endsBefore[endsBefore.length - 1] ?? null };
   }
 
-  // Sweep forward from today through every range that overlaps the stretch so
-  // far or starts the day after it ends. A range starting any later leaves a
-  // gap, and a gap is where Coverage runs out — whatever lies beyond it.
-  let endDate = today;
+  let endDate = referenceDay;
   for (const r of [...ranges].sort((a, b) => a.start_date.localeCompare(b.start_date))) {
     if (r.start_date > nextDay(endDate)) break;
     if (r.end_date > endDate) endDate = r.end_date;
   }
 
-  const daysLeft = Math.round((toUtcMs(endDate) - toUtcMs(today)) / DAY_MS);
+  const daysLeft = differenceInCalendarDays(parseISO(endDate), parseISO(referenceDay)) + 1;
   return { state: daysLeft <= COVERAGE_WARNING_DAYS ? 'ending' : 'covered', endDate, daysLeft };
 }

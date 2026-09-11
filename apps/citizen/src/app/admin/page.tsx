@@ -9,7 +9,7 @@ import { createClient } from '@differenzia/core/supabase/client';
 import { wasteVisual } from '@differenzia/core/waste-style';
 import type { Locale } from '@differenzia/core/types';
 import { coverageHorizon, type CoverageHorizon } from '@/lib/coverage';
-import { romeToday } from '@/lib/reference-day';
+import { referenceDay } from '@/lib/reference-day';
 import { formatDateLocalized, getWasteTypeName } from '@/lib/utils';
 import styles from './page.admin.module.css';
 
@@ -23,7 +23,7 @@ const SECTIONS = [
 export default function AdminDashboardPage() {
   const { locale, t } = useLocale();
   const tomorrow = useTomorrowCollection(locale);
-  const horizon = coverageHorizon(romeToday(), useCoverage());
+  const horizon = coverageHorizon(referenceDay(), useCoverage());
   const [subscribers, setSubscribers] = useState<number | null>(null);
   const [publishedNews, setPublishedNews] = useState<number | null>(null);
 
@@ -100,7 +100,8 @@ export default function AdminDashboardPage() {
 
 /**
  * The Coverage end date, always on show: calm while comfortably far off, a
- * warning within `COVERAGE_WARNING_DAYS`, an error once today is uncovered.
+ * warning within `COVERAGE_WARNING_DAYS`, an error once the Reference day is
+ * uncovered.
  */
 function CoverageStat({
   horizon,
@@ -136,9 +137,9 @@ function CoverageStat({
 
   const ending = horizon.state === 'ending';
   const daysLeft =
-    horizon.daysLeft === 0
+    horizon.daysLeft === 1
       ? t('admin.coverageLastDay')
-      : `${horizon.daysLeft} ${t(horizon.daysLeft === 1 ? 'admin.coverageDayLeft' : 'admin.coverageDaysLeft')}`;
+      : t('admin.coverageDaysLeft').replace('{n}', String(horizon.daysLeft));
 
   return (
     <section
