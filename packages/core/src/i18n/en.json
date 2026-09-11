@@ -135,7 +135,16 @@
     "wasteType": "Waste type",
     "tipItLabel": "Tip (IT)",
     "saveChanges": "Save changes",
-    "noSelection": "Select an entry to edit it."
+    "noSelection": "Select an entry to edit it.",
+    "coverageCovered": "Schedule loaded until",
+    "coverageEnding": "The schedule ends on",
+    "coverageExpired": "Schedule expired on",
+    "coverageNotCovered": "The schedule does not cover today",
+    "coverageDaysLeft": "days left",
+    "coverageDayLeft": "day left",
+    "coverageLastDay": "Today is the last covered day",
+    "coverageEndingHint": "Load the next schedule before this date. After it, citizens will see “Calendar not yet available” and the evening notification will not be sent.",
+    "coverageExpiredHint": "Citizens see “Calendar not yet available” and the evening notification is not sent. Load the new schedule."
   },
   "common": {
     "loading": "Loading...",

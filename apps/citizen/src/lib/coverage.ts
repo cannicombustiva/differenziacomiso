@@ -71,3 +71,59 @@ export function dayStatus(
   if (collection && collection.wasteTypes.length > 0) return 'pickups';
   return 'no-collection';
 }
+
+/**
+ * How many days before Coverage runs out the Admin dashboard starts warning.
+ * Two months leaves time to obtain the next Busso calendar and load it.
+ */
+export const COVERAGE_WARNING_DAYS = 60;
+
+/**
+ * How far ahead of `today` the Schedule vouches for, as the Admin needs to see
+ * it (#78).
+ *
+ * - `covered` / `ending` — today is covered; `endDate` is the last date of the
+ *   unbroken stretch that starts today, and `ending` means it is at most
+ *   `COVERAGE_WARNING_DAYS` away.
+ * - `expired` — today itself is outside Coverage: Citizens already see
+ *   "calendario non ancora disponibile" and the evening Notification is silent.
+ *   `endDate` is the last covered date before today, or null if there is none.
+ * - `unknown` — Coverage is unreadable or empty; see `dayStatus` for why
+ *   neither may be read as "nothing is covered".
+ */
+export type CoverageHorizon =
+  | { state: 'unknown' }
+  | { state: 'covered' | 'ending'; endDate: string; daysLeft: number }
+  | { state: 'expired'; endDate: string | null };
+
+const DAY_MS = 86_400_000;
+
+function toUtcMs(date: string): number {
+  return Date.parse(`${date}T00:00:00Z`);
+}
+
+function nextDay(date: string): string {
+  return new Date(toUtcMs(date) + DAY_MS).toISOString().slice(0, 10);
+}
+
+export function coverageHorizon(today: string, ranges: CoverageRange[] | null): CoverageHorizon {
+  if (ranges === null || ranges.length === 0) return { state: 'unknown' };
+
+  if (!isCovered(today, ranges)) {
+    const endsBefore = ranges.map((r) => r.end_date).filter((end) => end < today);
+    const endDate = endsBefore.length > 0 ? endsBefore.reduce((a, b) => (a > b ? a : b)) : null;
+    return { state: 'expired', endDate };
+  }
+
+  // Sweep forward from today through every range that overlaps the stretch so
+  // far or starts the day after it ends. A range starting any later leaves a
+  // gap, and a gap is where Coverage runs out — whatever lies beyond it.
+  let endDate = today;
+  for (const r of [...ranges].sort((a, b) => a.start_date.localeCompare(b.start_date))) {
+    if (r.start_date > nextDay(endDate)) break;
+    if (r.end_date > endDate) endDate = r.end_date;
+  }
+
+  const daysLeft = Math.round((toUtcMs(endDate) - toUtcMs(today)) / DAY_MS);
+  return { state: daysLeft <= COVERAGE_WARNING_DAYS ? 'ending' : 'covered', endDate, daysLeft };
+}
