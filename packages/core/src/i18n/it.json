@@ -135,7 +135,15 @@
     "wasteType": "Tipo di rifiuto",
     "tipItLabel": "Consiglio (IT)",
     "saveChanges": "Salva modifiche",
-    "noSelection": "Seleziona una voce per modificarla."
+    "noSelection": "Seleziona una voce per modificarla.",
+    "coverageCovered": "Calendario caricato fino al",
+    "coverageEnding": "Il calendario termina il",
+    "coverageExpired": "Calendario scaduto — ultimo giorno coperto",
+    "coverageNotCovered": "Il calendario non copre la data di domani",
+    "coverageDaysLeft": "{n} giorni rimanenti",
+    "coverageLastDay": "Domani è l'ultimo giorno coperto",
+    "coverageEndingHint": "Carica il calendario successivo prima di questa data: da quel giorno i cittadini vedranno «Calendario non ancora disponibile» per il giorno dopo e la notifica serale non partirà.",
+    "coverageExpiredHint": "I cittadini vedono «Calendario non ancora disponibile» e la notifica serale non parte. Carica il nuovo calendario."
   },
   "common": {
     "loading": "Caricamento...",

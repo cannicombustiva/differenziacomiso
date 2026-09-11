@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { parseISO } from 'date-fns';
 import { useLocale } from '@/hooks/useLocale';
-import { useTomorrowCollection } from '@/hooks/useCollection';
+import { useCoverage, useTomorrowCollection } from '@/hooks/useCollection';
 import { createClient } from '@differenzia/core/supabase/client';
 import { wasteVisual } from '@differenzia/core/waste-style';
-import { getWasteTypeName } from '@/lib/utils';
+import type { Locale } from '@differenzia/core/types';
+import { coverageHorizon, type CoverageHorizon } from '@/lib/coverage';
+import { referenceDay } from '@/lib/reference-day';
+import { formatDateLocalized, getWasteTypeName } from '@/lib/utils';
 import styles from './page.admin.module.css';
 
 const SECTIONS = [
@@ -19,6 +23,7 @@ const SECTIONS = [
 export default function AdminDashboardPage() {
   const { locale, t } = useLocale();
   const tomorrow = useTomorrowCollection(locale);
+  const horizon = coverageHorizon(referenceDay(), useCoverage());
   const [subscribers, setSubscribers] = useState<number | null>(null);
   const [publishedNews, setPublishedNews] = useState<number | null>(null);
 
@@ -41,6 +46,8 @@ export default function AdminDashboardPage() {
     <div>
       <h1 className={styles.heading}>{t('admin.navDashboard')}</h1>
       <p className={styles.subtitle}>{t('admin.dashboardSubtitle')}</p>
+
+      <CoverageStat horizon={horizon} locale={locale} t={t} />
 
       <div className={styles.stats}>
         <div className={styles.statCard}>
@@ -88,6 +95,62 @@ export default function AdminDashboardPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+/**
+ * The Coverage end date, always on show: calm while comfortably far off, a
+ * warning within `COVERAGE_WARNING_DAYS`, an error once the Reference day is
+ * uncovered.
+ */
+function CoverageStat({
+  horizon,
+  locale,
+  t,
+}: {
+  horizon: CoverageHorizon;
+  locale: Locale;
+  t: (key: string) => string;
+}) {
+  const formatted = (date: string) => formatDateLocalized(parseISO(date), 'd MMMM yyyy', locale);
+
+  if (horizon.state === 'unknown') {
+    return (
+      <section className={styles.coverage}>
+        <div className={styles.statLabel}>{t('admin.coverageCovered')}</div>
+        <div className={styles.coverageDate}>—</div>
+      </section>
+    );
+  }
+
+  if (horizon.state === 'expired') {
+    return (
+      <section className={`${styles.coverage} ${styles.coverageExpired}`} role="alert">
+        <div className={styles.statLabel}>
+          {t(horizon.endDate ? 'admin.coverageExpired' : 'admin.coverageNotCovered')}
+        </div>
+        {horizon.endDate && <div className={styles.coverageDate}>{formatted(horizon.endDate)}</div>}
+        <p className={styles.coverageHint}>{t('admin.coverageExpiredHint')}</p>
+      </section>
+    );
+  }
+
+  const ending = horizon.state === 'ending';
+  const daysLeft =
+    horizon.daysLeft === 1
+      ? t('admin.coverageLastDay')
+      : t('admin.coverageDaysLeft').replace('{n}', String(horizon.daysLeft));
+
+  return (
+    <section
+      className={ending ? `${styles.coverage} ${styles.coverageEnding}` : styles.coverage}
+      role={ending ? 'status' : undefined}
+    >
+      <div className={styles.statLabel}>{t(ending ? 'admin.coverageEnding' : 'admin.coverageCovered')}</div>
+      <div className={styles.coverageDate}>{formatted(horizon.endDate)}</div>
+      <div className={styles.coverageMeta}>{daysLeft}</div>
+      {ending && <p className={styles.coverageHint}>{t('admin.coverageEndingHint')}</p>}
+    </section>
   );
 }
 

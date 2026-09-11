@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { dayStatus, isOutsideCoverage, type CoverageRange } from '@/lib/coverage';
+import {
+  COVERAGE_WARNING_DAYS,
+  coverageHorizon,
+  dayStatus,
+  isOutsideCoverage,
+  type CoverageRange,
+} from '@/lib/coverage';
 import type { CollectionDayGrouped, WasteType } from '@differenzia/core/types';
 
 const UMIDO: WasteType = {
@@ -114,5 +120,123 @@ describe('isOutsideCoverage', () => {
     // not silence the evening Notification for the whole seeded year.
     expect(isOutsideCoverage('2027-01-01', null)).toBe(false);
     expect(isOutsideCoverage('2027-01-01', [])).toBe(false);
+  });
+});
+
+describe('coverageHorizon', () => {
+  it('warns 60 days ahead', () => {
+    expect(COVERAGE_WARNING_DAYS).toBe(60);
+  });
+
+  // Every horizon is read from a Reference day (today + 1), never from today.
+
+  it('is covered when the end of Coverage is comfortably far away', () => {
+    // Today 11 Sep, Reference day 12 Sep: 12 Sep – 31 Dec is 111 covered days.
+    expect(coverageHorizon('2026-09-12', YEAR_2026)).toEqual({
+      state: 'covered',
+      endDate: '2026-12-31',
+      daysLeft: 111,
+    });
+  });
+
+  it('is ending within 60 days of the end of Coverage', () => {
+    expect(coverageHorizon('2026-11-16', YEAR_2026)).toEqual({
+      state: 'ending',
+      endDate: '2026-12-31',
+      daysLeft: 46,
+    });
+  });
+
+  it('starts warning exactly 60 days out, not 61', () => {
+    expect(coverageHorizon('2026-11-01', YEAR_2026)).toMatchObject({ state: 'covered', daysLeft: 61 });
+    expect(coverageHorizon('2026-11-02', YEAR_2026)).toEqual({
+      state: 'ending',
+      endDate: '2026-12-31',
+      daysLeft: 60,
+    });
+  });
+
+  it('is still ending when the Reference day is the last covered date', () => {
+    // Today 30 Dec: tonight's Notification is the last one Coverage allows.
+    expect(coverageHorizon('2026-12-31', YEAR_2026)).toEqual({
+      state: 'ending',
+      endDate: '2026-12-31',
+      daysLeft: 1,
+    });
+  });
+
+  it('is expired on the end date itself, because the Reference day is already uncovered', () => {
+    // Today 31 Dec, Reference day 1 Jan 2027: Citizens already see "calendario
+    // non ancora disponibile" for tomorrow and tonight's Notification is
+    // silent. The harm has begun, so this is an error, not a warning.
+    expect(coverageHorizon('2027-01-01', YEAR_2026)).toEqual({
+      state: 'expired',
+      endDate: '2026-12-31',
+    });
+  });
+
+  it('reads through a range that starts the day after another ends', () => {
+    // The healthy renewal: 2027 imported before 2026 runs out. The Admin has
+    // done their job, so the horizon is the end of 2027, not a false alarm.
+    const renewed: CoverageRange[] = [
+      ...YEAR_2026,
+      { start_date: '2027-01-01', end_date: '2027-12-31', source: 'import' },
+    ];
+    expect(coverageHorizon('2026-11-16', renewed)).toEqual({
+      state: 'covered',
+      endDate: '2027-12-31',
+      daysLeft: 411,
+    });
+  });
+
+  it('reads through overlapping ranges', () => {
+    const overlapping: CoverageRange[] = [
+      { start_date: '2026-07-01', end_date: '2027-06-30', source: 'import' },
+      ...YEAR_2026,
+    ];
+    expect(coverageHorizon('2026-11-16', overlapping)).toMatchObject({ endDate: '2027-06-30' });
+  });
+
+  it('stops at a gap: an uncovered stretch is where Coverage ends', () => {
+    const gapped: CoverageRange[] = [
+      { start_date: '2026-01-01', end_date: '2026-06-30', source: 'seed' },
+      { start_date: '2026-09-01', end_date: '2026-12-31', source: 'import' },
+    ];
+    expect(coverageHorizon('2026-05-16', gapped)).toEqual({
+      state: 'ending',
+      endDate: '2026-06-30',
+      daysLeft: 46,
+    });
+    expect(coverageHorizon('2026-07-15', gapped)).toEqual({
+      state: 'expired',
+      endDate: '2026-06-30',
+    });
+  });
+
+  it('is expired with no end date when Coverage only starts in the future', () => {
+    const futureOnly: CoverageRange[] = [
+      { start_date: '2027-01-01', end_date: '2027-12-31', source: 'import' },
+    ];
+    expect(coverageHorizon('2026-12-01', futureOnly)).toEqual({ state: 'expired', endDate: null });
+  });
+
+  it('is covered when Coverage starts on the Reference day itself', () => {
+    // Today 31 Dec is uncovered, but tomorrow is what Citizens and tonight's
+    // Notification act on — and tomorrow is covered.
+    const futureOnly: CoverageRange[] = [
+      { start_date: '2027-01-01', end_date: '2027-12-31', source: 'import' },
+    ];
+    expect(coverageHorizon('2027-01-01', futureOnly)).toEqual({
+      state: 'covered',
+      endDate: '2027-12-31',
+      daysLeft: 365,
+    });
+  });
+
+  it('is unknown when Coverage is unreadable or empty', () => {
+    // Same rule as dayStatus: Coverage may withhold a claim, never manufacture
+    // one. An empty table is the deploy window, not a town with no calendar.
+    expect(coverageHorizon('2026-09-11', null)).toEqual({ state: 'unknown' });
+    expect(coverageHorizon('2026-09-11', [])).toEqual({ state: 'unknown' });
   });
 });
