@@ -26,7 +26,7 @@ export function getAdminAuthError(error: unknown): { status: 401 | 403 | 500; me
   return { status: 401, message: 'Unauthorized' };
 }
 
-export async function requireAdmin(): Promise<{ email: string }> {
+export async function requireAdmin(): Promise<{ id: string; email: string }> {
   const supabase = createServerSupabaseClient();
   const { data: { session } } = await supabase.auth.getSession();
 
@@ -50,5 +50,5 @@ export async function requireAdmin(): Promise<{ email: string }> {
     throw new AdminAuthError('Forbidden', 403);
   }
 
-  return { email };
+  return { id: data.id, email };
 }

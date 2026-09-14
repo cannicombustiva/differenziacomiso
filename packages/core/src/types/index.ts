@@ -48,6 +48,8 @@ export interface PushSubscriptionRecord {
   endpoint: string;
   keys_p256dh: string;
   keys_auth: string;
+  /** Set only for a device subscribed from the admin panel (#79). */
+  admin_id: string | null;
   created_at: string;
 }
 

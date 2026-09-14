@@ -143,7 +143,12 @@
     "coverageDaysLeft": "{n} giorni rimanenti",
     "coverageLastDay": "Domani è l'ultimo giorno coperto",
     "coverageEndingHint": "Carica il calendario successivo prima di questa data: da quel giorno i cittadini vedranno «Calendario non ancora disponibile» per il giorno dopo e la notifica serale non partirà.",
-    "coverageExpiredHint": "I cittadini vedono «Calendario non ancora disponibile» e la notifica serale non parte. Carica il nuovo calendario."
+    "coverageExpiredHint": "I cittadini vedono «Calendario non ancora disponibile» e la notifica serale non parte. Carica il nuovo calendario.",
+    "adminDeviceTitle": "Avvisi calendario su questo dispositivo",
+    "adminDeviceHint": "Ricevi una notifica serale quando il calendario sta per scadere, anche se non apri il pannello.",
+    "adminDeviceRegister": "Registra questo dispositivo",
+    "adminDeviceRegistered": "Dispositivo registrato",
+    "adminDeviceUnsupported": "Questo browser non supporta le notifiche push."
   },
   "common": {
     "loading": "Caricamento...",

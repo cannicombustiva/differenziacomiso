@@ -42,7 +42,12 @@ async function removeSubscriptionFromServer(endpoint: string) {
   }
 }
 
-export function usePushSubscription() {
+/**
+ * @param subscribeUrl where the Subscription is saved. The Citizen app uses the
+ * default; the admin panel passes `/api/push/subscribe-admin` so the row is
+ * tagged as an Admin device (#79).
+ */
+export function usePushSubscription(subscribeUrl: string = '/api/push/subscribe') {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
 
@@ -79,19 +84,23 @@ export function usePushSubscription() {
     });
   }, []);
 
-  const subscribe = useCallback(async () => {
-    if (!isSupported) return;
+  const subscribe = useCallback(async (): Promise<boolean> => {
+    if (!isSupported) return false;
 
     let subscription: PushSubscription | null = null;
+    let createdHere = false;
     try {
       const registration = await navigator.serviceWorker.ready;
       const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
+      // An Admin may register a device that is already a Citizen Subscription;
+      // a failed save must not tear that existing one down.
+      createdHere = !(await registration.pushManager.getSubscription());
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidKey),
       });
 
-      const res = await fetch('/api/push/subscribe', {
+      const res = await fetch(subscribeUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(subscription),
@@ -102,13 +111,15 @@ export function usePushSubscription() {
       }
 
       setIsSubscribed(true);
+      return true;
     } catch (err) {
-      if (subscription) {
+      if (subscription && createdHere) {
         await subscription.unsubscribe().catch(() => {});
       }
       console.error('Failed to subscribe:', err);
+      return false;
     }
-  }, [isSupported]);
+  }, [isSupported, subscribeUrl]);
 
   const unsubscribe = useCallback(async () => {
     if (!isSupported) return;

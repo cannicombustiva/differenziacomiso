@@ -25,14 +25,27 @@ const failing = new Set<string>();
 /** Minimal stand-in for the Supabase query builder the route uses. */
 function fakeClient() {
   const from = (table: string) => {
-    const result = failing.has(table)
-      ? Promise.resolve({ data: null, error: { message: `${table} read failed` } })
-      : Promise.resolve({ data: tables[table] ?? [], error: null });
+    // Only `not(col, 'is', null)` is honoured; other filters are irrelevant to
+    // the rows each test seeds.
+    const notNull: string[] = [];
+    const result = () =>
+      failing.has(table)
+        ? Promise.resolve({ data: null, error: { message: `${table} read failed` } })
+        : Promise.resolve({
+            data: ((tables[table] ?? []) as Record<string, unknown>[]).filter((row) =>
+              notNull.every((col) => row[col] != null)
+            ),
+            error: null,
+          });
     const query = {
       select: () => query,
       eq: () => query,
+      not: (col: string, op: string, value: unknown) => {
+        if (op === 'is' && value === null) notNull.push(col);
+        return query;
+      },
       delete: () => query,
-      then: (...args: Parameters<Promise<unknown>['then']>) => result.then(...args),
+      then: (...args: Parameters<Promise<unknown>['then']>) => result().then(...args),
     };
     return query;
   };
@@ -45,7 +58,21 @@ const SUBSCRIBER = {
   endpoint: 'https://fcm.googleapis.com/fcm/send/abc',
   keys_p256dh: 'p256dh-key',
   keys_auth: 'auth-key',
+  admin_id: null,
 };
+
+const ADMIN_DEVICE = {
+  endpoint: 'https://fcm.googleapis.com/fcm/send/admin',
+  keys_p256dh: 'admin-p256dh-key',
+  keys_auth: 'admin-auth-key',
+  admin_id: 'admin-1',
+};
+
+/** The bodies pushed to one endpoint, in send order. */
+const bodiesSentTo = (endpoint: string) =>
+  sendPushNotification.mock.calls
+    .filter(([sub]) => (sub as { endpoint: string }).endpoint === endpoint)
+    .map(([, payload]) => (payload as { body: string }).body);
 
 const YEAR_2026 = [{ start_date: '2026-01-01', end_date: '2026-12-31', source: 'seed' }];
 
@@ -155,5 +182,80 @@ describe('GET /api/cron/daily-notification', () => {
 
     expect(body.skipped).toBe(true);
     expect(sendPushNotification).not.toHaveBeenCalled();
+  });
+
+  describe('Coverage-expiry warning to Admin devices', () => {
+    it('sends no warning when no Admin device is subscribed', async () => {
+      referenceDay.mockReturnValue('2026-11-20');
+
+      const body = await (await get()).json();
+
+      expect(sendPushNotification).toHaveBeenCalledTimes(1);
+      expect(bodiesSentTo(SUBSCRIBER.endpoint)).toEqual([body.message]);
+      expect(body.coverageWarning).toBeNull();
+    });
+
+    it('sends no warning while Coverage is comfortably far off', async () => {
+      tables.push_subscriptions = [SUBSCRIBER, ADMIN_DEVICE];
+
+      const body = await (await get()).json();
+
+      expect(bodiesSentTo(ADMIN_DEVICE.endpoint)).toEqual([body.message]);
+      expect(body.coverageWarning).toBeNull();
+    });
+
+    it('warns Admin devices only, after the Citizen push, when Coverage is ending', async () => {
+      referenceDay.mockReturnValue('2026-11-20');
+      tables.push_subscriptions = [SUBSCRIBER, ADMIN_DEVICE];
+
+      const body = await (await get()).json();
+
+      expect(bodiesSentTo(SUBSCRIBER.endpoint)).toEqual([body.message]);
+      expect(bodiesSentTo(ADMIN_DEVICE.endpoint)).toEqual([
+        body.message,
+        'Calendario in scadenza il 31 dicembre 2026',
+      ]);
+      expect(body.coverageWarning).toEqual({
+        message: 'Calendario in scadenza il 31 dicembre 2026',
+        sent: 1,
+        failed: 0,
+      });
+    });
+
+    it('still warns Admin devices when Coverage has expired and the Citizen push is skipped', async () => {
+      referenceDay.mockReturnValue('2027-01-01');
+      tables.push_subscriptions = [SUBSCRIBER, ADMIN_DEVICE];
+
+      const body = await (await get()).json();
+
+      expect(body.skipped).toBe(true);
+      expect(bodiesSentTo(SUBSCRIBER.endpoint)).toEqual([]);
+      expect(bodiesSentTo(ADMIN_DEVICE.endpoint)).toEqual(['Calendario scaduto il 31 dicembre 2026']);
+      expect(body.coverageWarning.sent).toBe(1);
+    });
+
+    it('sends no warning when Coverage cannot be read', async () => {
+      referenceDay.mockReturnValue('2026-11-20');
+      failing.add('schedule_coverage');
+      tables.push_subscriptions = [SUBSCRIBER, ADMIN_DEVICE];
+
+      const body = await (await get()).json();
+
+      expect(bodiesSentTo(ADMIN_DEVICE.endpoint)).toEqual([body.message]);
+      expect(body.coverageWarning).toBeNull();
+    });
+
+    it('sends the warning at most once a day: the off-season DST invocation is silent', async () => {
+      // Both UTC schedules hit this route daily; only the one inside the 20:00
+      // Rome window may send, and the warning rides that same gate.
+      referenceDay.mockReturnValue('2026-11-20');
+      tables.push_subscriptions = [SUBSCRIBER, ADMIN_DEVICE];
+
+      await get();
+      isWithinSendWindow.mockReturnValue(false);
+      await get();
+
+      expect(bodiesSentTo(ADMIN_DEVICE.endpoint).filter((b) => b.startsWith('Calendario'))).toHaveLength(1);
+    });
   });
 });

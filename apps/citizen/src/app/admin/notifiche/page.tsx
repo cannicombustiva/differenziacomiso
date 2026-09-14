@@ -3,8 +3,42 @@
 import { useState, useEffect } from 'react';
 import { useLocale } from '@/hooks/useLocale';
 import { useToast } from '@/components/ui/Toast/Toast';
+import { usePushSubscription } from '@/hooks/usePushSubscription';
 import { formatSendResult } from '@/lib/send-result';
 import styles from './page.module.css';
+
+/**
+ * Registers the current device as an Admin device, so the daily cron can push
+ * the Coverage-expiry warning to it (#79). Always offered: a device already
+ * subscribed as a Citizen is only tagged once it is registered here.
+ */
+function AdminDeviceCard() {
+  const { t } = useLocale();
+  const { showToast } = useToast();
+  const { isSupported, subscribe } = usePushSubscription('/api/push/subscribe-admin');
+  const [state, setState] = useState<'idle' | 'saving' | 'registered'>('idle');
+
+  const handleRegister = async () => {
+    setState('saving');
+    const ok = await subscribe();
+    setState(ok ? 'registered' : 'idle');
+    showToast(ok ? t('admin.adminDeviceRegistered') : t('common.error'), ok ? 'success' : 'error');
+  };
+
+  return (
+    <div className={styles.formCard}>
+      <label className={styles.label}>{t('admin.adminDeviceTitle')}</label>
+      <p className={styles.previewHint}>{t(isSupported ? 'admin.adminDeviceHint' : 'admin.adminDeviceUnsupported')}</p>
+      {isSupported && (
+        <button className={styles.sendBtn} onClick={handleRegister} disabled={state !== 'idle'}>
+          {state === 'saving'
+            ? t('common.loading')
+            : t(state === 'registered' ? 'admin.adminDeviceRegistered' : 'admin.adminDeviceRegister')}
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function AdminNotifichePage() {
   const { t } = useLocale();
@@ -129,6 +163,8 @@ export default function AdminNotifichePage() {
             <p className={styles.previewHint}>{t('admin.previewHint')}</p>
           </div>
         </div>
+
+        <AdminDeviceCard />
       </div>
     </div>
   );
