@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
-import { sendPushNotification } from '@/lib/push';
-import { isDeadSubscription } from '@/lib/dead-subscription';
+import { sendToAllSubscriptions } from '@/lib/push-fan-out';
 import { referenceDay } from '@/lib/reference-day';
 import { isWithinSendWindow } from '@/lib/send-window';
 import { buildNotificationMessage, type ScheduleRow } from '@/lib/notification-message';
@@ -59,30 +58,10 @@ export async function GET(request: Request) {
   // Fetch all subscriptions
   const { data: subscriptions } = await supabase.from('push_subscriptions').select('*');
 
-  const payload = {
+  const { sent, failed } = await sendToAllSubscriptions(supabase, subscriptions ?? [], {
     title: 'DifferenziaComiso',
     body: notifBody,
-    icon: '/icons/icon-192x192.png',
-    url: '/',
-  };
-
-  let sent = 0;
-  let failed = 0;
-
-  for (const sub of subscriptions || []) {
-    try {
-      await sendPushNotification(
-        { endpoint: sub.endpoint, keys: { p256dh: sub.keys_p256dh, auth: sub.keys_auth } },
-        payload
-      );
-      sent++;
-    } catch (err) {
-      failed++;
-      if (isDeadSubscription(err)) {
-        await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
-      }
-    }
-  }
+  });
 
   return NextResponse.json({ date: tomorrow, message: notifBody, sent, failed });
 }

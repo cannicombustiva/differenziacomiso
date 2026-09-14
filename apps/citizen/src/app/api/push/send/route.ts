@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
 import { getAdminAuthError, requireAdmin } from '@/lib/admin';
-import { sendPushNotification } from '@/lib/push';
-import { isDeadSubscription } from '@/lib/dead-subscription';
+import { sendToAllSubscriptions } from '@/lib/push-fan-out';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,33 +34,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to fetch subscriptions' }, { status: 500 });
     }
 
-    const payload = {
+    const { sent, failed } = await sendToAllSubscriptions(supabase, subscriptions ?? [], {
       title,
       body: text,
-      icon: '/icons/icon-192x192.png',
-      url: '/',
-    };
-
-    let sent = 0;
-    let failed = 0;
-
-    for (const sub of subscriptions || []) {
-      try {
-        await sendPushNotification(
-          {
-            endpoint: sub.endpoint,
-            keys: { p256dh: sub.keys_p256dh, auth: sub.keys_auth },
-          },
-          payload
-        );
-        sent++;
-      } catch (err) {
-        failed++;
-        if (isDeadSubscription(err)) {
-          await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
-        }
-      }
-    }
+    });
 
     return NextResponse.json({ sent, failed });
   } catch (err) {
