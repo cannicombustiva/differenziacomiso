@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
 import { getAdminAuthError, requireAdmin } from '@/lib/admin';
 import { sendPushNotification } from '@/lib/push';
+import { isDeadSubscription } from '@/lib/dead-subscription';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,8 +57,7 @@ export async function POST(request: Request) {
         sent++;
       } catch (err) {
         failed++;
-        // Remove expired/invalid subscriptions
-        if ((err as { statusCode?: number })?.statusCode === 410) {
+        if (isDeadSubscription(err)) {
           await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
         }
       }

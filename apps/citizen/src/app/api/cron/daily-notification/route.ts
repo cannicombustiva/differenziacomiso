@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
 import { sendPushNotification } from '@/lib/push';
+import { isDeadSubscription } from '@/lib/dead-subscription';
 import { referenceDay } from '@/lib/reference-day';
 import { isWithinSendWindow } from '@/lib/send-window';
 import { buildNotificationMessage, type ScheduleRow } from '@/lib/notification-message';
@@ -77,7 +78,7 @@ export async function GET(request: Request) {
       sent++;
     } catch (err) {
       failed++;
-      if ((err as { statusCode?: number })?.statusCode === 410) {
+      if (isDeadSubscription(err)) {
         await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
       }
     }
