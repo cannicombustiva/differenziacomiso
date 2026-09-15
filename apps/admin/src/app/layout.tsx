@@ -4,6 +4,8 @@ import I18nProvider from '@differenzia/core/i18n-provider';
 import { ToastProvider } from '@differenzia/ui/toast';
 import ServiceWorkerRegistrar from '@differenzia/ui/service-worker-registrar';
 import AdminShell from '@/components/AdminShell/AdminShell';
+import itMessages from '@/i18n/it.json';
+import enMessages from '@/i18n/en.json';
 
 export const metadata: Metadata = {
   title: 'DifferenziaComiso · Admin',
@@ -25,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
       </head>
       <body>
-        <I18nProvider>
+        <I18nProvider messages={{ it: itMessages, en: enMessages }}>
           <ToastProvider>
             <AdminShell>{children}</AdminShell>
             <ServiceWorkerRegistrar />
