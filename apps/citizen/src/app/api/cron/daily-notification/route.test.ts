@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 vi.mock('server-only', () => ({}));
 
 const sendPushNotification = vi.fn().mockResolvedValue(undefined);
-vi.mock('@/lib/push', () => ({
+vi.mock('@differenzia/core/push', () => ({
   sendPushNotification: (...args: unknown[]) => sendPushNotification(...args),
 }));
 

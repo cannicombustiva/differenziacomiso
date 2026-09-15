@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import '@differenzia/ui/tokens.css';
 import '@/styles/globals.css';
 import Navbar from '@/components/Navbar/Navbar';
 import I18nProvider from '@differenzia/core/i18n-provider';

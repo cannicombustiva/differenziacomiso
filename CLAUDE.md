@@ -268,8 +268,8 @@ differenzia-comiso/                 # pnpm workspace root
 │       │   │                       #   /notizie, /info, /admin/*, /api/*
 │       │   ├── components/         # WasteCard, Navbar, SearchBar, ...
 │       │   ├── hooks/              # useCollection, usePushSubscription
-│       │   ├── lib/                # app-only helpers (offline-cache, push, utils, ...)
-│       │   ├── styles/globals.css  # CSS variables (colors, fonts)
+│       │   ├── lib/                # app-only helpers (offline-cache, coverage-warning, utils, ...)
+│       │   ├── styles/globals.css  # Citizen app shell (tokens in @differenzia/ui)
 │       │   └── middleware.ts
 │       ├── next.config.js          # also loads the root .env.local
 │       ├── tsconfig.json
@@ -283,11 +283,12 @@ differenzia-comiso/                 # pnpm workspace root
 │   │       ├── coverage.ts         # dayStatus, coverageHorizon (ADR 0006)
 │   │       ├── reference-day.ts    # today + 1, Europe/Rome
 │   │       ├── dates.ts            # formatDateLocalized
+│   │       ├── push.ts, push-fan-out.ts, save-subscription.ts  # server-side Web Push
 │   │       ├── types/index.ts      # TypeScript interfaces
 │   │       ├── i18n.ts + i18n/{it,en}.json + i18n-provider.tsx  # useLocale
 │   │       └── supabase/{client,server,admin}.ts
 │   └── ui/                         # React components shared by both apps, @differenzia/ui/*
-│       └── src/                    # Toast, Modal, CalendarGrid (CSS Modules co-located)
+│       └── src/                    # tokens.css (CSS variables), Toast, Modal, CalendarGrid
 ├── supabase/                       # single owner of the database
 │   ├── migrations/                 # SQL migration files
 │   └── seed.sql                    # waste_types + 2026 schedule

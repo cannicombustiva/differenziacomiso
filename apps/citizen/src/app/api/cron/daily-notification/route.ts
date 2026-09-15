@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
-import { NOTIFICATION_TITLE, sendToAllSubscriptions } from '@/lib/push-fan-out';
+import { NOTIFICATION_TITLE, sendToAllSubscriptions } from '@differenzia/core/push-fan-out';
 import { referenceDay } from '@differenzia/core/reference-day';
 import { isWithinSendWindow } from '@/lib/send-window';
 import { buildNotificationMessage, type ScheduleRow } from '@/lib/notification-message';

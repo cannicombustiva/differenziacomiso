@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
 import { getAdminAuthError, requireAdmin } from '@/lib/admin';
-import { saveSubscriptionRequest } from '@/lib/save-subscription';
+import { saveSubscriptionRequest } from '@differenzia/core/save-subscription';
 
 export const dynamic = 'force-dynamic';
 

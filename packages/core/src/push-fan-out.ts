@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { PushSubscriptionRecord } from '@differenzia/core/types';
-import { sendPushNotification } from '@/lib/push';
-import { isDeadSubscription } from '@/lib/dead-subscription';
+import type { PushSubscriptionRecord } from './types';
+import { sendPushNotification } from './push';
+import { isDeadSubscription } from './dead-subscription';
 
 /** The `push_subscriptions` columns a send needs. */
 export type SubscriptionRow = Pick<PushSubscriptionRecord, 'endpoint' | 'keys_p256dh' | 'keys_auth'>;
