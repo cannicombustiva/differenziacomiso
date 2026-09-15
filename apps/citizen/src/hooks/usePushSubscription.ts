@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { urlBase64ToUint8Array } from '@/lib/utils';
+import { subscribeDevice } from '@/lib/subscribe-device';
 
 const PENDING_UNSUBSCRIBE_ENDPOINTS_KEY = 'pendingPushUnsubscribeEndpoints';
 
@@ -42,7 +43,15 @@ async function removeSubscriptionFromServer(endpoint: string) {
   }
 }
 
-export function usePushSubscription() {
+/** Who a Subscription is for: a Citizen device, or an Admin device (#79). */
+export type PushAudience = 'citizen' | 'admin';
+
+const SUBSCRIBE_URL: Record<PushAudience, string> = {
+  citizen: '/api/push/subscribe',
+  admin: '/api/push/subscribe-admin',
+};
+
+export function usePushSubscription(audience: PushAudience = 'citizen') {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
 
@@ -79,36 +88,31 @@ export function usePushSubscription() {
     });
   }, []);
 
-  const subscribe = useCallback(async () => {
-    if (!isSupported) return;
+  const subscribe = useCallback(async (): Promise<boolean> => {
+    if (!isSupported) return false;
 
-    let subscription: PushSubscription | null = null;
+    let registration: ServiceWorkerRegistration;
     try {
-      const registration = await navigator.serviceWorker.ready;
-      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidKey),
-      });
-
-      const res = await fetch('/api/push/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(subscription),
-      });
-
-      if (!res.ok) {
-        throw new Error('Server failed to save subscription');
-      }
-
-      setIsSubscribed(true);
+      registration = await navigator.serviceWorker.ready;
     } catch (err) {
-      if (subscription) {
-        await subscription.unsubscribe().catch(() => {});
-      }
       console.error('Failed to subscribe:', err);
+      return false;
     }
-  }, [isSupported]);
+    const ok = await subscribeDevice(
+      registration.pushManager,
+      urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
+      async (subscription) => {
+        const res = await fetch(SUBSCRIBE_URL[audience], {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(subscription),
+        });
+        if (!res.ok) throw new Error('Server failed to save subscription');
+      }
+    );
+    if (ok) setIsSubscribed(true);
+    return ok;
+  }, [isSupported, audience]);
 
   const unsubscribe = useCallback(async () => {
     if (!isSupported) return;

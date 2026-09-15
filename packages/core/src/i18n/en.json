@@ -143,7 +143,12 @@
     "coverageDaysLeft": "{n} days left",
     "coverageLastDay": "Tomorrow is the last covered day",
     "coverageEndingHint": "Load the next schedule before this date: from that day on, citizens will see “Calendar not yet available” for the following day and the evening notification will not be sent.",
-    "coverageExpiredHint": "Citizens see “Calendar not yet available” and the evening notification is not sent. Load the new schedule."
+    "coverageExpiredHint": "Citizens see “Calendar not yet available” and the evening notification is not sent. Load the new schedule.",
+    "adminDeviceTitle": "Schedule alerts on this device",
+    "adminDeviceHint": "Get an evening notification when the schedule is about to run out, even if you never open the panel.",
+    "adminDeviceRegister": "Register this device",
+    "adminDeviceRegistered": "Device registered",
+    "adminDeviceUnsupported": "This browser does not support push notifications."
   },
   "common": {
     "loading": "Loading...",

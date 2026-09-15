@@ -63,6 +63,17 @@
   color: var(--color-text-secondary);
   margin-bottom: 7px;
 }
+.cardTitle {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+.cardHint {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
 .textarea {
   width: 100%;
   min-height: 100px;

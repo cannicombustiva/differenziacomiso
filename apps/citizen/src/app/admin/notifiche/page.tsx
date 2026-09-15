@@ -3,8 +3,69 @@
 import { useState, useEffect } from 'react';
 import { useLocale } from '@/hooks/useLocale';
 import { useToast } from '@/components/ui/Toast/Toast';
+import { usePushSubscription } from '@/hooks/usePushSubscription';
 import { formatSendResult } from '@/lib/send-result';
 import styles from './page.module.css';
+
+type AdminDeviceState = 'checking' | 'unregistered' | 'saving' | 'registered';
+
+/** Whether this browser's current Subscription is tagged as an Admin device. */
+async function checkAdminDevice(): Promise<boolean> {
+  const registration = await navigator.serviceWorker.ready;
+  const subscription = await registration.pushManager.getSubscription();
+  if (!subscription) return false;
+  const res = await fetch(`/api/push/subscribe-admin?endpoint=${encodeURIComponent(subscription.endpoint)}`);
+  if (!res.ok) throw new Error('admin device lookup failed');
+  return (await res.json()).registered === true;
+}
+
+/**
+ * Registers the current device as an Admin device, so the daily cron can push
+ * the Coverage-expiry warning to it (#79). Shows the device's real state on
+ * load: unsubscribing from /info deletes the row and silently drops the tag.
+ */
+function AdminDeviceCard() {
+  const { t } = useLocale();
+  const { showToast } = useToast();
+  const { isSupported, subscribe } = usePushSubscription('admin');
+  const [state, setState] = useState<AdminDeviceState>('checking');
+
+  useEffect(() => {
+    if (!isSupported) return;
+    checkAdminDevice()
+      .then((registered) => setState(registered ? 'registered' : 'unregistered'))
+      .catch((error) => {
+        console.error('Failed to check admin device', error);
+        setState('unregistered');
+      });
+  }, [isSupported]);
+
+  const handleRegister = async () => {
+    setState('saving');
+    const ok = await subscribe();
+    setState(ok ? 'registered' : 'unregistered');
+    showToast(ok ? t('admin.adminDeviceRegistered') : t('common.error'), ok ? 'success' : 'error');
+  };
+
+  const buttonText: Record<AdminDeviceState, string> = {
+    checking: t('common.loading'),
+    saving: t('common.loading'),
+    unregistered: t('admin.adminDeviceRegister'),
+    registered: t('admin.adminDeviceRegistered'),
+  };
+
+  return (
+    <section className={styles.formCard}>
+      <h2 className={styles.cardTitle}>{t('admin.adminDeviceTitle')}</h2>
+      <p className={styles.cardHint}>{t(isSupported ? 'admin.adminDeviceHint' : 'admin.adminDeviceUnsupported')}</p>
+      {isSupported && (
+        <button className={styles.sendBtn} onClick={handleRegister} disabled={state !== 'unregistered'}>
+          {buttonText[state]}
+        </button>
+      )}
+    </section>
+  );
+}
 
 export default function AdminNotifichePage() {
   const { t } = useLocale();
@@ -129,6 +190,8 @@ export default function AdminNotifichePage() {
             <p className={styles.previewHint}>{t('admin.previewHint')}</p>
           </div>
         </div>
+
+        <AdminDeviceCard />
       </div>
     </div>
   );
