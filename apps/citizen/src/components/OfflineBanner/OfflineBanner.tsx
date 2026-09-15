@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { getLastRefreshed } from '@/lib/offline-cache';
 

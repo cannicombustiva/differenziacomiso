@@ -26,6 +26,17 @@ export function useTranslation() {
   return useContext(I18nContext);
 }
 
+/** The active locale, its setter, a toggle between it and en, and `t`. */
+export function useLocale() {
+  const { locale, setLocale, t } = useTranslation();
+
+  const toggleLocale = () => {
+    setLocale(locale === 'it' ? 'en' : 'it');
+  };
+
+  return { locale, setLocale, toggleLocale, t };
+}
+
 export function getTranslation(locale: Locale) {
   return function t(key: string): string {
     const keys = key.split('.');

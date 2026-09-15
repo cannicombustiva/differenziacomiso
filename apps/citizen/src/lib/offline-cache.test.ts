@@ -9,7 +9,7 @@ import {
   COVERAGE_KEY,
   type StorageLike,
 } from '@/lib/offline-cache';
-import { dayStatus, type CoverageRange } from '@/lib/coverage';
+import { dayStatus, type CoverageRange } from '@differenzia/core/coverage';
 
 function fakeStore(seed: Record<string, string> = {}): StorageLike & { keys: () => string[] } {
   const map = new Map<string, string>(Object.entries(seed));

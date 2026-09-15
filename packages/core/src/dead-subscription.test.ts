@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isDeadSubscription } from '@/lib/dead-subscription';
+import { isDeadSubscription } from './dead-subscription';
 
 describe('isDeadSubscription', () => {
   it('treats a 410 Gone from the push service as a dead subscription', () => {

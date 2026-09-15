@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import { usePushSubscription } from '@/hooks/usePushSubscription';
 import ThemeSwitcher from '@/components/ThemeSwitcher/ThemeSwitcher';
 import { getAppVersion } from '@/lib/app-version';

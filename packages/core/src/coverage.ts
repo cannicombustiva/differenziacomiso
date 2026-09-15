@@ -1,5 +1,5 @@
 import { addDays, differenceInCalendarDays, format, parseISO } from 'date-fns';
-import type { CollectionDayGrouped } from '@differenzia/core/types';
+import type { CollectionDayGrouped } from './types';
 
 /** One row of `schedule_coverage`: a date range the Schedule vouches for. */
 export type CoverageRange = {

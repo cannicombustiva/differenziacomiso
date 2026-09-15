@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useLocale } from '@/hooks/useLocale';
-import { useToast } from '@/components/ui/Toast/Toast';
+import { useLocale } from '@differenzia/core/i18n';
+import { useToast } from '@differenzia/ui/toast';
 import { usePushSubscription } from '@/hooks/usePushSubscription';
 import { formatSendResult } from '@/lib/send-result';
 import styles from './page.module.css';

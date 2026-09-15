@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
 import { getAdminAuthError, requireAdmin } from '@/lib/admin';
-import { NOTIFICATION_TITLE, sendToAllSubscriptions } from '@/lib/push-fan-out';
+import { NOTIFICATION_TITLE, sendToAllSubscriptions } from '@differenzia/core/push-fan-out';
 
 export const dynamic = 'force-dynamic';
 

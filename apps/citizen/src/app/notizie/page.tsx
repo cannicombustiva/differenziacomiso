@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import { createClient } from '@differenzia/core/supabase/client';
 import { format } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';

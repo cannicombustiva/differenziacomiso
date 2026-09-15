@@ -3,11 +3,11 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 const sendPushNotification = vi.fn();
 
-vi.mock('@/lib/push', () => ({
+vi.mock('./push', () => ({
   sendPushNotification: (...args: unknown[]) => sendPushNotification(...args),
 }));
 
-import { sendToAllSubscriptions } from '@/lib/push-fan-out';
+import { sendToAllSubscriptions } from './push-fan-out';
 
 function fakeSupabase() {
   const eq = vi.fn().mockResolvedValue({ error: null });

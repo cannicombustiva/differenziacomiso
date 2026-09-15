@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createClient } from '@differenzia/core/supabase/client';
 import { useRouter } from 'next/navigation';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import {
   loginReducer,
   initialLoginState,

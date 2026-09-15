@@ -1,6 +1,6 @@
 import { parseISO } from 'date-fns';
-import type { CoverageHorizon } from '@/lib/coverage';
-import { formatDateLocalized } from '@/lib/utils';
+import type { CoverageHorizon } from '@differenzia/core/coverage';
+import { formatDateLocalized } from '@differenzia/core/dates';
 
 /**
  * The Italian push body warning Admin devices that Coverage is running out

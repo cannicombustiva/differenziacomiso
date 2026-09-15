@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { referenceDay, romeToday } from '@/lib/reference-day';
+import { referenceDay, romeToday } from './reference-day';
 
 describe('romeToday', () => {
   it('returns the current calendar day in Europe/Rome', () => {

@@ -1,8 +1,7 @@
 'use client';
 
 import type { WasteType, Locale } from '@differenzia/core/types';
-import { getWasteTypeName } from '@/lib/utils';
-import { wasteVisual } from '@differenzia/core/waste-style';
+import { wasteVisual, getWasteTypeName } from '@differenzia/core/waste-style';
 import WasteIcon from '@/components/WasteIcon/WasteIcon';
 import styles from './WasteCard.module.css';
 

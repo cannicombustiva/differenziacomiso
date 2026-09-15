@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 vi.mock('server-only', () => ({}));
 
 const sendPushNotification = vi.fn().mockResolvedValue(undefined);
-vi.mock('@/lib/push', () => ({
+vi.mock('@differenzia/core/push', () => ({
   sendPushNotification: (...args: unknown[]) => sendPushNotification(...args),
 }));
 
@@ -13,7 +13,7 @@ vi.mock('@/lib/send-window', () => ({
 }));
 
 const referenceDay = vi.fn().mockReturnValue('2026-06-17');
-vi.mock('@/lib/reference-day', () => ({
+vi.mock('@differenzia/core/reference-day', () => ({
   referenceDay: () => referenceDay(),
 }));
 

@@ -2,11 +2,10 @@
 
 import Link from 'next/link';
 import { parseISO } from 'date-fns';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import { useTomorrowCollection, useWeekCollections, useCoverage } from '@/hooks/useCollection';
-import { dayStatus } from '@/lib/coverage';
-import { getWasteTypeName } from '@/lib/utils';
-import { wasteVisual } from '@differenzia/core/waste-style';
+import { dayStatus } from '@differenzia/core/coverage';
+import { wasteVisual, getWasteTypeName } from '@differenzia/core/waste-style';
 import WasteCard from '@/components/WasteCard/WasteCard';
 import WasteIcon from '@/components/WasteIcon/WasteIcon';
 import styles from './page.module.css';

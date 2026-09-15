@@ -15,10 +15,9 @@ import {
 } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
 import type { CollectionDayGrouped, Locale, WasteType } from '@differenzia/core/types';
-import { getWasteTypeName } from '@/lib/utils';
-import { wasteVisual } from '@differenzia/core/waste-style';
-import { referenceDay } from '@/lib/reference-day';
-import { dayStatus, type CoverageRange } from '@/lib/coverage';
+import { wasteVisual, getWasteTypeName } from '@differenzia/core/waste-style';
+import { referenceDay } from '@differenzia/core/reference-day';
+import { dayStatus, type CoverageRange } from '@differenzia/core/coverage';
 import styles from './CalendarGrid.module.css';
 
 interface CalendarGridProps {
