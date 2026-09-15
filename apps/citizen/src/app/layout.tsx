@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar/Navbar';
 import I18nProvider from '@differenzia/core/i18n-provider';
 import ThemeProvider from '@/components/ThemeProvider';
 import { ToastProvider } from '@differenzia/ui/toast';
-import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
+import ServiceWorkerRegistrar from '@differenzia/ui/service-worker-registrar';
 import OfflineBanner from '@/components/OfflineBanner/OfflineBanner';
 import { Analytics } from '@vercel/analytics/next';
 

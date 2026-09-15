@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { subscribeDevice } from '@/lib/subscribe-device';
+import { subscribeDevice } from './subscribe-device';
 
 const KEY = new Uint8Array([1, 2, 3]);
 

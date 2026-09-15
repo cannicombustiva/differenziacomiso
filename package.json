@@ -5,13 +5,14 @@
   "packageManager": "pnpm@10.17.1",
   "scripts": {
     "dev": "pnpm --filter @differenzia/citizen dev",
+    "dev:admin": "pnpm --filter @differenzia/admin dev",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit && pnpm -r typecheck",
     "seed:generate": "tsx scripts/generate-seed.ts",
-    "build": "pnpm --filter @differenzia/citizen build",
+    "build": "pnpm --filter './apps/*' build",
     "start": "pnpm --filter @differenzia/citizen start",
-    "lint": "pnpm --filter @differenzia/citizen lint && pnpm exec eslint packages/core/src packages/ui/src scripts",
+    "lint": "pnpm --filter './apps/*' lint && pnpm exec eslint packages/core/src packages/ui/src scripts",
     "prepare": "husky",
     "deploy": "vercel --prod",
     "deploy:preview": "vercel"

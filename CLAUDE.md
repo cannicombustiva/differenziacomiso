@@ -261,19 +261,28 @@ CREATE INDEX idx_riciclabolario_search ON riciclabolario USING gin(to_tsvector('
 ```
 differenzia-comiso/                 # pnpm workspace root
 ├── apps/
-│   └── citizen/                    # the Citizen PWA (still serves /admin)
+│   ├── citizen/                    # the Citizen PWA
 │       ├── public/                 # PWA icons, manifest.json, sw.js
 │       ├── src/
 │       │   ├── app/                # routes: /, /calendario, /riciclabolario,
-│       │   │                       #   /notizie, /info, /admin/*, /api/*
+│       │   │                       #   /notizie, /info, /api/push/{subscribe,unsubscribe}, /api/cron
 │       │   ├── components/         # WasteCard, Navbar, SearchBar, ...
 │       │   ├── hooks/              # useCollection, usePushSubscription
 │       │   ├── lib/                # app-only helpers (offline-cache, coverage-warning, utils, ...)
-│       │   ├── styles/globals.css  # Citizen app shell (tokens in @differenzia/ui)
-│       │   └── middleware.ts
+│       │   └── styles/globals.css  # Citizen app shell (tokens in @differenzia/ui)
 │       ├── next.config.js          # also loads the root .env.local
 │       ├── tsconfig.json
 │       └── vercel.json             # crons; Vercel Root Directory = apps/citizen
+│   └── admin/                      # the Admin panel, its own Vercel project (ADR 0005)
+│       ├── public/                 # push-only sw.js, notification icons
+│       ├── src/
+│       │   ├── app/                # routes: /, /login, /calendario, /riciclabolario,
+│       │   │                       #   /notizie, /notifiche, /api/push/{send,subscribers,subscribe-admin}
+│       │   ├── components/         # AdminShell (sidebar), ui/Button
+│       │   ├── hooks/              # useSchedule (no cache), useAdminDevice
+│       │   ├── lib/                # admin (requireAdmin), login-machine, send-result
+│       │   └── middleware.ts       # Admin session on every page but /login
+│       └── next.config.js          # Vercel Root Directory = apps/admin
 ├── packages/
 │   ├── core/                       # shared domain code, imported as @differenzia/core/*
 │   │   └── src/
@@ -284,21 +293,25 @@ differenzia-comiso/                 # pnpm workspace root
 │   │       ├── reference-day.ts    # today + 1, Europe/Rome
 │   │       ├── dates.ts            # formatDateLocalized
 │   │       ├── push.ts, push-fan-out.ts, save-subscription.ts  # server-side Web Push
+│   │       ├── subscribe-device.ts, url-base64.ts  # browser-side Web Push
+│   │       ├── schedule-queries.ts # Coverage + Schedule reads both apps share
 │   │       ├── types/index.ts      # TypeScript interfaces
 │   │       ├── i18n.ts + i18n/{it,en}.json + i18n-provider.tsx  # useLocale
 │   │       └── supabase/{client,server,admin}.ts
 │   └── ui/                         # React components shared by both apps, @differenzia/ui/*
-│       └── src/                    # tokens.css (CSS variables), Toast, Modal, CalendarGrid
+│       └── src/                    # tokens.css (CSS variables), Toast, Modal, CalendarGrid,
+│                                   #   ServiceWorkerRegistrar
 ├── supabase/                       # single owner of the database
 │   ├── migrations/                 # SQL migration files
 │   └── seed.sql                    # waste_types + 2026 schedule
 ├── scripts/                        # generate-seed.ts and one-off DB scripts
+├── load-root-env.cjs               # loads the root .env.local into both apps
 ├── .env.local                      # NEXT_PUBLIC_SUPABASE_URL, ANON_KEY, VAPID keys
 ├── pnpm-workspace.yaml
 ├── vitest.config.ts                # runs every workspace test suite
 ├── tsconfig.base.json              # compilerOptions every tsconfig shares
 ├── tsconfig.json                   # covers scripts/ only
-├── package.json                    # workspace root: test, lint, build, seed:generate
+├── package.json                    # workspace root: dev, dev:admin, test, lint, build
 └── CLAUDE.md                       # This file
 ```
 

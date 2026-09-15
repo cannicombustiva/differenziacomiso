@@ -1,15 +1,18 @@
 'use client';
 
 import { useState, useCallback, useEffect, type ReactNode } from 'react';
-import { I18nContext, getTranslation, getLocaleFromCookie } from './i18n';
+import { I18nContext, getTranslation, getLocaleFromCookie, type AppMessages } from './i18n';
 import type { Locale } from './types';
 
 export default function I18nProvider({
   children,
   initialLocale,
+  messages,
 }: {
   children: ReactNode;
   initialLocale?: Locale;
+  /** Namespaces only this app uses, layered over the shared dictionaries. */
+  messages?: AppMessages;
 }) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale || 'it');
 
@@ -27,7 +30,7 @@ export default function I18nProvider({
     document.cookie = `locale=${newLocale};path=/;max-age=31536000;SameSite=Lax`;
   }, []);
 
-  const t = getTranslation(locale);
+  const t = getTranslation(locale, messages);
 
   return (
     <I18nContext.Provider value={{ locale, setLocale, t }}>

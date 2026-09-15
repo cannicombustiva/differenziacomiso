@@ -18,7 +18,10 @@
     "./push": "./src/push.ts",
     "./push-fan-out": "./src/push-fan-out.ts",
     "./dead-subscription": "./src/dead-subscription.ts",
-    "./save-subscription": "./src/save-subscription.ts"
+    "./save-subscription": "./src/save-subscription.ts",
+    "./url-base64": "./src/url-base64.ts",
+    "./subscribe-device": "./src/subscribe-device.ts",
+    "./schedule-queries": "./src/schedule-queries.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
