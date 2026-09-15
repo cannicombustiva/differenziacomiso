@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { urlBase64ToUint8Array } from '@/lib/utils';
+import { urlBase64ToUint8Array } from './url-base64';
 
 /** A P-256 VAPID public key shape: 0x04 (uncompressed point) + 32-byte X + 32-byte Y. */
 const P256_PUBLIC_KEY_BYTES = [0x04, ...Array.from({ length: 64 }, (_, i) => (i * 37 + 11) % 256)];

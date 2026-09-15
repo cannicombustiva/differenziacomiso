@@ -2,7 +2,10 @@
   "extends": "next/core-web-vitals",
   "settings": {
     "next": {
-      "rootDir": "apps/citizen/"
+      "rootDir": [
+        "apps/citizen/",
+        "apps/admin/"
+      ]
     }
   },
   "rules": {

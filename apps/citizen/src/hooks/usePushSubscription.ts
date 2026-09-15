@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { urlBase64ToUint8Array } from '@/lib/utils';
-import { subscribeDevice } from '@/lib/subscribe-device';
+import { urlBase64ToUint8Array } from '@differenzia/core/url-base64';
+import { subscribeDevice } from '@differenzia/core/subscribe-device';
 
 const PENDING_UNSUBSCRIBE_ENDPOINTS_KEY = 'pendingPushUnsubscribeEndpoints';
 
@@ -43,15 +43,7 @@ async function removeSubscriptionFromServer(endpoint: string) {
   }
 }
 
-/** Who a Subscription is for: a Citizen device, or an Admin device (#79). */
-export type PushAudience = 'citizen' | 'admin';
-
-const SUBSCRIBE_URL: Record<PushAudience, string> = {
-  citizen: '/api/push/subscribe',
-  admin: '/api/push/subscribe-admin',
-};
-
-export function usePushSubscription(audience: PushAudience = 'citizen') {
+export function usePushSubscription() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
 
@@ -102,7 +94,7 @@ export function usePushSubscription(audience: PushAudience = 'citizen') {
       registration.pushManager,
       urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
       async (subscription) => {
-        const res = await fetch(SUBSCRIBE_URL[audience], {
+        const res = await fetch('/api/push/subscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(subscription),
@@ -112,7 +104,7 @@ export function usePushSubscription(audience: PushAudience = 'citizen') {
     );
     if (ok) setIsSubscribed(true);
     return ok;
-  }, [isSupported, audience]);
+  }, [isSupported]);
 
   const unsubscribe = useCallback(async () => {
     if (!isSupported) return;

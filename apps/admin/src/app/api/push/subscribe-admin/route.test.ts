@@ -25,17 +25,14 @@ const SUBSCRIPTION = {
   keys: { p256dh: 'p256dh-key', auth: 'auth-key' },
 };
 
-const routes = {
-  'subscribe-admin': () => import('./route'),
-  subscribe: () => import('../subscribe/route'),
+const post = async () => {
+  const { POST } = await import('./route');
+  return POST(
+    new Request('https://example.test/api/push/subscribe-admin', { method: 'POST', body: JSON.stringify(SUBSCRIPTION) })
+  );
 };
 
-const post = async (path: keyof typeof routes) => {
-  const { POST } = await routes[path]();
-  return POST(new Request(`https://example.test/api/push/${path}`, { method: 'POST', body: JSON.stringify(SUBSCRIPTION) }));
-};
-
-describe('push subscription routes', () => {
+describe('/api/push/subscribe-admin', () => {
   beforeEach(() => {
     vi.resetModules();
     upsert.mockReset().mockResolvedValue({ error: null });
@@ -44,7 +41,7 @@ describe('push subscription routes', () => {
   });
 
   it('records admin_id when an authenticated Admin subscribes from the admin panel', async () => {
-    const res = await post('subscribe-admin');
+    const res = await post();
 
     expect(res.status).toBe(200);
     expect(upsert).toHaveBeenCalledWith(
@@ -60,17 +57,10 @@ describe('push subscription routes', () => {
     const { AdminAuthError } = await import('@/lib/admin');
     requireAdmin.mockRejectedValue(new AdminAuthError('nope', status));
 
-    const res = await post('subscribe-admin');
+    const res = await post();
 
     expect(res.status).toBe(status);
     expect(upsert).not.toHaveBeenCalled();
-  });
-
-  it('never writes admin_id when a Citizen subscribes — not even to clear an existing tag', async () => {
-    const res = await post('subscribe');
-
-    expect(res.status).toBe(200);
-    expect(upsert.mock.calls[0][0]).not.toHaveProperty('admin_id');
   });
 
   it('reports whether an endpoint is currently an Admin device', async () => {

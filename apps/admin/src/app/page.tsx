@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { parseISO } from 'date-fns';
 import { useLocale } from '@differenzia/core/i18n';
-import { useCoverage, useTomorrowCollection } from '@/hooks/useCollection';
+import { useCoverage, useTomorrowCollection } from '@/hooks/useSchedule';
 import { createClient } from '@differenzia/core/supabase/client';
 import { wasteVisual, getWasteTypeName } from '@differenzia/core/waste-style';
 import type { Locale } from '@differenzia/core/types';
@@ -14,10 +14,10 @@ import styles from './page.admin.module.css';
 import { formatDateLocalized } from '@differenzia/core/dates';
 
 const SECTIONS = [
-  { href: '/admin/calendario', label: 'admin.navCalendar', desc: 'admin.descCalendar', icon: 'calendar', color: '#2E7D32', ink: '#fff' },
-  { href: '/admin/riciclabolario', label: 'admin.navDictionary', desc: 'admin.descDictionary', icon: 'book', color: '#1E6FCB', ink: '#fff' },
-  { href: '/admin/notizie', label: 'admin.navNews', desc: 'admin.descNews', icon: 'news', color: '#7A4F2E', ink: '#fff' },
-  { href: '/admin/notifiche', label: 'admin.navNotifications', desc: 'admin.descNotifications', icon: 'bell', color: '#E8B500', ink: '#3a2e00' },
+  { href: '/calendario', label: 'admin.navCalendar', desc: 'admin.descCalendar', icon: 'calendar', color: '#2E7D32', ink: '#fff' },
+  { href: '/riciclabolario', label: 'admin.navDictionary', desc: 'admin.descDictionary', icon: 'book', color: '#1E6FCB', ink: '#fff' },
+  { href: '/notizie', label: 'admin.navNews', desc: 'admin.descNews', icon: 'news', color: '#7A4F2E', ink: '#fff' },
+  { href: '/notifiche', label: 'admin.navNotifications', desc: 'admin.descNotifications', icon: 'bell', color: '#E8B500', ink: '#3a2e00' },
 ] as const;
 
 export default function AdminDashboardPage() {
