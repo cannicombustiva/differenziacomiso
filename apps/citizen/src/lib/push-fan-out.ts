@@ -6,6 +6,9 @@ import { isDeadSubscription } from '@/lib/dead-subscription';
 /** The `push_subscriptions` columns a send needs. */
 export type SubscriptionRow = Pick<PushSubscriptionRecord, 'endpoint' | 'keys_p256dh' | 'keys_auth'>;
 
+/** The title every Notification carries unless an Admin sets one. */
+export const NOTIFICATION_TITLE = 'DifferenziaComiso';
+
 /** What a Notification says; the icon and tap target are the same for every send. */
 export interface NotificationContent {
   title: string;

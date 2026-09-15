@@ -48,6 +48,10 @@ _Avoid_: "user", "editor".
 A single device/browser endpoint opted into push notifications — one row in `push_subscriptions`. **Not** a person: one Citizen with two devices is two Subscriptions. The admin metric is a count of Subscriptions ("dispositivi iscritti"), never "utenti".
 _Avoid_: "subscriber"/"utente" as a person-count.
 
+**Admin device** (IT: _Dispositivo amministratore_):
+A Subscription registered from the admin panel by an authenticated Admin — a `push_subscriptions` row with `admin_id` set. Still a device, not a person: one Admin with two phones is two Admin devices. Receives the evening Notification like any Subscription, plus the Coverage-expiry warning, which Citizen devices never get. Unsubscribing the device from the Citizen app deletes the row, and with it the Admin tag.
+_Avoid_: "admin subscriber", "admin user".
+
 ### Pattern and exceptions
 
 **Settimana Tipo** (EN: _Typical week_):

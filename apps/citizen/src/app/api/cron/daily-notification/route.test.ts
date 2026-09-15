@@ -204,7 +204,7 @@ describe('GET /api/cron/daily-notification', () => {
       expect(body.coverageWarning).toBeNull();
     });
 
-    it('warns Admin devices only, after the Citizen push, when Coverage is ending', async () => {
+    it('warns Admin devices only, after the evening Notification, when Coverage is ending', async () => {
       referenceDay.mockReturnValue('2026-11-20');
       tables.push_subscriptions = [SUBSCRIBER, ADMIN_DEVICE];
 
@@ -222,7 +222,7 @@ describe('GET /api/cron/daily-notification', () => {
       });
     });
 
-    it('still warns Admin devices when Coverage has expired and the Citizen push is skipped', async () => {
+    it('still warns Admin devices when Coverage has expired and the evening Notification is skipped', async () => {
       referenceDay.mockReturnValue('2027-01-01');
       tables.push_subscriptions = [SUBSCRIBER, ADMIN_DEVICE];
 
@@ -231,6 +231,21 @@ describe('GET /api/cron/daily-notification', () => {
       expect(body.skipped).toBe(true);
       expect(bodiesSentTo(SUBSCRIBER.endpoint)).toEqual([]);
       expect(bodiesSentTo(ADMIN_DEVICE.endpoint)).toEqual(['Calendario scaduto il 31 dicembre 2026']);
+      expect(body.coverageWarning.sent).toBe(1);
+    });
+
+    it('still warns Admin devices when the Schedule read fails', async () => {
+      referenceDay.mockReturnValue('2026-11-20');
+      failing.add('collection_schedule');
+      tables.push_subscriptions = [SUBSCRIBER, ADMIN_DEVICE];
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const res = await get();
+      const body = await res.json();
+
+      expect(res.status).toBe(500);
+      expect(bodiesSentTo(SUBSCRIBER.endpoint)).toEqual([]);
+      expect(bodiesSentTo(ADMIN_DEVICE.endpoint)).toEqual(['Calendario in scadenza il 31 dicembre 2026']);
       expect(body.coverageWarning.sent).toBe(1);
     });
 

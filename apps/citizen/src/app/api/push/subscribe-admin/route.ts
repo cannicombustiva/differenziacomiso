@@ -1,52 +1,54 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
 import { getAdminAuthError, requireAdmin } from '@/lib/admin';
+import { saveSubscriptionRequest } from '@/lib/save-subscription';
 
 export const dynamic = 'force-dynamic';
 
-/**
- * Subscribe this device as an Admin device (#79): same row as a Citizen
- * Subscription, plus the `admin_id` that makes it receive the Coverage-expiry
- * warning. Only reachable from the admin panel while authenticated.
- */
-export async function POST(request: Request) {
-  let adminId: string;
+/** The authenticated Admin's id, or the error response to return instead. */
+async function adminIdOrError(): Promise<string | NextResponse> {
   try {
-    ({ id: adminId } = await requireAdmin());
+    return (await requireAdmin()).id;
   } catch (error) {
     const authError = getAdminAuthError(error);
     return NextResponse.json({ error: authError.message }, { status: authError.status });
   }
+}
 
-  try {
-    const subscription = await request.json();
+/**
+ * Subscribe this device as an Admin device (#79): the same Subscription row a
+ * Citizen gets, plus the `admin_id` that makes it receive the Coverage-expiry
+ * warning.
+ */
+export async function POST(request: Request) {
+  const adminId = await adminIdOrError();
+  if (adminId instanceof NextResponse) return adminId;
+  return saveSubscriptionRequest(request, adminId);
+}
 
-    if (!subscription?.endpoint || !subscription?.keys?.p256dh || !subscription?.keys?.auth) {
-      return NextResponse.json({ error: 'Invalid subscription' }, { status: 400 });
-    }
+/**
+ * Whether `?endpoint=` is currently an Admin device, so the admin panel can
+ * show it — a device unsubscribed from /info loses its row, and with it the tag.
+ */
+export async function GET(request: Request) {
+  const adminId = await adminIdOrError();
+  if (adminId instanceof NextResponse) return adminId;
 
-    const supabase = createAdminClient();
-
-    const { error } = await supabase
-      .from('push_subscriptions')
-      .upsert(
-        {
-          endpoint: subscription.endpoint,
-          keys_p256dh: subscription.keys.p256dh,
-          keys_auth: subscription.keys.auth,
-          admin_id: adminId,
-        },
-        { onConflict: 'endpoint' }
-      );
-
-    if (error) {
-      console.error('Failed to save admin subscription:', error);
-      return NextResponse.json({ error: 'Failed to save subscription' }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error('Admin subscribe error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  const endpoint = new URL(request.url).searchParams.get('endpoint');
+  if (!endpoint) {
+    return NextResponse.json({ error: 'endpoint is required' }, { status: 400 });
   }
+
+  const { data, error } = await createAdminClient()
+    .from('push_subscriptions')
+    .select('admin_id')
+    .eq('endpoint', endpoint)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Admin device lookup failed:', error);
+    return NextResponse.json({ error: 'Lookup failed' }, { status: 500 });
+  }
+
+  return NextResponse.json({ registered: Boolean(data?.admin_id) });
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { urlBase64ToUint8Array } from '@/lib/utils';
+import { subscribeDevice } from '@/lib/subscribe-device';
 
 const PENDING_UNSUBSCRIBE_ENDPOINTS_KEY = 'pendingPushUnsubscribeEndpoints';
 
@@ -42,12 +43,15 @@ async function removeSubscriptionFromServer(endpoint: string) {
   }
 }
 
-/**
- * @param subscribeUrl where the Subscription is saved. The Citizen app uses the
- * default; the admin panel passes `/api/push/subscribe-admin` so the row is
- * tagged as an Admin device (#79).
- */
-export function usePushSubscription(subscribeUrl: string = '/api/push/subscribe') {
+/** Who a Subscription is for: a Citizen device, or an Admin device (#79). */
+export type PushAudience = 'citizen' | 'admin';
+
+const SUBSCRIBE_URL: Record<PushAudience, string> = {
+  citizen: '/api/push/subscribe',
+  admin: '/api/push/subscribe-admin',
+};
+
+export function usePushSubscription(audience: PushAudience = 'citizen') {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
 
@@ -87,39 +91,28 @@ export function usePushSubscription(subscribeUrl: string = '/api/push/subscribe'
   const subscribe = useCallback(async (): Promise<boolean> => {
     if (!isSupported) return false;
 
-    let subscription: PushSubscription | null = null;
-    let createdHere = false;
+    let registration: ServiceWorkerRegistration;
     try {
-      const registration = await navigator.serviceWorker.ready;
-      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
-      // An Admin may register a device that is already a Citizen Subscription;
-      // a failed save must not tear that existing one down.
-      createdHere = !(await registration.pushManager.getSubscription());
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidKey),
-      });
-
-      const res = await fetch(subscribeUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(subscription),
-      });
-
-      if (!res.ok) {
-        throw new Error('Server failed to save subscription');
-      }
-
-      setIsSubscribed(true);
-      return true;
+      registration = await navigator.serviceWorker.ready;
     } catch (err) {
-      if (subscription && createdHere) {
-        await subscription.unsubscribe().catch(() => {});
-      }
       console.error('Failed to subscribe:', err);
       return false;
     }
-  }, [isSupported, subscribeUrl]);
+    const ok = await subscribeDevice(
+      registration.pushManager,
+      urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
+      async (subscription) => {
+        const res = await fetch(SUBSCRIBE_URL[audience], {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(subscription),
+        });
+        if (!res.ok) throw new Error('Server failed to save subscription');
+      }
+    );
+    if (ok) setIsSubscribed(true);
+    return ok;
+  }, [isSupported, audience]);
 
   const unsubscribe = useCallback(async () => {
     if (!isSupported) return;

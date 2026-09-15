@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
 import { getAdminAuthError, requireAdmin } from '@/lib/admin';
-import { sendToAllSubscriptions } from '@/lib/push-fan-out';
+import { NOTIFICATION_TITLE, sendToAllSubscriptions } from '@/lib/push-fan-out';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const title: string = body.title || 'DifferenziaComiso';
+    const title: string = body.title || NOTIFICATION_TITLE;
     const text: string = body.body || body.message;
 
     if (!text) {
