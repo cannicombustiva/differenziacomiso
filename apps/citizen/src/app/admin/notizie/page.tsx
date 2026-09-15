@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import { createClient } from '@differenzia/core/supabase/client';
 import Button from '@/components/ui/Button/Button';
-import Modal from '@/components/ui/Modal/Modal';
-import { useToast } from '@/components/ui/Toast/Toast';
+import Modal from '@differenzia/ui/modal';
+import { useToast } from '@differenzia/ui/toast';
 import type { Announcement } from '@differenzia/core/types';
 import { format } from 'date-fns';
 import styles from './page.module.css';

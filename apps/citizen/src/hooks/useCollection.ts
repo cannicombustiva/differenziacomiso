@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { format, addDays, parseISO, startOfMonth, endOfMonth } from 'date-fns';
 import { createClient } from '@differenzia/core/supabase/client';
-import { referenceDay, romeToday } from '@/lib/reference-day';
+import { referenceDay, romeToday } from '@differenzia/core/reference-day';
 import { groupCollections, type ScheduleRow } from '@differenzia/core/group-collections';
 import { writeCache, readCache, writeCoverageCache, readCoverageCache } from '@/lib/offline-cache';
-import type { CoverageRange } from '@/lib/coverage';
+import type { CoverageRange } from '@differenzia/core/coverage';
 import type { CollectionDayGrouped, Locale } from '@differenzia/core/types';
 
 const SCHEDULE_SELECT =

@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
 import { NOTIFICATION_TITLE, sendToAllSubscriptions } from '@/lib/push-fan-out';
-import { referenceDay } from '@/lib/reference-day';
+import { referenceDay } from '@differenzia/core/reference-day';
 import { isWithinSendWindow } from '@/lib/send-window';
 import { buildNotificationMessage, type ScheduleRow } from '@/lib/notification-message';
-import { coverageHorizon, isOutsideCoverage, type CoverageRange } from '@/lib/coverage';
+import { coverageHorizon, isOutsideCoverage, type CoverageRange } from '@differenzia/core/coverage';
 import { coverageWarningMessage } from '@/lib/coverage-warning';
 
 type EveningNotificationResult =

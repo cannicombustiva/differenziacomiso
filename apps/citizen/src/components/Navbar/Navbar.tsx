@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import styles from './Navbar.module.css';
 
 const NAV_ITEMS = [

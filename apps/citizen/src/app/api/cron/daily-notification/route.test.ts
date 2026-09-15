@@ -13,7 +13,7 @@ vi.mock('@/lib/send-window', () => ({
 }));
 
 const referenceDay = vi.fn().mockReturnValue('2026-06-17');
-vi.mock('@/lib/reference-day', () => ({
+vi.mock('@differenzia/core/reference-day', () => ({
   referenceDay: () => referenceDay(),
 }));
 

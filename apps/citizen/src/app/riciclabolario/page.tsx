@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import { createClient } from '@differenzia/core/supabase/client';
 import { searchRiciclabolario } from '@/lib/riciclabolario-search';
-import { wasteVisual, wasteSlug, type WasteSlug } from '@differenzia/core/waste-style';
-import { getWasteTypeName } from '@/lib/utils';
+import { wasteVisual, wasteSlug, type WasteSlug, getWasteTypeName } from '@differenzia/core/waste-style';
 import { writeCache, readCache } from '@/lib/offline-cache';
 import type { RiciclabolarioItem, WasteType, Locale } from '@differenzia/core/types';
 import styles from './page.module.css';

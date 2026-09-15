@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import { createClient } from '@differenzia/core/supabase/client';
-import { useToast } from '@/components/ui/Toast/Toast';
+import { useToast } from '@differenzia/ui/toast';
 import { wasteVisual } from '@differenzia/core/waste-style';
 import type { RiciclabolarioItem, WasteType } from '@differenzia/core/types';
 import styles from './page.module.css';

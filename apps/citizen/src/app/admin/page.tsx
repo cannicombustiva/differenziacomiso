@@ -3,15 +3,15 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { parseISO } from 'date-fns';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import { useCoverage, useTomorrowCollection } from '@/hooks/useCollection';
 import { createClient } from '@differenzia/core/supabase/client';
-import { wasteVisual } from '@differenzia/core/waste-style';
+import { wasteVisual, getWasteTypeName } from '@differenzia/core/waste-style';
 import type { Locale } from '@differenzia/core/types';
-import { coverageHorizon, type CoverageHorizon } from '@/lib/coverage';
-import { referenceDay } from '@/lib/reference-day';
-import { formatDateLocalized, getWasteTypeName } from '@/lib/utils';
+import { coverageHorizon, type CoverageHorizon } from '@differenzia/core/coverage';
+import { referenceDay } from '@differenzia/core/reference-day';
 import styles from './page.admin.module.css';
+import { formatDateLocalized } from '@differenzia/core/dates';
 
 const SECTIONS = [
   { href: '/admin/calendario', label: 'admin.navCalendar', desc: 'admin.descCalendar', icon: 'calendar', color: '#2E7D32', ink: '#fff' },

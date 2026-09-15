@@ -10,14 +10,19 @@
     "./i18n": "./src/i18n.ts",
     "./supabase/client": "./src/supabase/client.ts",
     "./supabase/server": "./src/supabase/server.ts",
-    "./supabase/admin": "./src/supabase/admin.ts"
+    "./supabase/admin": "./src/supabase/admin.ts",
+    "./coverage": "./src/coverage.ts",
+    "./reference-day": "./src/reference-day.ts",
+    "./dates": "./src/dates.ts",
+    "./i18n-provider": "./src/i18n-provider.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
-    "@supabase/supabase-js": "^2.99.0"
+    "@supabase/supabase-js": "^2.99.0",
+    "date-fns": "^4.1.0"
   },
   "peerDependencies": {
     "next": "^14.2.21",

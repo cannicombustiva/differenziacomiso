@@ -1,13 +1,7 @@
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
-import { it } from 'date-fns/locale';
-import type { WasteType, Locale } from '@differenzia/core/types';
 
 export function formatDate(date: Date, formatStr: string = 'yyyy-MM-dd'): string {
   return format(date, formatStr);
-}
-
-export function formatDateLocalized(date: Date, formatStr: string, locale: Locale): string {
-  return format(date, formatStr, { locale: locale === 'it' ? it : undefined });
 }
 
 export function getCurrentWeekDays(referenceDate: Date = new Date()): Date[] {
@@ -20,10 +14,6 @@ export function getMonthDays(year: number, month: number): Date[] {
   const start = startOfMonth(new Date(year, month));
   const end = endOfMonth(new Date(year, month));
   return eachDayOfInterval({ start, end });
-}
-
-export function getWasteTypeName(wasteType: WasteType, locale: Locale): string {
-  return locale === 'en' ? wasteType.name_en : wasteType.name_it;
 }
 
 export function isSameDayCheck(date1: Date, date2: Date): boolean {

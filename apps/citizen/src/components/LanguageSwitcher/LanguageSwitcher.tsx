@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import styles from './LanguageSwitcher.module.css';
 
 export default function LanguageSwitcher() {

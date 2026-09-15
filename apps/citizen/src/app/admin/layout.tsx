@@ -2,7 +2,7 @@
 
 import { useState, useEffect, type ReactNode } from 'react';
 import { createClient } from '@differenzia/core/supabase/client';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import styles from './layout.module.css';

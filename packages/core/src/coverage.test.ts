@@ -5,8 +5,8 @@ import {
   dayStatus,
   isOutsideCoverage,
   type CoverageRange,
-} from '@/lib/coverage';
-import type { CollectionDayGrouped, WasteType } from '@differenzia/core/types';
+} from './coverage';
+import type { CollectionDayGrouped, WasteType } from './types';
 
 const UMIDO: WasteType = {
   id: 'a1000000-0000-0000-0000-000000000002',

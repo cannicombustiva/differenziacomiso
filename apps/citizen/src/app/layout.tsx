@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import '@/styles/globals.css';
 import Navbar from '@/components/Navbar/Navbar';
-import I18nProvider from '@/components/I18nProvider';
+import I18nProvider from '@differenzia/core/i18n-provider';
 import ThemeProvider from '@/components/ThemeProvider';
-import { ToastProvider } from '@/components/ui/Toast/Toast';
+import { ToastProvider } from '@differenzia/ui/toast';
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
 import OfflineBanner from '@/components/OfflineBanner/OfflineBanner';
 import { Analytics } from '@vercel/analytics/next';

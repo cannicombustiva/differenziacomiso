@@ -266,23 +266,28 @@ differenzia-comiso/                 # pnpm workspace root
 │       ├── src/
 │       │   ├── app/                # routes: /, /calendario, /riciclabolario,
 │       │   │                       #   /notizie, /info, /admin/*, /api/*
-│       │   ├── components/         # WasteCard, CalendarGrid, Navbar, ui/, ...
-│       │   ├── hooks/              # useCollection, useLocale, usePushSubscription
-│       │   ├── lib/                # app-only helpers (coverage, push, utils, ...)
+│       │   ├── components/         # WasteCard, Navbar, SearchBar, ...
+│       │   ├── hooks/              # useCollection, usePushSubscription
+│       │   ├── lib/                # app-only helpers (offline-cache, push, utils, ...)
 │       │   ├── styles/globals.css  # CSS variables (colors, fonts)
 │       │   └── middleware.ts
 │       ├── next.config.js          # also loads the root .env.local
 │       ├── tsconfig.json
 │       └── vercel.json             # crons; Vercel Root Directory = apps/citizen
 ├── packages/
-│   └── core/                       # shared domain code, imported as @differenzia/core/*
-│       └── src/
-│           ├── settimana-tipo.ts   # the weekly pattern (ADR 0007 depends on it)
-│           ├── waste-style.ts      # waste colors/slugs
-│           ├── group-collections.ts
-│           ├── types/index.ts      # TypeScript interfaces
-│           ├── i18n.ts + i18n/{it,en}.json
-│           └── supabase/{client,server,admin}.ts
+│   ├── core/                       # shared domain code, imported as @differenzia/core/*
+│   │   └── src/
+│   │       ├── settimana-tipo.ts   # the weekly pattern (ADR 0007 depends on it)
+│   │       ├── waste-style.ts      # waste colors/slugs, getWasteTypeName
+│   │       ├── group-collections.ts
+│   │       ├── coverage.ts         # dayStatus, coverageHorizon (ADR 0006)
+│   │       ├── reference-day.ts    # today + 1, Europe/Rome
+│   │       ├── dates.ts            # formatDateLocalized
+│   │       ├── types/index.ts      # TypeScript interfaces
+│   │       ├── i18n.ts + i18n/{it,en}.json + i18n-provider.tsx  # useLocale
+│   │       └── supabase/{client,server,admin}.ts
+│   └── ui/                         # React components shared by both apps, @differenzia/ui/*
+│       └── src/                    # Toast, Modal, CalendarGrid (CSS Modules co-located)
 ├── supabase/                       # single owner of the database
 │   ├── migrations/                 # SQL migration files
 │   └── seed.sql                    # waste_types + 2026 schedule
@@ -290,7 +295,7 @@ differenzia-comiso/                 # pnpm workspace root
 ├── .env.local                      # NEXT_PUBLIC_SUPABASE_URL, ANON_KEY, VAPID keys
 ├── pnpm-workspace.yaml
 ├── vitest.config.ts                # runs every workspace test suite
-├── tsconfig.base.json              # compilerOptions all three tsconfigs share
+├── tsconfig.base.json              # compilerOptions every tsconfig shares
 ├── tsconfig.json                   # covers scripts/ only
 ├── package.json                    # workspace root: test, lint, build, seed:generate
 └── CLAUDE.md                       # This file

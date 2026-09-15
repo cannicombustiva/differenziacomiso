@@ -1,4 +1,4 @@
-import type { WasteType } from './types';
+import type { Locale, WasteType } from './types';
 
 /**
  * Refreshed visual palette for each waste type, keyed by a stable slug derived
@@ -66,4 +66,9 @@ export function textOn(hex: string): string {
   const [r, g, b] = [0, 2, 4].map((i) => parseInt(c.slice(i, i + 2), 16) / 255);
   const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
   return lum > 0.6 ? '#1A1A1A' : '#FFFFFF';
+}
+
+/** A Waste type's name in `locale`. */
+export function getWasteTypeName(wasteType: WasteType, locale: Locale): string {
+  return locale === 'en' ? wasteType.name_en : wasteType.name_it;
 }

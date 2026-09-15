@@ -13,7 +13,7 @@
  * nobody has ever loaded — the one thing Coverage exists to prevent.
  */
 
-import type { CoverageRange } from '@/lib/coverage';
+import type { CoverageRange } from '@differenzia/core/coverage';
 
 /** The slice of the Storage API we use — injectable so it can be tested. */
 export type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;

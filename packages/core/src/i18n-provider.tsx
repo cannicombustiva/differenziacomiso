@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useCallback, useEffect, type ReactNode } from 'react';
-import { I18nContext, getTranslation, getLocaleFromCookie } from '@differenzia/core/i18n';
-import type { Locale } from '@differenzia/core/types';
+import { I18nContext, getTranslation, getLocaleFromCookie } from './i18n';
+import type { Locale } from './types';
 
 export default function I18nProvider({
   children,

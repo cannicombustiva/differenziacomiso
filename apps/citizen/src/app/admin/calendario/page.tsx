@@ -3,12 +3,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { format, addDays, startOfMonth, endOfMonth } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
-import { useLocale } from '@/hooks/useLocale';
+import { useLocale } from '@differenzia/core/i18n';
 import { createClient } from '@differenzia/core/supabase/client';
-import CalendarGrid from '@/components/CalendarGrid/CalendarGrid';
-import Modal from '@/components/ui/Modal/Modal';
+import CalendarGrid from '@differenzia/ui/calendar-grid';
+import Modal from '@differenzia/ui/modal';
 import Button from '@/components/ui/Button/Button';
-import { useToast } from '@/components/ui/Toast/Toast';
+import { useToast } from '@differenzia/ui/toast';
 import { settimanaTipo, WASTE_KEY_NAME_IT } from '@differenzia/core/settimana-tipo';
 import { groupCollections, type ScheduleRow } from '@differenzia/core/group-collections';
 import type { WasteType, CollectionDayGrouped } from '@differenzia/core/types';
