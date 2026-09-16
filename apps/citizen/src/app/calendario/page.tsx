@@ -5,7 +5,7 @@ import { format, parseISO } from 'date-fns';
 import { it as itLocale } from 'date-fns/locale';
 import { useLocale } from '@differenzia/core/i18n';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useMonthCollections, useCoverage } from '@/hooks/useCollection';
+import { useMonthCollections, useCoverage, useLoadedSpans } from '@/hooks/useCollection';
 import { dayStatus, type DayStatus } from '@differenzia/core/coverage';
 import { referenceDay } from '@differenzia/core/reference-day';
 import { wasteVisual, getWasteTypeName } from '@differenzia/core/waste-style';
@@ -29,6 +29,7 @@ function statusMessage(
   t: (key: string) => string
 ): string {
   if (status === 'unscheduled') return t('calendar.notAvailable');
+  if (status === 'not-downloaded') return t('calendar.notDownloaded');
   if (status === 'holiday') {
     return `${t('calendar.holiday')}${collection?.holidayNote ? ` — ${collection.holidayNote}` : ''}`;
   }
@@ -47,6 +48,7 @@ export default function CalendarioPage() {
     locale
   );
   const coverage = useCoverage();
+  const loaded = useLoadedSpans(collections);
 
   const selectedCollection = selectedDate
     ? collections.find((c) => c.date === selectedDate)
@@ -60,10 +62,10 @@ export default function CalendarioPage() {
   );
 
   const renderDetail = (date: string, coll = selectedCollection) => {
-    const status = dayStatus(date, coll ?? undefined, coverage);
+    const status = dayStatus(date, coll ?? undefined, coverage, loaded);
     if (status !== 'pickups') {
       const cls =
-        status === 'unscheduled'
+        status === 'unscheduled' || status === 'not-downloaded'
           ? styles.notAvailable
           : status === 'holiday'
             ? styles.holiday
@@ -82,7 +84,7 @@ export default function CalendarioPage() {
     );
   };
 
-  const panelStatus = dayStatus(panelDate, panelCollection, coverage);
+  const panelStatus = dayStatus(panelDate, panelCollection, coverage, loaded);
   const hasPickup = panelStatus === 'pickups';
 
   return (
@@ -94,6 +96,7 @@ export default function CalendarioPage() {
             currentMonth={currentMonth}
             collections={collections}
             coverage={coverage}
+            loadedSpans={loaded}
             locale={locale}
             onDayClick={(date) => setSelectedDate(date)}
             onMonthChange={setCurrentMonth}

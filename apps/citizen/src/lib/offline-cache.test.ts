@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
   writeCache,
+  recordLoadedSpan,
+  readLoadedSpans,
   readCache,
   getLastRefreshed,
   writeCoverageCache,
@@ -144,6 +146,97 @@ describe('cached Coverage', () => {
     const stamped = getLastRefreshed(s);
     writeCoverageCache(YEAR_2026, s);
     expect(getLastRefreshed(s)).toBe(stamped);
+  });
+});
+
+describe('loaded spans', () => {
+  // What this device actually downloaded, as opposed to what Coverage vouches
+  // for (#91). Written by the same hooks that fill the Schedule cache.
+  it('reports unknown when nothing was ever recorded', () => {
+    expect(readLoadedSpans(fakeStore())).toBeNull();
+  });
+
+  it('reads back a span it recorded', () => {
+    const s = fakeStore();
+    recordLoadedSpan('2026-06-01', '2026-06-30', s);
+    expect(readLoadedSpans(s)).toEqual([{ from: '2026-06-01', to: '2026-06-30' }]);
+  });
+
+  it('records a single date as a one-day span', () => {
+    const s = fakeStore();
+    recordLoadedSpan('2026-06-17', '2026-06-17', s);
+    expect(readLoadedSpans(s)).toEqual([{ from: '2026-06-17', to: '2026-06-17' }]);
+  });
+
+  it('merges overlapping and adjacent spans so the list cannot grow forever', () => {
+    // A device that opens the app daily records a fresh week span every day.
+    const s = fakeStore();
+    recordLoadedSpan('2026-06-01', '2026-06-07', s);
+    recordLoadedSpan('2026-06-05', '2026-06-12', s); // overlaps
+    recordLoadedSpan('2026-06-13', '2026-06-20', s); // starts the next day
+    expect(readLoadedSpans(s)).toEqual([{ from: '2026-06-01', to: '2026-06-20' }]);
+  });
+
+  it('keeps a real gap between two spans', () => {
+    const s = fakeStore();
+    recordLoadedSpan('2026-06-01', '2026-06-30', s);
+    recordLoadedSpan('2026-09-01', '2026-09-30', s);
+    expect(readLoadedSpans(s)).toEqual([
+      { from: '2026-06-01', to: '2026-06-30' },
+      { from: '2026-09-01', to: '2026-09-30' },
+    ]);
+  });
+
+  it('does not advance the last-refreshed stamp', () => {
+    // Like Coverage: the offline banner vouches for Schedule payloads, not for
+    // a note about which dates were asked for.
+    const s = fakeStore();
+    recordLoadedSpan('2026-06-01', '2026-06-30', s);
+    expect(getLastRefreshed(s)).toBeNull();
+  });
+
+  it('rejects and evicts a cached value that is not a list of spans', () => {
+    const s = fakeStore();
+    s.setItem('dc:cache:loaded-spans', JSON.stringify({ version: CACHE_VERSION, data: [{ from: '2026-06-01' }] }));
+    expect(readLoadedSpans(s)).toBeNull();
+    expect(s.getItem('dc:cache:loaded-spans')).toBeNull();
+  });
+
+  it('drops spans written under an older cache version', () => {
+    const s = fakeStore();
+    s.setItem('dc:cache:loaded-spans', JSON.stringify({ version: CACHE_VERSION - 1, data: [{ from: '2026-06-01', to: '2026-06-30' }] }));
+    expect(readLoadedSpans(s)).toBeNull();
+  });
+});
+
+describe('offline day status for a month this device never opened', () => {
+  // The #91 regression, end to end through the cache: Coverage is cached and
+  // does contain the date, but no Schedule payload for it was ever written.
+  const seeded = () => {
+    const s = fakeStore();
+    writeCoverageCache([{ start_date: '2026-01-01', end_date: '2026-12-31', source: 'seed' }], s);
+    return s;
+  };
+
+  it('says not-downloaded rather than a confident day off', () => {
+    const s = seeded();
+    recordLoadedSpan('2026-06-01', '2026-06-30', s);
+
+    expect(dayStatus('2026-09-14', undefined, readCoverageCache(s), readLoadedSpans(s))).toBe('not-downloaded');
+  });
+
+  it('still says no collection for a day inside the month it did load', () => {
+    const s = seeded();
+    recordLoadedSpan('2026-06-01', '2026-06-30', s);
+
+    expect(dayStatus('2026-06-21', undefined, readCoverageCache(s), readLoadedSpans(s))).toBe('no-collection');
+  });
+
+  it('keeps the pre-#91 reading on a device that never cached any span', () => {
+    const s = seeded();
+
+    expect(readLoadedSpans(s)).toBeNull();
+    expect(dayStatus('2026-09-14', undefined, readCoverageCache(s), readLoadedSpans(s))).toBe('no-collection');
   });
 });
 

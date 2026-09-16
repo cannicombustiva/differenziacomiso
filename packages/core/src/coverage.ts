@@ -11,13 +11,25 @@ export type CoverageRange = {
 /**
  * What the app can honestly say about a single date.
  *
- * `no-collection` and `unscheduled` look identical in `collection_schedule` —
- * both are simply an absence of rows (ADR 0001 stores final state, so a Sunday
- * or a 5th Thursday stores nothing at all). Only Coverage separates them, which
- * is why every surface must ask this function rather than test
+ * `no-collection`, `unscheduled` and `not-downloaded` look identical in
+ * `collection_schedule` — all three are simply an absence of rows (ADR 0001
+ * stores final state, so a Sunday or a 5th Thursday stores nothing at all).
+ * Coverage separates the first two; what this device has downloaded separates
+ * the third. That is why every surface must ask this function rather than test
  * `wasteTypes.length === 0` for itself. See ADR 0006.
  */
-export type DayStatus = 'pickups' | 'holiday' | 'no-collection' | 'unscheduled';
+export type DayStatus = 'pickups' | 'holiday' | 'no-collection' | 'unscheduled' | 'not-downloaded';
+
+/** An inclusive date range this device has actually loaded into its cache. */
+export type DateSpan = { from: string; to: string };
+
+/**
+ * Whether `date` falls inside any span this device has loaded. Boundaries are
+ * inclusive, and ISO 'yyyy-MM-dd' strings compare correctly as strings.
+ */
+function isLoaded(date: string, spans: DateSpan[]): boolean {
+  return spans.some((s) => date >= s.from && date <= s.to);
+}
 
 /**
  * Whether `date` falls inside any Coverage range. Boundaries are inclusive, and
@@ -61,15 +73,25 @@ export function isOutsideCoverage(date: string, ranges: CoverageRange[] | null):
  *
  * Once a Coverage row exists, a date outside every range is genuinely unknown
  * and says so.
+ *
+ * `loaded` answers a different question: has *this device* ever downloaded the
+ * date (#91)? Coverage is coarse — one row can span a whole year — while the
+ * Schedule cache is filled a month at a time, so a covered date the device
+ * never opened has no rows for the same reason an unloaded year does. `null`
+ * means the caller does not track this (the Admin panel, and everything
+ * written before #91), and keeps the earlier reading. An empty list is not the
+ * same: it is a device that tracks spans and has loaded none.
  */
 export function dayStatus(
   date: string,
   collection: CollectionDayGrouped | undefined,
-  ranges: CoverageRange[] | null
+  ranges: CoverageRange[] | null,
+  loaded: DateSpan[] | null = null
 ): DayStatus {
   if (isOutsideCoverage(date, ranges)) return 'unscheduled';
   if (collection?.isHoliday) return 'holiday';
   if (collection && collection.wasteTypes.length > 0) return 'pickups';
+  if (loaded !== null && !isLoaded(date, loaded)) return 'not-downloaded';
   return 'no-collection';
 }
 
