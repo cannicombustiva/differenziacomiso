@@ -8,6 +8,7 @@ import { createClient } from '@differenzia/core/supabase/client';
 import CalendarGrid from '@differenzia/ui/calendar-grid';
 import Modal from '@differenzia/ui/modal';
 import Button from '@/components/ui/Button/Button';
+import ImportPanel from '@/components/ImportPanel/ImportPanel';
 import { useToast } from '@differenzia/ui/toast';
 import { settimanaTipo, WASTE_KEY_NAME_IT } from '@differenzia/core/settimana-tipo';
 import { groupCollections, type ScheduleRow } from '@differenzia/core/group-collections';
@@ -199,6 +200,8 @@ export default function AdminCalendarioPage() {
   return (
     <div>
       <h2 className={styles.heading}>{t('admin.calendarManager')}</h2>
+
+      <ImportPanel />
 
       <div className={styles.bulkSection}>
         <h3 className={styles.subheading}>{t('admin.bulkFill')}</h3>
