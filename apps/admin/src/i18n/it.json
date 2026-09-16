@@ -109,7 +109,7 @@
     "importErrorEmpty": "Seleziona un file PDF.",
     "importErrorTooLarge": "Il file supera 10 MB.",
     "importErrorNotPdf": "Il file non è un PDF.",
-    "importErrorRangeInvalid": "Intervallo di date non valido: la data finale deve seguire quella iniziale.",
+    "importErrorRangeInvalid": "Intervallo di date non valido: la data finale non può precedere quella iniziale.",
     "importErrorFailed": "Caricamento non riuscito. Riprova."
   }
 }

@@ -60,8 +60,9 @@ export async function POST(request: Request) {
   const file = form.get('file');
   if (!(file instanceof File)) return reject('empty');
 
-  // Size is checked before the bytes are read, so an oversized upload is
-  // refused without being buffered twice.
+  // The declared size and type are checked before the bytes are copied out of
+  // the form, so an oversized or non-PDF upload is refused without a second
+  // buffer. The magic-byte check that follows is the one that is proof.
   const declaredRejection = checkImportFile(file);
   if (declaredRejection) return reject(declaredRejection);
 

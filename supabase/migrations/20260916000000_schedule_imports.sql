@@ -33,18 +33,25 @@ ALTER TABLE schedule_imports ENABLE ROW LEVEL SECURITY;
 -- policy at all — unlike Coverage, an Import is not Citizen-facing.
 --
 -- There is deliberately no DELETE policy: discarding sets `status`, and a
--- row that could be deleted would not be a record.
+-- row that could be deleted would not be a record. Nor is there an UPDATE
+-- policy yet: an admin-wide one would let a browser set `status = 'approved'`
+-- and `approved_diff` directly, skipping the review ADR 0007 exists for.
+-- Discarding goes through the service-role route; the approval slice decides
+-- what, if anything, a session client may change.
 CREATE POLICY "Admins read schedule_imports"
   ON schedule_imports FOR SELECT TO authenticated
   USING (is_admin());
 
-CREATE POLICY "Admins insert schedule_imports"
+-- An insert may only start a draft, for the same reason.
+CREATE POLICY "Admins insert draft schedule_imports"
   ON schedule_imports FOR INSERT TO authenticated
-  WITH CHECK (is_admin());
-
-CREATE POLICY "Admins update schedule_imports"
-  ON schedule_imports FOR UPDATE TO authenticated
-  USING (is_admin()) WITH CHECK (is_admin());
+  WITH CHECK (
+    is_admin()
+    AND status = 'draft'
+    AND approved_by IS NULL
+    AND approved_at IS NULL
+    AND approved_diff IS NULL
+  );
 
 -- The source PDFs. Private: the Busso calendar is a public municipal document,
 -- but a public bucket is a URL that can never be un-published.

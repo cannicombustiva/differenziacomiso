@@ -165,9 +165,10 @@
   white-space: nowrap;
 }
 
+/* Status, not a waste type: the waste palette stays reserved for waste. */
 .draft {
-  background: var(--waste-plastica-tint, #fbf1cc);
-  color: #9a7b00;
+  background: color-mix(in srgb, var(--color-warning) 18%, transparent);
+  color: var(--color-text);
 }
 
 .approved {

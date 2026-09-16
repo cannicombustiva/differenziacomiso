@@ -1,16 +1,16 @@
 'use client';
 
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { format } from 'date-fns';
-import { it as itLocale } from 'date-fns/locale';
 import { useLocale } from '@differenzia/core/i18n';
+import { formatDateLocalized } from '@differenzia/core/dates';
 import Modal from '@differenzia/ui/modal';
 import { useToast } from '@differenzia/ui/toast';
 import Button from '@/components/ui/Button/Button';
 import {
   checkImportFile,
-  checkImportRange,
+  checkImportForm,
   wholeYearRange,
+  type ImportRange,
   type ImportRejection,
   type ImportStatus,
   type ImportSummary,
@@ -23,6 +23,9 @@ const REJECTION_KEY: Record<ImportRejection, string> = {
   'not-pdf': 'admin.importErrorNotPdf',
   'range-invalid': 'admin.importErrorRangeInvalid',
 };
+
+/** The Schedule begins with 2026 (the seed); no earlier Busso calendar concerns the app. */
+const FIRST_IMPORT_YEAR = 2026;
 
 const STATUS_KEY: Record<ImportStatus, string> = {
   draft: 'admin.importStatusDraft',
@@ -57,7 +60,7 @@ export default function ImportPanel() {
   const [imports, setImports] = useState<ImportSummary[] | null>(null);
   const [discarding, setDiscarding] = useState<ImportSummary | null>(null);
 
-  const range = preset === 'year' ? wholeYearRange(year) : { start: customStart, end: customEnd };
+  const range: ImportRange = preset === 'year' ? wholeYearRange(year) : { start: customStart, end: customEnd };
 
   const loadImports = useCallback(async () => {
     const res = await fetch('/api/imports', { cache: 'no-store' });
@@ -71,10 +74,11 @@ export default function ImportPanel() {
 
   useEffect(() => { loadImports(); }, [loadImports]);
 
+  // A bare `yyyy-MM-dd` parses as UTC midnight, which is the previous day
+  // anywhere west of Greenwich; pin it to local midnight. Timestamps
+  // (`created_at`) carry their own offset and parse as they are.
   const formatDate = (value: string) =>
-    format(new Date(value.length === 10 ? `${value}T00:00:00` : value), 'd MMM yyyy', {
-      locale: locale === 'it' ? itLocale : undefined,
-    });
+    formatDateLocalized(new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00` : value), 'd MMM yyyy', locale);
 
   const handleFileChange = (next: File | null) => {
     setFile(next);
@@ -84,7 +88,7 @@ export default function ImportPanel() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const rejection = (file ? checkImportFile(file) : 'empty') ?? checkImportRange(range.start, range.end);
+    const rejection = checkImportForm(file, range);
     if (rejection) {
       setError(t(REJECTION_KEY[rejection]));
       return;
@@ -166,7 +170,7 @@ export default function ImportPanel() {
                 <span className={styles.label}>{t('admin.importYear')}</span>
                 <input
                   type="number"
-                  min={2026}
+                  min={FIRST_IMPORT_YEAR}
                   max={2100}
                   value={year}
                   onChange={(e) => setYear(Number(e.target.value))}

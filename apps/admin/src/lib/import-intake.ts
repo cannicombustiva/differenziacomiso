@@ -58,8 +58,24 @@ export function checkImportRange(
   return null;
 }
 
+/** An Import's date range as `yyyy-MM-dd` strings, inclusive at both ends. */
+export interface ImportRange {
+  start: string;
+  end: string;
+}
+
+/**
+ * Why the upload form cannot be submitted, or null if it can: the one
+ * rejection to show. The file wins over the range because it is what the
+ * Admin most recently touched.
+ */
+export function checkImportForm(file: { name: string; type: string; size: number } | null, range: ImportRange): ImportRejection | null {
+  if (!file) return 'empty';
+  return checkImportFile(file) ?? checkImportRange(range.start, range.end);
+}
+
 /** The default preset: the Busso PDF covers one calendar year. */
-export function wholeYearRange(year: number): { start: string; end: string } {
+export function wholeYearRange(year: number): ImportRange {
   return { start: `${year}-01-01`, end: `${year}-12-31` };
 }
 

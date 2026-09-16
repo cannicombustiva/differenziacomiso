@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   MAX_IMPORT_PDF_BYTES,
   checkImportFile,
+  checkImportForm,
   checkImportRange,
   wholeYearRange,
 } from './import-intake';
@@ -74,5 +75,25 @@ describe('checkImportRange', () => {
 describe('wholeYearRange', () => {
   it('spans 1 January to 31 December of the year', () => {
     expect(wholeYearRange(2027)).toEqual({ start: '2027-01-01', end: '2027-12-31' });
+  });
+});
+
+describe('checkImportForm', () => {
+  const YEAR = { start: '2027-01-01', end: '2027-12-31' };
+
+  it('accepts a PDF with a valid range', () => {
+    expect(checkImportForm(pdf(), YEAR)).toBeNull();
+  });
+
+  it('asks for a file before anything else', () => {
+    expect(checkImportForm(null, { start: '', end: '' })).toBe('empty');
+  });
+
+  it('reports a bad file before a bad range: the file is what the Admin just chose', () => {
+    expect(checkImportForm(pdf({ type: 'image/png' }), { start: '', end: '' })).toBe('not-pdf');
+  });
+
+  it('reports a bad range once the file is fine', () => {
+    expect(checkImportForm(pdf(), { start: '2027-12-31', end: '2027-01-01' })).toBe('range-invalid');
   });
 });
