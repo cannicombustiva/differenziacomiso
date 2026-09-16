@@ -1,19 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@differenzia/core/supabase/admin';
-import { getAdminAuthError, requireAdmin } from '@/lib/admin';
+import { adminIdOrError } from '@/lib/admin-route';
 import { saveSubscriptionRequest } from '@differenzia/core/save-subscription';
 
 export const dynamic = 'force-dynamic';
-
-/** The authenticated Admin's id, or the error response to return instead. */
-async function adminIdOrError(): Promise<string | NextResponse> {
-  try {
-    return (await requireAdmin()).id;
-  } catch (error) {
-    const authError = getAdminAuthError(error);
-    return NextResponse.json({ error: authError.message }, { status: authError.status });
-  }
-}
 
 /**
  * Subscribe this device as an Admin device (#79): the same Subscription row a
