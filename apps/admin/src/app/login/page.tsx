@@ -56,7 +56,7 @@ export default function AdminLoginPage() {
       });
       await apply(error ? { type: 'codeVerifyFailed', error } : { type: 'codeVerifySucceeded' });
     } else if (effect === 'redirect') {
-      router.replace('/admin');
+      router.replace('/');
     }
   };
 

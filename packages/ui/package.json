@@ -6,7 +6,8 @@
     "./toast": "./src/Toast/Toast.tsx",
     "./modal": "./src/Modal/Modal.tsx",
     "./calendar-grid": "./src/CalendarGrid/CalendarGrid.tsx",
-    "./tokens.css": "./src/tokens.css"
+    "./tokens.css": "./src/tokens.css",
+    "./service-worker-registrar": "./src/ServiceWorkerRegistrar/ServiceWorkerRegistrar.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

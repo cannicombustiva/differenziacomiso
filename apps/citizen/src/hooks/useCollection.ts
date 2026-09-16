@@ -5,12 +5,10 @@ import { format, addDays, parseISO, startOfMonth, endOfMonth } from 'date-fns';
 import { createClient } from '@differenzia/core/supabase/client';
 import { referenceDay, romeToday } from '@differenzia/core/reference-day';
 import { groupCollections, type ScheduleRow } from '@differenzia/core/group-collections';
+import { fetchCoverage, fetchScheduleRows } from '@differenzia/core/schedule-queries';
 import { writeCache, readCache, writeCoverageCache, readCoverageCache } from '@/lib/offline-cache';
 import type { CoverageRange } from '@differenzia/core/coverage';
 import type { CollectionDayGrouped, Locale } from '@differenzia/core/types';
-
-const SCHEDULE_SELECT =
-  'date, is_holiday, holiday_note_it, holiday_note_en, note_it, note_en, waste_types:waste_type_id(*)';
 
 /**
  * The Coverage ranges the Schedule vouches for (ADR 0006). `null` means not yet
@@ -28,11 +26,7 @@ export function useCoverage(): CoverageRange[] | null {
   useEffect(() => {
     (async () => {
       try {
-        const { data, error } = await createClient()
-          .from('schedule_coverage')
-          .select('start_date, end_date, source');
-        if (error) throw error;
-        const fetched = (data || []) as CoverageRange[];
+        const fetched = await fetchCoverage(createClient());
         writeCoverageCache(fetched);
         setRanges(fetched);
       } catch {
@@ -56,12 +50,7 @@ export function useTomorrowCollection(locale: Locale) {
     };
     (async () => {
       try {
-        const { data, error } = await createClient()
-          .from('collection_schedule')
-          .select(SCHEDULE_SELECT)
-          .eq('date', tomorrow);
-        if (error) throw error;
-        const rows = (data || []) as unknown as ScheduleRow[];
+        const rows = await fetchScheduleRows(createClient(), tomorrow);
         writeCache(key, rows);
         show(rows);
       } catch {
@@ -84,14 +73,7 @@ export function useWeekCollections(locale: Locale) {
     const key = `week:${today}`;
     (async () => {
       try {
-        const { data, error } = await createClient()
-          .from('collection_schedule')
-          .select(SCHEDULE_SELECT)
-          .gte('date', today)
-          .lte('date', end)
-          .order('date');
-        if (error) throw error;
-        const rows = (data || []) as unknown as ScheduleRow[];
+        const rows = await fetchScheduleRows(createClient(), today, end);
         writeCache(key, rows);
         setCollections(groupCollections(rows, locale));
       } catch {
@@ -113,14 +95,7 @@ export function useMonthCollections(year: number, month: number, locale: Locale)
     const key = `month:${start}`;
     (async () => {
       try {
-        const { data, error } = await createClient()
-          .from('collection_schedule')
-          .select(SCHEDULE_SELECT)
-          .gte('date', start)
-          .lte('date', end)
-          .order('date');
-        if (error) throw error;
-        const rows = (data || []) as unknown as ScheduleRow[];
+        const rows = await fetchScheduleRows(createClient(), start, end);
         writeCache(key, rows);
         setCollections(groupCollections(rows, locale));
       } catch {

@@ -5,14 +5,14 @@ import { createClient } from '@differenzia/core/supabase/client';
 import { useLocale } from '@differenzia/core/i18n';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import styles from './layout.module.css';
+import styles from './AdminShell.module.css';
 
 const ADMIN_NAV = [
-  { href: '/admin', label: 'admin.navDashboard', icon: 'dashboard' },
-  { href: '/admin/calendario', label: 'admin.navCalendar', icon: 'calendar' },
-  { href: '/admin/riciclabolario', label: 'admin.navDictionary', icon: 'dictionary' },
-  { href: '/admin/notizie', label: 'admin.navNews', icon: 'news' },
-  { href: '/admin/notifiche', label: 'admin.navNotifications', icon: 'bell' },
+  { href: '/', label: 'admin.navDashboard', icon: 'dashboard' },
+  { href: '/calendario', label: 'admin.navCalendar', icon: 'calendar' },
+  { href: '/riciclabolario', label: 'admin.navDictionary', icon: 'dictionary' },
+  { href: '/notizie', label: 'admin.navNews', icon: 'news' },
+  { href: '/notifiche', label: 'admin.navNotifications', icon: 'bell' },
 ] as const;
 
 function NavIcon({ icon }: { icon: string }) {
@@ -52,28 +52,32 @@ function NavIcon({ icon }: { icon: string }) {
   }
 }
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+/**
+ * The Admin chrome: dark sidebar navigation around every page but the login,
+ * which renders bare. Also bounces a signed-out browser to /login.
+ */
+export default function AdminShell({ children }: { children: ReactNode }) {
   const { t } = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (pathname === '/admin/login') {
+    if (pathname === '/login') {
       setIsAuthenticated(false);
       return;
     }
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
-        router.replace('/admin/login');
+        router.replace('/login');
       } else {
         setIsAuthenticated(true);
       }
     });
   }, [pathname, router]);
 
-  if (pathname === '/admin/login') {
+  if (pathname === '/login') {
     return <>{children}</>;
   }
 
@@ -88,7 +92,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.replace('/admin/login');
+    router.replace('/login');
   };
 
   return (
@@ -104,7 +108,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
         <nav className={styles.nav}>
           {ADMIN_NAV.map((item) => {
-            const active = item.href === '/admin' ? pathname === '/admin' : pathname.startsWith(item.href);
+            const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}

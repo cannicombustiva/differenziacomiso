@@ -21,8 +21,8 @@ function withCookies(responseToReturn: NextResponse, baseResponse: NextResponse)
 }
 
 export async function middleware(request: NextRequest) {
-  // Only protect admin routes (except login)
-  if (!request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname === '/admin/login') {
+  // The login page is the one page reachable without an Admin session.
+  if (request.nextUrl.pathname === '/login') {
     return NextResponse.next();
   }
 
@@ -48,13 +48,13 @@ export async function middleware(request: NextRequest) {
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
-    const loginUrl = new URL('/admin/login', request.url);
+    const loginUrl = new URL('/login', request.url);
     return redirectWithCookies(loginUrl, response);
   }
 
   const email = session.user.email?.toLowerCase();
   if (!email) {
-    const loginUrl = new URL('/admin/login', request.url);
+    const loginUrl = new URL('/login', request.url);
     return redirectWithCookies(loginUrl, response);
   }
 
@@ -73,7 +73,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!admin) {
-    const loginUrl = new URL('/admin/login', request.url);
+    const loginUrl = new URL('/login', request.url);
     return redirectWithCookies(loginUrl, response);
   }
 
@@ -81,5 +81,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  // Everything except API routes (which call requireAdmin() themselves), Next
+  // internals, and the files the service worker and notifications need.
+  matcher: ['/((?!api/|_next/|sw.js|icons/).*)'],
 };
