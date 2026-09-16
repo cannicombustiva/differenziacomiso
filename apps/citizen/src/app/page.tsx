@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { parseISO } from 'date-fns';
 import { useLocale } from '@differenzia/core/i18n';
-import { useTomorrowCollection, useWeekCollections, useCoverage } from '@/hooks/useCollection';
+import { useTomorrowCollection, useWeekCollections, useCoverage, useLoadedSpans } from '@/hooks/useCollection';
 import { dayStatus } from '@differenzia/core/coverage';
 import { wasteVisual, getWasteTypeName } from '@differenzia/core/waste-style';
 import WasteCard from '@/components/WasteCard/WasteCard';
@@ -17,6 +17,7 @@ export default function HomePage() {
   const tomorrow = useTomorrowCollection(locale);
   const week = useWeekCollections(locale);
   const coverage = useCoverage();
+  const loaded = useLoadedSpans(tomorrow);
 
   const fmt = (iso: string, o: Intl.DateTimeFormatOptions) =>
     new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'it-IT', o).format(parseISO(iso));
@@ -24,7 +25,7 @@ export default function HomePage() {
   const tomorrowTypes = tomorrow?.wasteTypes ?? [];
   // Coverage decides whether an empty Reference day means "day off" or "we have
   // not loaded this period" — the rows look identical either way (ADR 0006).
-  const status = tomorrow ? dayStatus(tomorrow.date, tomorrow, coverage) : null;
+  const status = tomorrow ? dayStatus(tomorrow.date, tomorrow, coverage, loaded) : null;
   const hasPickups = status === 'pickups';
   const upcoming = week.filter((d) => tomorrow && d.date > tomorrow.date);
 
@@ -67,10 +68,17 @@ export default function HomePage() {
 
         {tomorrow === null ? (
           <p className={styles.heroEmpty}>{t('common.loading')}</p>
-        ) : status === 'unscheduled' ? (
+        ) : status === 'unscheduled' || status === 'not-downloaded' ? (
+          // Two different silences: the calendar was never loaded for this
+          // date, or this device never downloaded it (#91). Both refuse to
+          // claim a day off; only the wording differs.
           <div className={styles.heroUnscheduled}>
-            <p className={styles.heroEmpty}>{t('home.notAvailable')}</p>
-            <p className={styles.heroHint}>{t('home.notAvailableHint')}</p>
+            <p className={styles.heroEmpty}>
+              {t(status === 'unscheduled' ? 'home.notAvailable' : 'home.notDownloaded')}
+            </p>
+            <p className={styles.heroHint}>
+              {t(status === 'unscheduled' ? 'home.notAvailableHint' : 'home.notDownloadedHint')}
+            </p>
           </div>
         ) : !hasPickups ? (
           <p className={styles.heroEmpty}>

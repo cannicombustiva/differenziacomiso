@@ -11,9 +11,15 @@
  * still tell "nothing is collected" apart from "we never loaded this period"
  * (ADR 0006). Without it the PWA would go on asserting a day off for dates
  * nobody has ever loaded — the one thing Coverage exists to prevent.
+ *
+ * Coverage alone is too coarse to finish that job: one row can vouch for a
+ * whole year while the Schedule is cached a month at a time, so a covered
+ * month the device never opened still looked like ~30 days off (#91). The
+ * loaded spans record which dates were actually downloaded, and `dayStatus`
+ * reads the two together.
  */
 
-import type { CoverageRange } from '@differenzia/core/coverage';
+import type { CoverageRange, DateSpan } from '@differenzia/core/coverage';
 
 /** The slice of the Storage API we use — injectable so it can be tested. */
 export type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
@@ -23,6 +29,9 @@ const REFRESHED_KEY = 'dc:lastRefreshed';
 
 /** The key Coverage is cached under, alongside the Schedule payloads. */
 export const COVERAGE_KEY = 'coverage';
+
+/** The key the loaded date spans are cached under (#91). */
+export const LOADED_SPANS_KEY = 'loaded-spans';
 
 /**
  * The shape version of every cached entry. Bump it whenever a cached payload's
@@ -165,6 +174,75 @@ export function readCoverageCache(store: StorageLike | null = defaultStore()): C
   if (cached === null) return null;
   if (!Array.isArray(cached) || !cached.every(isCoverageRange)) {
     if (store) evict(COVERAGE_KEY, store);
+    return null;
+  }
+  return cached;
+}
+
+function isDateSpan(value: unknown): value is DateSpan {
+  const s = value as DateSpan | null;
+  return typeof s === 'object' && s !== null && typeof s.from === 'string' && typeof s.to === 'string';
+}
+
+/** The day after `date`, so spans that merely touch can be merged. */
+function nextDay(date: string): string {
+  const d = new Date(`${date}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * Sort by start and fold together every span that overlaps or merely touches
+ * its neighbour. Without this the list would grow by one entry per visit: the
+ * week strip records a fresh span every day the app is opened.
+ */
+function mergeSpans(spans: DateSpan[]): DateSpan[] {
+  const sorted = [...spans].sort((a, b) => a.from.localeCompare(b.from));
+  const merged: DateSpan[] = [];
+  for (const span of sorted) {
+    const last = merged[merged.length - 1];
+    if (last && span.from <= nextDay(last.to)) {
+      if (span.to > last.to) last.to = span.to;
+    } else {
+      merged.push({ ...span });
+    }
+  }
+  return merged;
+}
+
+/**
+ * Record that this device downloaded the Schedule for `from`..`to` inclusive.
+ *
+ * Deliberately not `writeCache`: like Coverage, this is a note about what was
+ * asked for, not a Schedule payload, so it must not advance the last-refreshed
+ * stamp the offline banner shows.
+ */
+export function recordLoadedSpan(
+  from: string,
+  to: string,
+  store: StorageLike | null = defaultStore()
+): void {
+  if (!store) return;
+  const existing = readLoadedSpans(store) ?? [];
+  writeEntry(LOADED_SPANS_KEY, mergeSpans([...existing, { from, to }]), store);
+}
+
+/**
+ * The date spans this device has downloaded, or null when it has never
+ * recorded one.
+ *
+ * `null` and `[]` differ the way they do for Coverage: `null` is a device that
+ * tracks nothing yet — every date reads as it did before #91 — while `[]` is a
+ * device that tracks spans and holds none, so every covered date is honestly
+ * "not downloaded". A value of the wrong shape is rejected and evicted, since
+ * the version stamp says "written by this code", not "written by code that
+ * agreed about spans".
+ */
+export function readLoadedSpans(store: StorageLike | null = defaultStore()): DateSpan[] | null {
+  const cached = readCache<unknown>(LOADED_SPANS_KEY, store);
+  if (cached === null) return null;
+  if (!Array.isArray(cached) || !cached.every(isDateSpan)) {
+    if (store) evict(LOADED_SPANS_KEY, store);
     return null;
   }
   return cached;

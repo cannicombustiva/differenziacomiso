@@ -23,14 +23,17 @@
     "rest": "Rest day",
     "brandTagline": "Waste sorting",
     "notAvailable": "Calendar not yet available",
-    "notAvailableHint": "The calendar for this period has not been published yet."
+    "notAvailableHint": "The calendar for this period has not been published yet.",
+    "notDownloaded": "Not downloaded",
+    "notDownloadedHint": "Go online to see tomorrow's collection."
   },
   "calendar": {
     "title": "Calendar",
     "noCollection": "No collection",
     "holiday": "Holiday",
     "detailHint": "Tap a day on the calendar to see what to put out. Colours match the waste type.",
-    "notAvailable": "Not yet available"
+    "notAvailable": "Not yet available",
+    "notDownloaded": "Not downloaded"
   },
   "dictionary": {
     "title": "Waste Dictionary",

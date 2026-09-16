@@ -6,8 +6,15 @@ import { createClient } from '@differenzia/core/supabase/client';
 import { referenceDay, romeToday } from '@differenzia/core/reference-day';
 import { groupCollections, type ScheduleRow } from '@differenzia/core/group-collections';
 import { fetchCoverage, fetchScheduleRows } from '@differenzia/core/schedule-queries';
-import { writeCache, readCache, writeCoverageCache, readCoverageCache } from '@/lib/offline-cache';
-import type { CoverageRange } from '@differenzia/core/coverage';
+import {
+  writeCache,
+  readCache,
+  writeCoverageCache,
+  readCoverageCache,
+  recordLoadedSpan,
+  readLoadedSpans,
+} from '@/lib/offline-cache';
+import type { CoverageRange, DateSpan } from '@differenzia/core/coverage';
 import type { CollectionDayGrouped, Locale } from '@differenzia/core/types';
 
 /**
@@ -52,6 +59,7 @@ export function useTomorrowCollection(locale: Locale) {
       try {
         const rows = await fetchScheduleRows(createClient(), tomorrow);
         writeCache(key, rows);
+        recordLoadedSpan(tomorrow, tomorrow);
         show(rows);
       } catch {
         const cached = readCache<ScheduleRow[]>(key);
@@ -75,6 +83,7 @@ export function useWeekCollections(locale: Locale) {
       try {
         const rows = await fetchScheduleRows(createClient(), today, end);
         writeCache(key, rows);
+        recordLoadedSpan(today, end);
         setCollections(groupCollections(rows, locale));
       } catch {
         const cached = readCache<ScheduleRow[]>(key);
@@ -97,6 +106,7 @@ export function useMonthCollections(year: number, month: number, locale: Locale)
       try {
         const rows = await fetchScheduleRows(createClient(), start, end);
         writeCache(key, rows);
+        recordLoadedSpan(start, end);
         setCollections(groupCollections(rows, locale));
       } catch {
         const cached = readCache<ScheduleRow[]>(key);
@@ -106,4 +116,23 @@ export function useMonthCollections(year: number, month: number, locale: Locale)
   }, [year, month, locale]);
 
   return collections;
+}
+
+/**
+ * The date spans this device has downloaded (#91), re-read whenever `settled`
+ * changes — pass the collection state a page already renders, so the spans are
+ * refreshed by the same fetch that filled them.
+ *
+ * Read in an effect rather than during render: the cache lives in
+ * localStorage, which does not exist while the page is prerendered, and a
+ * value that appears mid-render would not survive hydration.
+ */
+export function useLoadedSpans(settled: unknown): DateSpan[] | null {
+  const [spans, setSpans] = useState<DateSpan[] | null>(null);
+
+  useEffect(() => {
+    setSpans(readLoadedSpans());
+  }, [settled]);
+
+  return spans;
 }

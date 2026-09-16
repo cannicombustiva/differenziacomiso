@@ -17,7 +17,7 @@ import { it as itLocale } from 'date-fns/locale';
 import type { CollectionDayGrouped, Locale, WasteType } from '@differenzia/core/types';
 import { wasteVisual, getWasteTypeName } from '@differenzia/core/waste-style';
 import { referenceDay } from '@differenzia/core/reference-day';
-import { dayStatus, type CoverageRange } from '@differenzia/core/coverage';
+import { dayStatus, type CoverageRange, type DateSpan } from '@differenzia/core/coverage';
 import styles from './CalendarGrid.module.css';
 
 interface CalendarGridProps {
@@ -25,6 +25,11 @@ interface CalendarGridProps {
   collections: CollectionDayGrouped[];
   /** Coverage ranges, or null when unknown — see ADR 0006. */
   coverage: CoverageRange[] | null;
+  /**
+   * The date spans this device has downloaded, or null for a caller that does
+   * not track them — the Admin panel, which is online-only (#91).
+   */
+  loadedSpans?: DateSpan[] | null;
   locale: Locale;
   onDayClick?: (date: string) => void;
   onMonthChange?: (date: Date) => void;
@@ -37,16 +42,21 @@ const DAY_HEADERS_IT_LONG = ['LUN', 'MAR', 'MER', 'GIO', 'VEN', 'SAB', 'DOM'];
 const DAY_HEADERS_EN_LONG = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
 /** Screen-reader wording for a day cell that collects nothing. */
-const STATUS_LABEL: Record<'holiday' | 'no-collection' | 'unscheduled', Record<Locale, string>> = {
+const STATUS_LABEL: Record<
+  'holiday' | 'no-collection' | 'unscheduled' | 'not-downloaded',
+  Record<Locale, string>
+> = {
   holiday: { it: 'festivo, nessuna raccolta', en: 'holiday, no collection' },
   'no-collection': { it: 'nessuna raccolta', en: 'no collection' },
   unscheduled: { it: 'calendario non ancora disponibile', en: 'calendar not yet available' },
+  'not-downloaded': { it: 'dati non scaricati', en: 'not downloaded' },
 };
 
 export default function CalendarGrid({
   currentMonth,
   collections,
   coverage,
+  loadedSpans = null,
   locale,
   onDayClick,
   onMonthChange,
@@ -119,7 +129,7 @@ export default function CalendarGrid({
             }
             const collection = collections.find((c) => c.date === dateStr);
             const types = collection?.wasteTypes ?? [];
-            const status = dayStatus(dateStr, collection, coverage);
+            const status = dayStatus(dateStr, collection, coverage, loadedSpans);
             // .rest is a day off the Schedule vouches for; an uncovered day is
             // not that, and carries its own treatment instead (ADR 0006).
             const isRest = status === 'holiday' || status === 'no-collection';
@@ -130,7 +140,9 @@ export default function CalendarGrid({
               isToday(date) ? styles.today : '',
               highlighted ? styles.highlight : '',
               isRest ? styles.rest : '',
-              status === 'unscheduled' ? styles.unscheduled : '',
+              // A date this device never downloaded is not a rest day either,
+              // so it wears the same treatment as an uncovered one (#91).
+              status === 'unscheduled' || status === 'not-downloaded' ? styles.unscheduled : '',
             ]
               .filter(Boolean)
               .join(' ');

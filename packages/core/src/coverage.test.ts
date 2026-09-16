@@ -28,6 +28,63 @@ const day = (over: Partial<CollectionDayGrouped> = {}): CollectionDayGrouped => 
   ...over,
 });
 
+describe('dayStatus and what this device has downloaded', () => {
+  // Coverage answers "does the Schedule vouch for this date?". Offline, a
+  // second question matters: "has this device ever loaded it?" (#91). The two
+  // are not derivable from each other — Coverage is one row for the whole
+  // year, while the cache is filled a month at a time.
+  const JUNE = [{ from: '2026-06-01', to: '2026-06-30' }];
+
+  it('says not-downloaded for a covered date this device never loaded', () => {
+    // The failure #91 exists to stop: offline, a month nobody opened rendered
+    // ~30 confident "nessuna raccolta" days.
+    expect(dayStatus('2026-09-14', undefined, YEAR_2026, JUNE)).toBe('not-downloaded');
+  });
+
+  it('still says no-collection for a covered date that was loaded and had no Pickups', () => {
+    expect(dayStatus('2026-06-21', undefined, YEAR_2026, JUNE)).toBe('no-collection');
+  });
+
+  it('reads the loaded spans inclusively at both ends', () => {
+    expect(dayStatus('2026-06-01', undefined, YEAR_2026, JUNE)).toBe('no-collection');
+    expect(dayStatus('2026-06-30', undefined, YEAR_2026, JUNE)).toBe('no-collection');
+    expect(dayStatus('2026-05-31', undefined, YEAR_2026, JUNE)).toBe('not-downloaded');
+    expect(dayStatus('2026-07-01', undefined, YEAR_2026, JUNE)).toBe('not-downloaded');
+  });
+
+  it('honours several disjoint spans', () => {
+    const spans = [{ from: '2026-06-01', to: '2026-06-30' }, { from: '2026-09-01', to: '2026-09-30' }];
+    expect(dayStatus('2026-09-14', undefined, YEAR_2026, spans)).toBe('no-collection');
+    expect(dayStatus('2026-07-15', undefined, YEAR_2026, spans)).toBe('not-downloaded');
+  });
+
+  it('says not-downloaded when this device has loaded nothing at all', () => {
+    expect(dayStatus('2026-06-21', undefined, YEAR_2026, [])).toBe('not-downloaded');
+  });
+
+  it('keeps the pre-#91 reading when the loaded spans are unknown', () => {
+    // `null` is an app that does not track spans — the Admin panel, and every
+    // caller written before #91. Coverage alone decides, as it did.
+    expect(dayStatus('2026-06-21', undefined, YEAR_2026, null)).toBe('no-collection');
+    expect(dayStatus('2026-06-21', undefined, YEAR_2026)).toBe('no-collection');
+  });
+
+  it('lets rows this device does hold outrank the span check', () => {
+    // A Pickup or a Holiday in hand is proof the date was loaded, whatever the
+    // spans say, so it is never downgraded to not-downloaded.
+    expect(dayStatus('2026-09-14', day({ wasteTypes: [UMIDO] }), YEAR_2026, JUNE)).toBe('pickups');
+    const holiday = day({ date: '2026-08-15', isHoliday: true });
+    expect(dayStatus('2026-08-15', holiday, YEAR_2026, JUNE)).toBe('holiday');
+  });
+
+  it('still says unscheduled outside Coverage, whatever was downloaded', () => {
+    // Outside Coverage the app has nothing to say about the date at all; that
+    // outranks "you have not downloaded it".
+    expect(dayStatus('2027-01-01', undefined, YEAR_2026, JUNE)).toBe('unscheduled');
+    expect(dayStatus('2027-01-01', undefined, YEAR_2026, [{ from: '2027-01-01', to: '2027-01-31' }])).toBe('unscheduled');
+  });
+});
+
 describe('dayStatus', () => {
   it('reports pickups for a covered date that collects something', () => {
     expect(dayStatus('2026-06-17', day({ wasteTypes: [UMIDO] }), YEAR_2026)).toBe('pickups');

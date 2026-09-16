@@ -23,14 +23,17 @@
     "rest": "Riposo",
     "brandTagline": "Raccolta differenziata",
     "notAvailable": "Calendario non ancora disponibile",
-    "notAvailableHint": "Il calendario per questo periodo non è ancora stato pubblicato."
+    "notAvailableHint": "Il calendario per questo periodo non è ancora stato pubblicato.",
+    "notDownloaded": "Dati non scaricati",
+    "notDownloadedHint": "Collegati a internet per vedere la raccolta di domani."
   },
   "calendar": {
     "title": "Calendario",
     "noCollection": "Nessuna raccolta",
     "holiday": "Festivo",
     "detailHint": "Tocca un giorno del calendario per vedere cosa esporre. I colori corrispondono al tipo di rifiuto.",
-    "notAvailable": "Non ancora disponibile"
+    "notAvailable": "Non ancora disponibile",
+    "notDownloaded": "Dati non scaricati"
   },
   "dictionary": {
     "title": "Riciclabolario",
